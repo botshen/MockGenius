@@ -23,7 +23,7 @@
       },
       {
         "resources": [ "insert.js" ],
-        "matches": ["https://ant-design.antgroup.com/*"]
+         "matches": ["<all_urls>"]
       }
     ],
     "action": {

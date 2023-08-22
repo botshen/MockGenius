@@ -620,6 +620,11 @@ acorn@^8.9.0:
   resolved "https://registry.npmmirror.com/acorn/-/acorn-8.10.0.tgz#8be5b3907a67221a81ab23c7889c4c5526b62ec5"
   integrity sha512-F0SAmZ8iUtS//m8DmCTA0jlh6TDKkHQyK6xc6V4KDTyZKA9dnvX9/3sRTVQrWm79glUAZbnmmNcdYwUIHWVybw==
 
+ajax-hook@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npmmirror.com/ajax-hook/-/ajax-hook-3.0.1.tgz#4b0f0539e912d374e0f285e29e16b08d735cd5f7"
+  integrity sha512-/0n+bv3NNZ5hcGb0L22T677xVkhJtcNRBHI4TEyJgV/NuVS/8dSMmZW4CGEJuGhQEV8t0ZaUb6rmm4QEjLGN2w==
+
 ajv@^6.12.4:
   version "6.12.6"
   resolved "https://registry.npmmirror.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
