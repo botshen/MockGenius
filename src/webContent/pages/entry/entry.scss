@@ -1,0 +1,13 @@
+.M-entry {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .main-container {
+        position: relative;
+        flex: 1;
+        padding: 20px;
+        // background: linear-gradient(#f48c8d, #f4c58d);
+
+    }
+}

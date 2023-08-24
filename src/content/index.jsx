@@ -41,4 +41,18 @@ try {
     insertScript.setAttribute('type', 'text/javascript')
     insertScript.src = window.chrome.runtime.getURL('insert.js')
     document.body.appendChild(insertScript)
-} catch (err) {}
+} catch (err) { }
+
+window.addEventListener(
+    'CUSTOMEVENT',
+    (event) => {
+        console.log('event',event)
+         
+        chrome.runtime.sendMessage({
+            type: "ajaxInterceptor",
+            message: "content_to_background",
+            data: event,
+          })
+    },
+    false
+)
