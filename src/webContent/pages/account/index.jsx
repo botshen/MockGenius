@@ -7,16 +7,16 @@ import Detail from '../../components/detail';
 const Account = () => {
     const datalist = [
         {
-            title: 'Ant Design Title 1',
+            title: '/dev-api/vue-admin-template/user/33',
         },
         {
-            title: 'Ant Design Title 2',
+            title: '/dev-api/vue-admin-template/user/inf222o',
         },
         {
-            title: 'Ant Design Title 3',
+            title: '/dev-api/vue-admin-template/user/info1111',
         },
         {
-            title: 'Ant Design Title 4',
+            title: '/dev-api/vue-admin-template/user/in444fo',
         },
     ];
     const [detail, setDetail] = useState(false);
@@ -38,10 +38,7 @@ const Account = () => {
                     (
                         <div>
                             <List className='account-wrapper'
-                                pagination={{
-                                    position: 'bottom',
-                                    align: 'center',
-                                }}
+
                                 dataSource={datalist}
                                 renderItem={(item, index) => (
                                     <List.Item>
@@ -50,7 +47,7 @@ const Account = () => {
                                                 <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
                                             }
                                             title={<span onClick={handleTitleClick} >{item.title}</span>}
-                                            description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                                            description="地址的中文描述"
                                         />
                                     </List.Item>
                                 )}
