@@ -12,11 +12,11 @@ function Nav(props) {
     const items = [
         {
             key: '/home',
-            label: 'Home',
+            label: 'savedBox',
         },
         {
             key: '/account',
-            label: 'Account',
+            label: 'interceptor',
         },
     ]
 
@@ -39,7 +39,7 @@ function Nav(props) {
                 centered
             />
             <Button className="btn-exit" type="primary" onClick={onExit}>
-                退出
+                Exit
             </Button>
         </div>
     )

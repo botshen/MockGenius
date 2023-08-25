@@ -1,35 +1,63 @@
-import { useEffect, useState } from 'react'
-import './home.styl'
+import React, { useState } from 'react';
+import { Avatar, List, Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
+import Detail from '../../components/detail';
 
-function Home() {
-    const [xxx, setXxx] = useState('xxx')
-    //  挂载的时候打印日志
-    // useEffect(() => {
-    //     console.log('home mount')
+const Home = () => {
+    const datalist = [
+        {
+            title: 'Ant Design Title 1',
+        },
+        {
+            title: 'Ant Design Title 2',
+        },
+        {
+            title: 'Ant Design Title 3',
+        },
+        {
+            title: 'Ant Design Title 4',
+        },
+    ];
+    const data = {
+        "name": "John",
+        "age": 30,
+        "city": "New York"
+    };
+    const [detail, setDetail] = useState(false);
 
-    //     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    //         console.log('request',request)
-    //         try{
-    //             if (request.message === "background_to_popup") {
-    //                 console.log(request.data,12139)
-    //                 setXxx(request.message)
-    //             }
-    //         }catch(err){
-    //             console.warn('sddddddddddd')
-
-    //         }
-            
-    //     });
-    //     // 卸载的时候打印日志
-    //     return () => {
-    //         console.log('home unmount')
-    //     }
-    // }, [])
+    const handleTitleClick = () => {
+        console.log('title clicked!');
+        setDetail(true);
+    }
+    const setDetailFalse = () => {
+        setDetail(false);
+    }
     return (
-        <div className="P-home">
-            <h1>{xxx}</h1>
-        </div>
-    )
-}
+        <>
+            {
+                detail ?
+                    (<Detail onCancel={setDetailFalse} />) :
+                    <List className='account-wrapper'
+                        pagination={{
+                            position: 'bottom',
+                            align: 'center',
+                        }}
+                        dataSource={datalist}
+                        renderItem={(item, index) => (
+                            <List.Item >
+                                <List.Item.Meta
+                                    avatar={
+                                        <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
+                                    }
+                                    title={<span onClick={handleTitleClick} >{item.title}</span>}
+                                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                                />
+                            </List.Item>
+                        )}
+                    />
+            }
 
-export default Home
+
+        </>
+    );
+};
+export default Home;

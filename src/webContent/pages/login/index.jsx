@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Input } from 'antd'
-import { apiReqs } from '@/api'
+import { Avatar, List, Button } from 'antd';
 import imgLogo from './logo.png'
 import './login.scss'
 
@@ -14,37 +13,46 @@ function Login() {
 
     // 登录
     const onLogin = () => {
-        navigate('/home')
-        apiReqs.signIn({
-            // 如果上传文件，则设置formData为true，这里暂时不用。
-            // formData: true,
-            data: {
-                account,
-                password,
-            },
-            success: (res) => {
-                console.log(res)
-                navigate('/home')
-            },
-            fail: (res) => {
-                alert(res)
-            },
-        })
+        navigate('/account')
+
     }
+    const data = [
+        {
+            title: 'Ant Design Title 1',
+        },
+        {
+            title: 'Ant Design Title 2',
+        },
+        {
+            title: 'Ant Design Title 3',
+        },
+        {
+            title: 'Ant Design Title 4',
+        },
+    ];
     return (
-        <div className="P-login">
+        <div className="login-wrapper">
             <img src={imgLogo} alt="" className="logo" />
-            <div className="ipt-con">
-                <Input placeholder="账号" value={account} onChange={(e)=>{setAccount(e.target.value)}} />
-            </div>
-            <div className="ipt-con">
-                <Input.Password placeholder="密码" value={password} onChange={(e)=>{setPassword(e.target.value)}}/>
-            </div>
-            <div className="ipt-con">
-                <Button type="primary" block={true} onClick={onLogin}>
-                    登录
-                </Button>
-            </div>
+            <List
+                itemLayout="horizontal"
+                dataSource={data}
+                renderItem={(item, index) => (
+                    <List.Item
+                        actions={
+                            [<Button type="text">edit</Button>,
+                            <Button danger type="text">
+                                delete
+                            </Button>
+                            ]}
+                    >
+                        <List.Item.Meta
+                            avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
+                            title={<span onClick={onLogin} >{item.title}</span>}
+                            description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                        />
+                    </List.Item>
+                )}
+            />
         </div>
     )
 }

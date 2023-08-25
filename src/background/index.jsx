@@ -56,10 +56,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         console.log('request', request)
         if (request.message == 'content_to_background') {
             console.log(request.data)
-            chrome.runtime.sendMessage({
-                message: "background_to_popup",
-                data: request.data,
-            })
+            // chrome.runtime.sendMessage({
+            //     message: "background_to_popup",
+            //     data: request.data,
+            // })
         }
     })
     return true

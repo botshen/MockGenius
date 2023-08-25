@@ -8,7 +8,7 @@ export default function SvelteJSONEditor(props) {
 
   useEffect(() => {
     // create editor
-    console.log("create editor", refContainer.current);
+    // console.log("create editor", refContainer.current);
     refEditor.current = new JSONEditor({
       target: refContainer.current,
       props: {}
@@ -17,7 +17,7 @@ export default function SvelteJSONEditor(props) {
     return () => {
       // destroy editor
       if (refEditor.current) {
-        console.log("destroy editor");
+        // console.log("destroy editor");
         refEditor.current.destroy();
         refEditor.current = null;
       }
@@ -27,7 +27,7 @@ export default function SvelteJSONEditor(props) {
   // update props
   useEffect(() => {
     if (refEditor.current) {
-      console.log("update props", props);
+      // console.log("update props", props);
       refEditor.current.updateProps(props);
     }
   }, [props]);
