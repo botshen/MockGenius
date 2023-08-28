@@ -52,10 +52,10 @@ const Home = () => {
                             renderItem={(item, index) => (
                                 <List.Item >
                                     <List.Item.Meta
-                                        avatar={
-                                            <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
-                                        }
-                                        title={<span onClick={handleTitleClick} >{item.title}</span>}
+                                        // avatar={
+                                        //     <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
+                                        // }
+                                        title={<span style={{ cursor: 'pointer' }} onClick={handleTitleClick} >{item.title}</span>}
                                         description="备注🙅🏻‍♀️"
                                     />
                                 </List.Item>

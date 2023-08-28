@@ -47,20 +47,28 @@ try {
         insertScript.src = window.chrome.runtime.getURL('insert.js')
     }
     document.body.appendChild(insertScript)
+
+    const input = document.createElement('input')
+    input.setAttribute('id', 'ajaxInterceptor')
+    input.setAttribute('style', 'display:none')
+    document.documentElement.appendChild(input)
 } catch (err) {
     console.error('err', err)
 }
 
 window.addEventListener(
-    'CUSTOMEVENT',
+    'request',
     (event) => {
-        console.log('event', event)
-
-        chrome.runtime.sendMessage({
-            type: "ajaxInterceptor",
-            message: "content_to_background",
-            data: event,
-        })
+        console.log('content接受的request事件', event)
+        chrome.runtime.sendMessage(
+            { type: "ajaxInterceptor", data: event }, function (response) {
+                console.dir(response);
+            });
+        // chrome.runtime.sendMessage({
+        //     type: "ajaxInterceptor",
+        //     message: "content_to_background",
+        //     data: event,
+        // })
     },
     false
 )
