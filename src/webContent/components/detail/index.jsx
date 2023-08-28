@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
+import { Button, Input, Form, Switch, InputNumber, Select } from 'antd';
 import SvelteJSONEditor from '../json/index'
 
 const onFinish = (values) => {
@@ -24,7 +24,7 @@ export default function Detail({ onCancel }) {
       greeting: "Hello World",
       color: "#ff3e00",
       ok: true,
-      values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+      values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 12, 13, 14, 15]
     },
     text: undefined
   });
@@ -39,41 +39,44 @@ export default function Detail({ onCancel }) {
         className='form-wrapper'
         name="basic"
         labelCol={{
-          span: 8,
+          span: 3,
         }}
         wrapperCol={{
-          span: 16,
+          span: 24,
         }}
-        style={{
-          maxWidth: 600,
-        }}
+        // style={{
+        //   maxWidth: 600,
+        // }}
         initialValues={{
-          remember: true,
+          code: '200',
+          switchOn: true,
+          delay: 100,
+          Method: 'get',
+          pathRule: '/api',
+          Response: JSON.stringify(data, null, 2),
+          name: 'api1'
+
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item
-          label="Username"
-          name="username"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your username!',
-            },
-          ]}
+          wrapperCol={{
+            offset: 1,
+            span: 16,
+          }}
         >
-          <SvelteJSONEditor
-            content={content}
-            readOnly={readOnly}
-            onChange={setContent}
-            mode="text"
-          />
+          <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
+            Submit
+          </Button>
+          <Button onClick={onCancel} type="primary" htmlType="submit">
+            Cancel
+          </Button>
         </Form.Item>
         <Form.Item
-          label="Username"
-          name="username"
+          label="name"
+          name="name"
           rules={[
             {
               required: true,
@@ -84,120 +87,106 @@ export default function Detail({ onCancel }) {
           <Input />
         </Form.Item>
         <Form.Item
-          label="Password"
-          name="password"
+          label="switchOn"
+          name="switchOn"
           valuePropName="checked"
 
         >
           <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
         </Form.Item>
         <Form.Item
-          label="Password"
-          name="password"
+          label="pathRule"
+          name="pathRule"
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: 'Please input your pathRule!',
             },
           ]}
         >
-          <Input.Password />
+          <Input />
         </Form.Item>
         <Form.Item
-          label="Delay"
-          name="password"
+          label="Response"
+          name="Response"
+
+        >
+          <SvelteJSONEditor
+            content={content}
+            readOnly={readOnly}
+            onChange={setContent}
+            mode="text"
+          />
+        </Form.Item>
+
+
+
+        <Form.Item
+          label="Method"
+          name="Method"
           rules={[
             {
               required: true,
-              message: 'Please input your password!',
+              message: 'Please input your Method!',
             },
           ]}
         >
           <Select
-            initialvalues="lucy"
             style={{
               width: 120,
             }}
             onChange={handleChange}
             options={[
               {
-                value: 'jack',
-                label: 'Jack',
+                value: 'get',
+                label: 'get',
               },
               {
-                value: 'lucy',
-                label: 'Lucy',
-              },
-              {
-                value: 'Yiminghe',
-                label: 'yiminghe',
-              },
-              {
-                value: 'disabled',
-                label: 'Disabled',
-                disabled: true,
-              },
+                value: 'post',
+                label: 'post',
+              }
             ]}
           />
         </Form.Item>
         <Form.Item
           label="Delay"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
+          name="delay"
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: 'Please input your delay!',
+        //   },
+        // ]}
         >
-          <InputNumber addonAfter="ms" initialvalues={100} />
+          <InputNumber addonAfter="ms" />
 
         </Form.Item>
 
+
         <Form.Item
-          name="remember"
-          valuePropName="checked"
-          wrapperCol={{
-            offset: 8,
-            span: 16,
-          }}
-        >
-          <Checkbox>Remember me</Checkbox>
-        </Form.Item>
-        <Form.Item
-          label="Delay"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your password!',
-            },
-          ]}
+          label="code"
+          name="code"
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: 'Please input your code!',
+        //   },
+        // ]}
         >
           <Select
-            initialvalues="lucy"
             style={{
               width: 120,
             }}
             onChange={handleChange}
             options={[
               {
-                value: 'jack',
-                label: 'Jack',
+                value: '200',
+                label: '200',
               },
               {
-                value: 'lucy',
-                label: 'Lucy',
-              },
-              {
-                value: 'Yiminghe',
-                label: 'yiminghe',
-              },
-              {
-                value: 'disabled',
-                label: 'Disabled',
-                disabled: true,
-              },
+                value: '404',
+                label: '404',
+              }
             ]}
           />
         </Form.Item>
@@ -208,19 +197,7 @@ export default function Detail({ onCancel }) {
 
 
 
-        <Form.Item
-          wrapperCol={{
-            offset: 8,
-            span: 16,
-          }}
-        >
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <Button onClick={onCancel} type="primary" htmlType="submit">
-            Cancel
-          </Button>
-        </Form.Item>
+
       </Form>
     </div>
   );

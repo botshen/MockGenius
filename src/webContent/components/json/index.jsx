@@ -1,6 +1,6 @@
 import { JSONEditor } from "vanilla-jsoneditor";
 import { useEffect, useRef } from "react";
-import "./VanillaJSONEditor.scss";
+import "./json.scss";
 
 export default function SvelteJSONEditor(props) {
   const refContainer = useRef(null);
@@ -32,5 +32,5 @@ export default function SvelteJSONEditor(props) {
     }
   }, [props]);
 
-  return <div className="vanilla-jsoneditor-react" ref={refContainer}></div>;
+  return <div className="jsoneditor-wrapper" ref={refContainer}></div>;
 }
