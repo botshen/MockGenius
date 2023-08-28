@@ -24,35 +24,43 @@ function Content() {
     )
 }
 
-// 创建id为CRX-container的div
-const app = document.createElement('div')
-app.id = 'CRX-container'
-// 将刚创建的div插入body最后
-document.body.appendChild(app)
-// 将ReactDOM插入刚创建的div
-const crxContainer = ReactDOM.createRoot(
-    document.getElementById('CRX-container')
-)
-crxContainer.render(<Content />)
+// // 创建id为CRX-container的div
+// const app = document.createElement('div')
+// app.id = 'CRX-container'
+// // 将刚创建的div插入body最后
+// document.body.appendChild(app)
+// // 将ReactDOM插入刚创建的div
+// const crxContainer = ReactDOM.createRoot(
+//     document.getElementById('CRX-container')
+// )
+// crxContainer.render(<Content />)
+console.log('env:', import.meta.env.MODE)
 
 // 向目标页面驻入js
 try {
     let insertScript = document.createElement('script')
-    insertScript.setAttribute('type', 'text/javascript')
-    insertScript.src = window.chrome.runtime.getURL('insert.js')
+    if (import.meta.env.MODE === 'development') {
+        insertScript.setAttribute('type', 'module');
+        insertScript.src = '../../public/insert.js'
+    } else {
+        insertScript.setAttribute('type', 'text/javascript')
+        insertScript.src = window.chrome.runtime.getURL('insert.js')
+    }
     document.body.appendChild(insertScript)
-} catch (err) { }
+} catch (err) {
+    console.error('err', err)
+}
 
 window.addEventListener(
     'CUSTOMEVENT',
     (event) => {
-        console.log('event',event)
-         
+        console.log('event', event)
+
         chrome.runtime.sendMessage({
             type: "ajaxInterceptor",
             message: "content_to_background",
             data: event,
-          })
+        })
     },
     false
 )

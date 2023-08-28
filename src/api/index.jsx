@@ -3,7 +3,7 @@
 /*global chrome*/
 
 // 请求服务器地址（开发环境模拟请求地址）
-let API_DOMAIN = '/api/'
+let API_DOMAIN = 'https://mock.apifox.cn/m1/432215-0-default'
 // 请求服务器地址（正式build环境真实请求地址）
 if (import.meta.env.MODE === 'production') {
     API_DOMAIN = 'http://localhost/api/'
@@ -20,6 +20,20 @@ export const API_CODE = {
     // API请求正常，登录异常
     ERR_LOGOUT: 401,
 }
+import axios from 'axios'
+const service = axios.create({
+    baseURL: 'https://mock.apifox.cn/m1/432215-0-default', // url = base url + request url
+    // withCredentials: true, // send cookies when cross-domain requests
+    timeout: 5000 // request timeout
+})
+
+function testMock1(params) {
+    return service({
+        url: '/sysUser/sign-in',
+        method: 'post',
+        params
+    })
+}
 // API请求异常报错内容
 export const API_FAILED = '网络连接异常，请稍后再试'
 
@@ -27,7 +41,7 @@ export const API_FAILED = '网络连接异常，请稍后再试'
 export const apiReqs = {
     // 登录
     signIn: (config) => {
-        config.url = API_DOMAIN + 'login/'
+        config.url = API_DOMAIN + '/sysUser/sign-in'
         config.method = 'post'
         apiFetch(config)
     },
@@ -44,6 +58,13 @@ export const apiReqs = {
         config.method = 'post'
         apiFetch(config)
     },
+    testMock: (config) => {
+       
+        testMock1({
+            name: "sx",
+            age: 18
+        })
+    }
 }
 
 // 发起请求

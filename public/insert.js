@@ -1,24 +1,54 @@
 console.log('insert.js loaded')
 import { proxy } from "ajax-hook";
+import Url from 'url-parse'
+
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
-const result = {
-  code: 0,
-  msg: 'success',
-  data: {
-    name: 'zhangsan',
-    age: 18
+
+const sendMsg = (msg, isMock = false) => {
+  const result = {
+    ...msg,
+    isMock
   }
+  const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: result })
+  window.dispatchEvent(event)
+}
+function handMockResult({ res, request, config }) {
+  const { response, path: rulePath, status } = res
+  const result = {
+    config,
+    status,
+    headers: [],
+    response: JSON.stringify(response),
+  }
+  const payload = {
+    request,
+    response: {
+      status: result.status,
+      headers: result.headers,
+      url: config.url,
+      responseTxt: JSON.stringify(response),
+      isMock: true,
+      rulePath,
+    },
+  }
+  return { result, payload }
 }
 proxy({
-  //请求发起前进入
   onRequest: (config, handler) => {
-    const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: config })
-    window.dispatchEvent(event)
+    // const url = new Url(config.url)
+    // const request = {
+    //   url: url.href,
+    //   method: config.method,
+    //   headers: config.headers,
+    //   type: 'xhr',
+    // }
+    // const { payload, result } = handMockResult({ res, request, config })
+    // console.log('request',request)
+    // console.log('payload',payload)
+    // sendMsg(payload, true)
+    // handler.resolve(config)
     console.log('config',config)
-    console.log('result',result)
-    handler.resolve(result)
-
-    // handler.next(config);
+    handler.next(config);
   },
   //请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
   onError: (err, handler) => {

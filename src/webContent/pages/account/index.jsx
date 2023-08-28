@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Avatar, List, Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
 import Detail from '../../components/detail';
+import { apiReqs } from '../../../api';
 
 
 
@@ -20,14 +21,16 @@ const Account = () => {
         },
     ];
     const [detail, setDetail] = useState(false);
-    console.log('detail', detail)
     const handleTitleClick = () => {
         console.log('title clicked!');
         setDetail(true);
-        console.log('detail', detail)
     }
     const setDetailFalse = () => {
         setDetail(false);
+    }
+
+    const test = () => {
+        apiReqs.testMock();
     }
     return (
         <>
@@ -37,6 +40,7 @@ const Account = () => {
                     :
                     (
                         <div>
+                            <Button type="primary" onClick={test}>Primary Button</Button>
                             <List className='account-wrapper'
 
                                 dataSource={datalist}
