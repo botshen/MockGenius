@@ -1,21 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { Avatar, List, Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
+import { useState } from "react";
+import { Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
 import SvelteJSONEditor from '../json/index'
 
-const data = [
-  {
-    title: 'Ant Design Title 1',
-  },
-  {
-    title: 'Ant Design Title 2',
-  },
-  {
-    title: 'Ant Design Title 3',
-  },
-  {
-    title: 'Ant Design Title 4',
-  },
-];
 const onFinish = (values) => {
   console.log('Success:', values);
 };
@@ -42,7 +28,7 @@ export default function Detail({ onCancel }) {
     },
     text: undefined
   });
- 
+
 
 
 

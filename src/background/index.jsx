@@ -77,8 +77,8 @@ chrome.action.onClicked.addListener(tab => {
             type: 'popup',
             left: 300,
             top: 300,
-            width: 1000,
-            height: 800,
+            width: 800,
+            height: 600,
         },
         function (window) {
             // ftdWindow = window
