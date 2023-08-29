@@ -34,6 +34,13 @@ let screenHeight = null
 //     //     chrome.declarativeContent.onPageChanged.addRules(rules)
 //     // })
 // })
+chrome.windows.onRemoved.addListener((windowId) => {
+    if (ftdWindow && ftdWindow.id === windowId) {
+        chrome.action.setBadgeText({ text: '' });
+        ftdWindow = null;
+    }
+});
+
 chrome.system.display.getInfo(function (displays) {
     if (displays && displays.length > 0) {
         const screenInfo = displays[0];
@@ -53,7 +60,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
 chrome.action.onClicked.addListener(() => {
-    if (ftdWindow) {
+    if (ftdWindow && ftdWindow.id) {
         console.log('The window exists!')
         const info = {
             focused: true,

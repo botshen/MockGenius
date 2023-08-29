@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Button, Input, Form, Switch, InputNumber, Select } from 'antd';
 import SvelteJSONEditor from '../json/index'
-import { useEffect } from "react";
-
+ 
 const onFinish = (values) => {
   console.log('Success:', values);
 };
@@ -16,24 +15,15 @@ export default function Detail({ onCancel, data }) {
 
 
   const [readOnly, setReadOnly] = useState(false);
-  const [content, setContent] = useState({});
-  const obj = {
+  const [content, setContent] = useState({
     json: {
       greeting: "Hello World",
       color: "#ff3e00",
       ok: true,
       values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 12, 13, 14, 15]
-    }
-  }
-  useEffect(() => {
-    console.log('data', data)
-    // setContent(JSON.parse(data.response) ?? obj.json)
-  }, [])
-
-
-
-
-
+    },
+    text:'11'
+  });
   return (
     <div className='detail-wrapper'>
       <Form

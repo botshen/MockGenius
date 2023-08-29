@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, Checkbox, Form, Input } from 'antd';
 
 
-const DetailModal = ({ onClose }) => {
+const DetailModal = ({ onClose, saveProject, formData }) => {
   const [form] = Form.useForm();
- 
+
   const handleCancel = () => {
-     onClose()
+    onClose()
   };
   const onFinish = (values) => {
     console.log('Success:', values);
@@ -14,6 +14,9 @@ const DetailModal = ({ onClose }) => {
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
+  useEffect(() => {
+    console.log('formData', formData)
+  }, [])
   return (
     <>
       <Modal
@@ -23,10 +26,8 @@ const DetailModal = ({ onClose }) => {
           form
             .validateFields()
             .then((values) => {
-              // form.resetFields();
-              // onCreate(values);
               console.log(values, 111)
-              onClose(values)
+              saveProject(values)
 
             })
             .catch((info) => {
@@ -48,9 +49,7 @@ const DetailModal = ({ onClose }) => {
           // style={{
           //   maxWidth: 600,
           // }}
-          initialValues={{
-            remember: true,
-          }}
+          initialValues={formData}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -69,8 +68,8 @@ const DetailModal = ({ onClose }) => {
           </Form.Item>
 
           <Form.Item
-            label="项目地址"
-            name="address"
+            label="项目域名"
+            name="pathRule"
             rules={[
               {
                 required: true,
