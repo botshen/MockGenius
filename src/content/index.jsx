@@ -14,8 +14,7 @@ const executeScript = (data) => {
         inputElem.value = code
     }
 }
-// 让 storage 的数据实时反映到页面上
-const setGlobalData = () => {
+ const setGlobalData = () => {
     chrome.storage.local.get(keys, (result) => {
         executeScript(result)
     })
