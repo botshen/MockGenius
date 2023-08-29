@@ -5,18 +5,21 @@ import imgLogo from './logo.png'
 import './login.scss'
 import DetailModal from './detailModal';
 import { saveStorage } from '../../utils';
-const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
-const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
+import { useDomainStore } from '../../store';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
+
 
 function Login() {
     // 路由跳转钩子
     const navigate = useNavigate()
+    const { setDomain } = useDomainStore()
+
     const [detailModalVisible, setdetailModalVisible] = useState(false)
     const [projectFormData, setProjectFormData] = useState({})
     const [apiList, setApiList] = useState([
         {
             name: '将军令',
-            pathRule: 'localhost:3000',
+            pathRule: 'http://localhost:9528',
 
         },
         {
@@ -28,13 +31,15 @@ function Login() {
         chrome.storage.local.get(
             [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
             result => {
-                // this.currentProject = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
                 setApiList(result[AJAX_INTERCEPTOR_PROJECTS] || [])
             }
         )
     }, [])
     // 登录
-    const onLogin = () => {
+    const onLogin = (item) => {
+        console.log('item', item)
+
+        setDomain(item.pathRule)
         navigate('/account')
     }
     const onClose = () => {
@@ -99,7 +104,7 @@ function Login() {
                                 ]}
                         >
                             <List.Item.Meta
-                                title={<span onClick={onLogin} >{item.name}</span>}
+                                title={<span onClick={() => { onLogin(item) }} >{item.name}</span>}
                                 description={item.pathRule}
                             />
                         </List.Item>

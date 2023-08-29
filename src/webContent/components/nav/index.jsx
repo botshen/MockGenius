@@ -1,8 +1,11 @@
 import { useNavigate } from 'react-router-dom'
 import { Button, Tabs } from 'antd'
 import './nav.scss'
-
+import { useDomainStore } from '../../store'
+ 
 function Nav(props) {
+    const bears = useDomainStore((state) => state.domain)
+
     // 通过当前路由的location来匹配Tab的激活态
     const { location } = props
 
@@ -32,7 +35,7 @@ function Nav(props) {
 
     return (
         <div className="M-nav">
-            <span className='domain'>localhost:8888</span>
+            <span className='domain'>{bears}</span>
             <Tabs
                 activeKey={location.pathname}
                 items={items}

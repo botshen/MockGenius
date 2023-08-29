@@ -21,7 +21,8 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.15.0",
     "url-parse": "^1.5.10",
-    "vanilla-jsoneditor": "0.11.4"
+    "vanilla-jsoneditor": "0.11.4",
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.20",

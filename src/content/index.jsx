@@ -44,13 +44,15 @@ const injectScriptToPage = () => {
 
 isProduction && chrome.storage.local.get(keys, (result) => {
     const currentName = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
+    console.log('currentName',currentName)
     const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
-    console.log('projectList',projectList)
+    console.log('projectList', projectList)
     const { origin } = location
     console.log('origin', origin)
     const currentProject =
         projectList.find((item) => item.name === currentName) || ({})
-    if (origin === currentProject.origin) {
+    if (origin === currentProject.pathUrl) {
+        console.log('121',121)
         injectScriptToPage()
         setGlobalData()
     }

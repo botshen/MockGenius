@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Detail from '../../components/detail';
 import { Table, Tag } from 'antd';
-
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
+import { useDomainStore } from '../../store';
 
 
 const Account = () => {
@@ -42,6 +43,8 @@ const Account = () => {
 
         }
     ];
+    const { setCurrentProject, currentProject } = useDomainStore()
+
     const [list, setList] = useState(
         [
             {
@@ -56,6 +59,13 @@ const Account = () => {
     const [detailVisible, setdetailVisible] = useState(false);
     const [detailData, setdetailData] = useState({});
     useEffect(() => {
+        chrome.storage.local.get(
+            [AJAX_INTERCEPTOR_CURRENT_PROJECT],
+            result => {
+                setCurrentProject(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
+                console.log('currentProject', currentProject)
+            }
+        )
         chrome.runtime.onMessage.addListener(event => {
             console.log('event', event)
             try {
@@ -108,14 +118,14 @@ const Account = () => {
                                 }}
                                 onRow={(record) => {
                                     return {
-                                      onClick: () => {
-                                         console.log('record',record)
-                                        setdetailData(record);
-                                        setdetailVisible(true);
-                                      }, // 点击行
-                                    
+                                        onClick: () => {
+                                            console.log('record', record)
+                                            setdetailData(record);
+                                            setdetailVisible(true);
+                                        }, // 点击行
+
                                     };
-                                  }}
+                                }}
                                 columns={columns}
                                 dataSource={list} />
                         </div>

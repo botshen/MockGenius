@@ -481,7 +481,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.2.20":
+"@types/react@*", "@types/react@^18.2.20", "@types/react@>=16.8":
   "integrity" "sha512-WKNtmsLWJM/3D5mG4U84cysVY31ivmyw85dE84fOCk5Hx78wezB/XEjVPWl2JTZ5FkEeaTJf+VgUAUn3PE7Isw=="
   "resolved" "https://registry.npmmirror.com/@types/react/-/react-18.2.20.tgz"
   "version" "18.2.20"
@@ -2773,6 +2773,11 @@
     "querystringify" "^2.1.1"
     "requires-port" "^1.0.0"
 
+"use-sync-external-store@1.2.0":
+  "integrity" "sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA=="
+  "resolved" "https://registry.npmmirror.com/use-sync-external-store/-/use-sync-external-store-1.2.0.tgz"
+  "version" "1.2.0"
+
 "vanilla-jsoneditor@0.11.4":
   "integrity" "sha512-uAzNVeteE5OvWyV/x+7y2VwzlB3IEA4l1E0dg6CEKCOA9zpTtf37HZppthHUy48ApzCMvrkDJc1SN/ZeW7/WGg=="
   "resolved" "https://registry.npmmirror.com/vanilla-jsoneditor/-/vanilla-jsoneditor-0.11.4.tgz"
@@ -2832,3 +2837,10 @@
   "integrity" "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="
   "resolved" "https://registry.npmmirror.com/yocto-queue/-/yocto-queue-0.1.0.tgz"
   "version" "0.1.0"
+
+"zustand@^4.4.1":
+  "integrity" "sha512-QCPfstAS4EBiTQzlaGP1gmorkh/UL1Leaj2tdj+zZCZ/9bm0WS7sI2wnfD5lpOszFqWJ1DcPnGoY8RDL61uokw=="
+  "resolved" "https://registry.npmmirror.com/zustand/-/zustand-4.4.1.tgz"
+  "version" "4.4.1"
+  dependencies:
+    "use-sync-external-store" "1.2.0"
