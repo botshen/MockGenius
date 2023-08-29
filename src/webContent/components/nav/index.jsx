@@ -12,11 +12,11 @@ function Nav(props) {
     const items = [
         {
             key: '/home',
-            label: 'savedBox',
+            label: 'Saved Intercepts',
         },
         {
             key: '/account',
-            label: 'interceptor',
+            label: 'API Intercept Log',
         },
     ]
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Input, Form, Switch, InputNumber, Select } from 'antd';
 import SvelteJSONEditor from '../json/index'
+import { useEffect } from "react";
 
 const onFinish = (values) => {
   console.log('Success:', values);
@@ -11,23 +12,23 @@ const onFinishFailed = (errorInfo) => {
 const handleChange = (value) => {
   console.log(`selected ${value}`);
 };
-export default function Detail({ onCancel }) {
+export default function Detail({ onCancel, data }) {
 
-  const data = {
-    "name": "John",
-    "age": 30,
-    "city": "New York"
-  };
+
   const [readOnly, setReadOnly] = useState(false);
-  const [content, setContent] = useState({
+  const [content, setContent] = useState({});
+  const obj = {
     json: {
       greeting: "Hello World",
       color: "#ff3e00",
       ok: true,
       values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 12, 13, 14, 15]
-    },
-    text: undefined
-  });
+    }
+  }
+  useEffect(() => {
+    console.log('data', data)
+    // setContent(JSON.parse(data.response) ?? obj.json)
+  }, [])
 
 
 
@@ -48,13 +49,13 @@ export default function Detail({ onCancel }) {
         //   maxWidth: 600,
         // }}
         initialValues={{
-          code: '200',
+          code: data.status,
           switchOn: true,
           delay: 100,
-          Method: 'get',
-          pathRule: '/api',
-          Response: JSON.stringify(data, null, 2),
-          name: 'api1'
+          Method: data.method,
+          pathRule: data.path,
+          // Response: JSON.stringify(data, null, 2),
+          name: data.path
 
         }}
         onFinish={onFinish}

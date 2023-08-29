@@ -122,7 +122,7 @@ proxy({
   },
   //请求成功后进入
   onResponse: (response, handler) => {
-    // console.log('response', response)
+    console.log('response', response)
     handler.next(response)
   }
 })

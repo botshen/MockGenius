@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite -c vite.webContent.config.js",
+    "watch": "node watch.js",
     "build": "vite build -c vite.webContent.config.js && vite build -c vite.content.config.js && vite build -c vite.inject.config.js && vite build -c vite.background.config.js && node build.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview -c vite.popup.config.js"

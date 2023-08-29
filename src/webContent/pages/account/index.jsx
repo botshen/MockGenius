@@ -1,65 +1,123 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, List, Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
 import Detail from '../../components/detail';
-import { apiReqs } from '../../../api';
+import { Table, Tag } from 'antd';
 
 
 
 const Account = () => {
+    const columns = [
+        {
+            title: 'Path',
+            dataIndex: 'path',
+            key: 'path',
+        },
+        {
+            title: 'Status',
+            dataIndex: 'status',
+            key: 'status',
+        },
+        {
+            title: 'Mock',
+            dataIndex: 'mock',
+            key: 'mock',
+        },
+        {
+            title: 'Type',
+            dataIndex: 'type',
+            key: 'type',
+        },
+        {
+            title: 'Method',
+            key: 'method',
+            dataIndex: 'method',
+            render: (method) => {
+                let color = 'geekblue';
+                return (
+                    <Tag color={color} key={method}>
+                        {method.toUpperCase()}
+                    </Tag>
+                )
+            },
 
-    const [list, setList] = useState([]); // [result, ...this.list
-    const [detail, setDetail] = useState(false);
+
+        }
+    ];
+    const [list, setList] = useState(
+        [
+            {
+                path: '/api/users',
+                status: 200,
+                mock: '穿透',
+                type: "xhr",
+                method: 'get',
+            }
+
+        ]);
+    const [detailVisible, setdetailVisible] = useState(false);
+    const [detailData, setdetailData] = useState({});
     useEffect(() => {
         chrome.runtime.onMessage.addListener(event => {
             console.log('event', event)
             try {
                 if (event.type === "ajaxInterceptor") {
-                    const result = event.data.url;
+                    const result = {
+                        path: event.data.url,
+                        status: event.data.status ?? 200,
+                        mock: '穿透',
+                        type: "xhr",
+                        method: event.data.method ?? 'post',
+                    };
+                    console.log('result', result)
                     // 把每次的result放到list里
                     setList(prevList => [...prevList, result]);
- 
+
                 }
-            } catch (e) {
-                console.warn('sddddddddddd', e, event)
-            }
+            } catch (e) { }
         })
     }, []
     )
-    const handleTitleClick = () => {
+    const handleTitleClick = (e) => {
+        console.log('e', e)
         console.log('title clicked!');
-        setDetail(true);
+        setdetailData({
+            code: '2111100',
+            switchOn: true,
+            delay: 100,
+            Method: 'get',
+            pathRule: '/api',
+            Response: '',
+            name: 'api1'
+        });
+        setdetailVisible(true);
     }
     const setDetailFalse = () => {
-        setDetail(false);
-    }
-
-    const test = () => {
-        apiReqs.testMock();
+        setdetailVisible(false);
     }
     return (
         <>
             {
-                detail ?
-                    (<Detail onCancel={setDetailFalse} />)
+                detailVisible ?
+                    (<Detail data={detailData} onCancel={setDetailFalse} />)
                     :
                     (
                         <div>
-                            <Button type="primary" onClick={test}>Primary Button</Button>
-                            <List className='account-wrapper'
-
-                                dataSource={list}
-                                renderItem={(item, index) => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                            // avatar={
-                                            //     <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
-                                            // }
-                                            title={<span style={{ cursor: 'pointer' }} onClick={handleTitleClick} >{item}</span>}
-                                            description="地址的中文描述"
-                                        />
-                                    </List.Item>
-                                )}
-                            />
+                            <Table
+                                size="small"
+                                pagination={{
+                                    position: ['none', 'none'],
+                                }}
+                                onRow={(record) => {
+                                    return {
+                                      onClick: () => {
+                                         console.log('record',record)
+                                        setdetailData(record);
+                                        setdetailVisible(true);
+                                      }, // 点击行
+                                    
+                                    };
+                                  }}
+                                columns={columns}
+                                dataSource={list} />
                         </div>
 
                     )
