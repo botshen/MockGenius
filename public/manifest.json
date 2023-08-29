@@ -14,7 +14,7 @@
         "run_at": "document_end"
       }
     ],
-    "permissions": ["storage","declarativeContent"],
+    "permissions": ["storage","declarativeContent", "system.display"],
     "host_permissions":[],
     "web_accessible_resources": [
       {
@@ -27,8 +27,7 @@
       }
     ],
     "action": {
-      // "default_popup": "index.html",
-      "default_icon": {
+       "default_icon": {
         "16": "/images/app.png",
         "32": "/images/app.png",
         "48": "/images/app.png",

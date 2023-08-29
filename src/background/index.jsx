@@ -1,5 +1,9 @@
 /*global chrome*/
-import { apiRequest } from '@/api'
+// import { apiRequest } from '@/api'
+let ftdWindow = null
+let screenWith = null
+let screenHeight = null
+
 // manifest.json的Permissions配置需添加declarativeContent权限
 chrome.runtime.onInstalled.addListener(function () {
     // 默认先禁止Page Action。如果不加这一句，则无法生效下面的规则
@@ -30,60 +34,78 @@ chrome.runtime.onInstalled.addListener(function () {
     //     chrome.declarativeContent.onPageChanged.addRules(rules)
     // })
 })
-
+chrome.system.display.getInfo(function (displays) {
+    if (displays && displays.length > 0) {
+        const screenInfo = displays[0];
+        screenWith = screenInfo.bounds.width;
+        screenHeight = screenInfo.bounds.height;
+    }
+});
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // 接收来自content script的消息，requset里不允许传递function和file类型的参数
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        // const { contentRequest } = request
-        // // 接收来自content的api请求
-        // if (contentRequest === 'apiRequest') {
-        //     let { config } = request
-        //     // API请求成功的回调
-        //     config.success = (data) => {
-        //         data.result = 'succ'
-        //         sendResponse(data)
-        //     }
-        //     // API请求失败的回调
-        //     config.fail = (msg) => {
-        //         sendResponse({
-        //             result: 'fail',
-        //             msg,
-        //         })
-        //     }
-        //     // 发起请求
-        //     apiRequest(config)
-        // }
+
         console.log('request', request)
-        if (request.message == 'content_to_background') {
-            console.log(request.data)
-            // chrome.runtime.sendMessage({
-            //     message: "background_to_popup",
-            //     data: request.data,
-            // })
-        }
+
     })
     return true
 })
 
- 
-chrome.action.onClicked.addListener(tab => {
-    // Send a message to the active tab
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    //   var activeTab = tabs[0];
-    //   chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
-      chrome.windows.create(
-        {
-            url: chrome.runtime.getURL('index.html'),
-            type: 'popup',
-            left: 300,
-            top: 300,
-            width: 800,
-            height: 600,
-        },
-        function (window) {
-            // ftdWindow = window
-        }
-    )
 
-    });
-  });
+chrome.action.onClicked.addListener(() => {
+    if (ftdWindow) {
+        console.log('The window exists!')
+        const info = {
+            focused: true,
+        }
+        chrome.windows.update(ftdWindow.id, info, (w) => {
+            if (!w) {
+                ftdWindow = null
+            }
+        })
+    } else {
+        chrome.storage.local.get(['windowSize'], function (result) {
+            let width = 800
+            let height = 600
+            /// 从storage中获取窗口大小  
+
+            if (result.windowSize) {
+                width = parseInt(result.windowSize.width)
+                height = parseInt(result.windowSize.height)
+            }
+            const left = parseInt((screenWith - width) / 2)
+            const top = parseInt((screenHeight - height) / 2)
+
+            chrome.windows.create(
+                {
+                    url: chrome.runtime.getURL('index.html'),
+                    type: 'popup',
+                    left,
+                    top,
+                    width,
+                    height,
+                },
+                function (window) {
+                    ftdWindow = window
+                }
+            )
+        })
+    }
+    // chrome.windows.create(
+    //     {
+    //         url: chrome.runtime.getURL('index.html'),
+    //         type: 'popup',
+    //         left: 300,
+    //         top: 300,
+    //         width: 800,
+    //         height: 600,
+    //     },
+    //     function (window) {
+    //         ftdWindow = window
+    //     }
+    // )
+
+
+});
+
+

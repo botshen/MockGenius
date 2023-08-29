@@ -59,16 +59,15 @@ try {
 window.addEventListener(
     'request',
     (event) => {
-        console.log('content接受的request事件', event)
-        chrome.runtime.sendMessage(
-            { type: "ajaxInterceptor", data: event }, function (response) {
-                console.dir(response);
-            });
-        // chrome.runtime.sendMessage({
-        //     type: "ajaxInterceptor",
-        //     message: "content_to_background",
-        //     data: event,
-        // })
+        console.log('content接受的request事件', event.detail)
+        const data={
+            url: event.detail.config.url,
+        }
+        chrome.runtime.sendMessage({
+            type: "ajaxInterceptor",
+            message: "content_to_background",
+            data,
+        })
     },
     false
 )

@@ -6,23 +6,25 @@ import { apiReqs } from '../../../api';
 
 
 const Account = () => {
-    
+
     const [list, setList] = useState([]); // [result, ...this.list
     const [detail, setDetail] = useState(false);
-    // useEffect(() => {
-    //     chrome.runtime.onMessage.addListener(event => {
-    //         console.log('event',event)
-    //         try {
-    //             if (event.type === 'ajaxInterceptor') {
-    //                 const result = event.detail
-    //                  setList([...list, result])
-    //             }
-    //         } catch (e) {
-    //             console.warn('sddddddddddd', e, event)
-    //         }
-    //     })
-    // }, []
-    // )
+    useEffect(() => {
+        chrome.runtime.onMessage.addListener(event => {
+            console.log('event', event)
+            try {
+                if (event.type === "ajaxInterceptor") {
+                    const result = event.data.url;
+                    // 把每次的result放到list里
+                    setList(prevList => [...prevList, result]);
+ 
+                }
+            } catch (e) {
+                console.warn('sddddddddddd', e, event)
+            }
+        })
+    }, []
+    )
     const handleTitleClick = () => {
         console.log('title clicked!');
         setDetail(true);
@@ -52,7 +54,7 @@ const Account = () => {
                                             // avatar={
                                             //     <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
                                             // }
-                                            title={<span style={{ cursor: 'pointer' }} onClick={handleTitleClick} >{item.title}</span>}
+                                            title={<span style={{ cursor: 'pointer' }} onClick={handleTitleClick} >{item}</span>}
                                             description="地址的中文描述"
                                         />
                                     </List.Item>
