@@ -69,7 +69,7 @@ const DetailModal = ({ onClose, saveProject, formData }) => {
 
           <Form.Item
             label="项目域名"
-            name="pathRule"
+            name="pathUrl"
             rules={[
               {
                 required: true,

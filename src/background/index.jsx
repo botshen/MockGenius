@@ -6,13 +6,13 @@ let screenHeight = null
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
-    name: '产品定价',
+    name: '将军令',
     pathUrl: 'http://localhost:9528',
     color: '#04B34C',
     switchOn: true,
     isRealRequest: false,
     isTerminalLogOpen: false,
-  }
+}
 // manifest.json的Permissions配置需添加declarativeContent权限
 chrome.runtime.onInstalled.addListener(function () {
     console.log('onInstalled')
@@ -45,13 +45,19 @@ chrome.runtime.onInstalled.addListener(function () {
     // })
     chrome.storage.local.set(
         {
-          [AJAX_INTERCEPTOR_PROJECTS]: [defaultProjectProduct],
-          [AJAX_INTERCEPTOR_CURRENT_PROJECT]: defaultProjectProduct.name,
+            [AJAX_INTERCEPTOR_PROJECTS]: [defaultProjectProduct],
+            [AJAX_INTERCEPTOR_CURRENT_PROJECT]: defaultProjectProduct.name,
         },
         function () {
-          console.log('生产环境')
+            console.log('生产环境')
+            chrome.storage.local.get(
+                [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
+                result => {
+                    console.log('chrome.storage.local', result)
+                }
+            )
         }
-      )
+    )
 })
 chrome.windows.onRemoved.addListener((windowId) => {
     if (ftdWindow && ftdWindow.id === windowId) {
@@ -60,6 +66,14 @@ chrome.windows.onRemoved.addListener((windowId) => {
     }
 });
 
+// chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+//     if (message.action === "refreshTab") {
+//       chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+//         var activeTab = tabs[0];
+//         chrome.tabs.reload(activeTab.id);
+//       });
+//     }
+//   });
 chrome.system.display.getInfo(function (displays) {
     if (displays && displays.length > 0) {
         const screenInfo = displays[0];
@@ -67,17 +81,63 @@ chrome.system.display.getInfo(function (displays) {
         screenHeight = screenInfo.bounds.height;
     }
 });
+function injectScriptToPage() {
+    try {
+        let insertScript = document.createElement('script');
+
+        insertScript.setAttribute('type', 'text/javascript');
+        insertScript.src = chrome.runtime.getURL('insert.js');
+
+        document.body.appendChild(insertScript);
+
+        const input = document.createElement('input');
+        input.setAttribute('id', 'api-mock-12138');
+        input.setAttribute('style', 'display:none');
+        document.documentElement.appendChild(input);
+    } catch (err) {
+        console.error('err', err);
+    }
+}
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    // 接收来自content script的消息，requset里不允许传递function和file类型的参数
-    chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    if (request.action === "refreshTab") {
+        chrome.tabs.query({}, function (tabs) {
+            const matchingTabs = getMatchingTabs(tabs, "http://localhost:9528");
+            if (matchingTabs.length > 0) {
+                const matchingTabId = matchingTabs[0].id;
+                //   chrome.tabs.reload(matchingTabId, {}, function () {
+                //     console.log("Tab refreshed:", matchingTabId);
+                //   });
+                chrome.scripting.executeScript({
+                    target: { tabId: matchingTabId },
+                    function: injectScriptToPage
+                  });
+            } else {
+                console.log("No matching tab found.");
+            }
+        });
+    }
+});
 
-        console.log('request', request)
+// 获取匹配特定地址的选项卡信息
+function getMatchingTabs(tabs, url) {
+    const matchingTabs = [];
+    for (const tab of tabs) {
+        console.log('tab', tab)
+        if (tab.url.startsWith(url)) {
+            matchingTabs.push(tab);
+        }
+    }
+    return matchingTabs;
+}
 
-    })
-    return true
-})
 
 
+
+
+
+
+
+// 点击 icon 事件
 chrome.action.onClicked.addListener(() => {
     if (ftdWindow && ftdWindow.id) {
         console.log('The window exists!')

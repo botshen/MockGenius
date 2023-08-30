@@ -17,29 +17,26 @@ function Login() {
     const [detailModalVisible, setdetailModalVisible] = useState(false)
     const [projectFormData, setProjectFormData] = useState({})
     const [apiList, setApiList] = useState([
-        {
-            name: '将军令',
-            pathRule: 'http://localhost:9528',
 
-        },
-        {
-            name: '河图',
-            pathRule: 'localhost:8888',
-        },
     ])
     useEffect(() => {
+        console.log('mounted')
         chrome.storage.local.get(
             [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
             result => {
+                console.log('result', result)
                 setApiList(result[AJAX_INTERCEPTOR_PROJECTS] || [])
             }
         )
     }, [])
+    useEffect(() => {
+        console.log('apiList has changed:', apiList);
+        saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...apiList])
+    }, [apiList]);
     // 登录
     const onLogin = (item) => {
-        console.log('item', item)
-
-        setDomain(item.pathRule)
+        setDomain(item.pathUrl)
+        saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, item.name)
         navigate('/account')
     }
     const onClose = () => {
@@ -49,26 +46,7 @@ function Login() {
     const DetailModalClose = (formData) => {
         setProjectFormData({})
         console.log('formData', formData)
-        const editProjectName = formData.name
-
-        const index = apiList.findIndex(item => {
-            return item.name === editProjectName
-        })
-
-        if (editProjectName) {
-            const updatedApiList = [...apiList]; // 克隆当前状态数组
-            updatedApiList[index] = { ...apiList[index], ...formData }; // 更新特定索引的元素
-            setApiList(updatedApiList); // 设置新状态
-            // if (editProjectName === this.currentProject) {
-            //     this.changeActiveProject(formData.name)
-            // }
-        } else {
-            setApiList([...apiList, formData])
-            this.changeActiveProject(formData.name)
-        }
-        setApiList(apiList)
-        // this.apiList = [...apiList]
-        saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...apiList])
+        setApiList(pre => [...pre, formData])
         setdetailModalVisible(false)
     }
     const handleDelete = (index) => {

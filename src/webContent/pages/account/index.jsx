@@ -62,8 +62,13 @@ const Account = () => {
         chrome.storage.local.get(
             [AJAX_INTERCEPTOR_CURRENT_PROJECT],
             result => {
+                function refreshTab() {
+                    location.reload();
+                }
                 setCurrentProject(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
+
                 console.log('currentProject', currentProject)
+                chrome.runtime.sendMessage({ action: "refreshTab" });
             }
         )
         chrome.runtime.onMessage.addListener(event => {
