@@ -1,62 +1,79 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Avatar, List, Button, Checkbox, Input, Form, Switch, InputNumber, Select } from 'antd';
 import Detail from '../../components/detail';
 import imgLogo from '../login/logo.png'
 import './home.scss'
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
+import { saveStorage } from '../../utils';
 
 const Home = () => {
-    const datalist = [
-        {
-            title: '/dev-api/vue-admin-template/user/33',
-        },
-        {
-            title: '/dev-api/vue-admin-template/user/inf222o',
-        },
-        {
-            title: '/dev-api/vue-admin-template/user/info1111',
-        },
-        {
-            title: '/dev-api/vue-admin-template/user/in444fo',
-        },
-    ];
-    const data = {
-        "name": "John",
-        "age": 30,
-        "city": "New York"
-    };
-    const [detail, setDetail] = useState(false);
+    const [datalist, setDatalist] = useState([]);
+    const [detailVisible, setDetailVisible] = useState(false);
+    useEffect(() => {
+        chrome.storage.local.get(
+            [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
+            result => {
+                const currentProject = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
+                const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
+                console.log('currentProject', currentProject);
+                console.log('projectList', projectList);
+            }
+        )
+    }, [])
+    useEffect(() => {
+        let currentProject;
+        chrome.storage.local.get(
+            [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
+            result => {
+                currentProject = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
+                // const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
+                // console.log('currentProject', currentProject);
+                // console.log('projectList', projectList);
+            }
+        )
+        saveStorage(currentProject, datalist)
 
+    }, [datalist])
     const handleTitleClick = () => {
         console.log('title clicked!');
-        setDetail(true);
+        setDetailVisible(true);
     }
     const setDetailFalse = () => {
-        setDetail(false);
+        setDetailVisible(false);
     }
     const setDetailTrue = () => {
-        setDetail(true);
+        setDetailVisible(true);
+    }
+    const DetailSubmit = (formData) => {
+        setDatalist(pre => [formData, ...pre])
+        setDetailVisible(false);
     }
     return (
         <>
             {
-                detail ?
-                    (<Detail onCancel={setDetailFalse} />) :
+                detailVisible ?
+                    (<Detail onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
                     <div className='home-wrapper'>
                         <img onClick={() => { setDetailTrue(true) }} src={imgLogo} alt="" className="logo" />
                         <List className='account-wrapper'
                             pagination={{
                                 position: 'bottom',
                                 align: 'center',
+                                pageSize: 8,
                             }}
+
+                            size='small'
                             dataSource={datalist}
                             renderItem={(item, index) => (
                                 <List.Item >
                                     <List.Item.Meta
-                                        // avatar={
-                                        //     <Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />
-                                        // }
-                                        title={<span style={{ cursor: 'pointer' }} onClick={handleTitleClick} >{item.title}</span>}
-                                        description="备注🙅🏻‍♀️"
+                                        title={
+                                            <span
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={handleTitleClick} >
+                                                {item.name}
+                                            </span>
+                                        }
                                     />
                                 </List.Item>
                             )}

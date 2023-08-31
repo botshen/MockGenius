@@ -1,29 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Input, Form, Switch, InputNumber, Select } from 'antd';
 import SvelteJSONEditor from '../json/index'
- 
-const onFinish = (values) => {
-  console.log('Success:', values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log('Failed:', errorInfo);
-};
-const handleChange = (value) => {
-  console.log(`selected ${value}`);
-};
-export default function Detail({ onCancel, data }) {
 
 
+export default function Detail({ onCancel, onSubmit, data }) {
   const [readOnly, setReadOnly] = useState(false);
-  const [content, setContent] = useState({
-    json: {
-      greeting: "Hello World",
-      color: "#ff3e00",
-      ok: true,
-      values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 9, 9, 9, 12, 13, 14, 15]
-    },
-    text:'11'
-  });
+  const [content, setContent] = useState({ json: {} });
+  useEffect(() => {
+    setContent({
+      json: data?.response ?? {}
+    })
+  }, [])
+  const onFinish = (formData) => {
+    console.log('Success:formData', formData);
+    onSubmit(formData)
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+  };
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+  };
   return (
     <div className='detail-wrapper'>
       <Form
@@ -35,17 +32,13 @@ export default function Detail({ onCancel, data }) {
         wrapperCol={{
           span: 24,
         }}
-        // style={{
-        //   maxWidth: 600,
-        // }}
         initialValues={{
-          code: data.status,
+          code: data?.status ?? '200',
           switchOn: true,
-          delay: 100,
-          Method: data.method,
-          pathRule: data.path,
-          // Response: JSON.stringify(data, null, 2),
-          name: data.path
+          delay: data?.delay ?? '',
+          method: data?.method ?? 'get',
+          pathRule: data?.path ?? '',
+          name: data?.path ?? ''
 
         }}
         onFinish={onFinish}
@@ -61,7 +54,7 @@ export default function Detail({ onCancel, data }) {
           <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
             Submit
           </Button>
-          <Button onClick={onCancel} type="primary" htmlType="submit">
+          <Button onClick={onCancel} type="primary">
             Cancel
           </Button>
         </Form.Item>
@@ -100,7 +93,6 @@ export default function Detail({ onCancel, data }) {
         <Form.Item
           label="Response"
           name="Response"
-
         >
           <SvelteJSONEditor
             content={content}
@@ -114,13 +106,7 @@ export default function Detail({ onCancel, data }) {
 
         <Form.Item
           label="Method"
-          name="Method"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your Method!',
-            },
-          ]}
+          name="method"
         >
           <Select
             style={{
@@ -142,12 +128,6 @@ export default function Detail({ onCancel, data }) {
         <Form.Item
           label="Delay"
           name="delay"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: 'Please input your delay!',
-        //   },
-        // ]}
         >
           <InputNumber addonAfter="ms" />
 
@@ -157,12 +137,6 @@ export default function Detail({ onCancel, data }) {
         <Form.Item
           label="code"
           name="code"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: 'Please input your code!',
-        //   },
-        // ]}
         >
           <Select
             style={{
@@ -181,14 +155,6 @@ export default function Detail({ onCancel, data }) {
             ]}
           />
         </Form.Item>
-
-
-
-
-
-
-
-
       </Form>
     </div>
   );

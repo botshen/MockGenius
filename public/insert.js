@@ -2,6 +2,7 @@ console.log('insert.js loaded')
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
 import { parse, stringify } from 'flatted';
+import { pathToRegexp } from 'path-to-regexp'
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'

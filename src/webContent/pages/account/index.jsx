@@ -45,17 +45,7 @@ const Account = () => {
     ];
     const { setCurrentProject, currentProject } = useDomainStore()
 
-    const [list, setList] = useState(
-        [
-            // {
-            //     path: '/api/users',
-            //     status: 200,
-            //     mock: '穿透',
-            //     type: "xhr",
-            //     method: 'get',
-            // }
-
-        ]);
+    const [list, setList] = useState([]);
     const [detailVisible, setdetailVisible] = useState(false);
     const [detailData, setdetailData] = useState({});
     useEffect(() => {
@@ -67,7 +57,7 @@ const Account = () => {
             }
         )
         chrome.runtime.onMessage.addListener(event => {
-            console.log('eventaccount', event)
+            console.log('eventaccount', event.data)
             try {
                 if (event.type === "ajaxInterceptor") {
                     const data = event.data;
@@ -77,9 +67,10 @@ const Account = () => {
                         mock: '穿透',
                         type: data.request.type,
                         method: data.request.method,
+                        response: JSON.parse(data.response.responseTxt)
                     }
                     setList(prevList => [result, ...prevList]);
- 
+
                 }
             } catch (e) { console.error('e', e) }
         })
@@ -102,11 +93,17 @@ const Account = () => {
     const setDetailFalse = () => {
         setdetailVisible(false);
     }
+    const handleDetailSubmit=(formData)=>{
+         console.log('formData',formData)
+        // setList(pre=>[formData,...pre])
+        setdetailVisible(false);
+        
+    }
     return (
         <>
             {
                 detailVisible ?
-                    (<Detail data={detailData} onCancel={setDetailFalse} />)
+                    (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse} />)
                     :
                     (
                         <div>
