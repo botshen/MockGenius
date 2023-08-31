@@ -47,13 +47,13 @@ const Account = () => {
 
     const [list, setList] = useState(
         [
-            {
-                path: '/api/users',
-                status: 200,
-                mock: '穿透',
-                type: "xhr",
-                method: 'get',
-            }
+            // {
+            //     path: '/api/users',
+            //     status: 200,
+            //     mock: '穿透',
+            //     type: "xhr",
+            //     method: 'get',
+            // }
 
         ]);
     const [detailVisible, setdetailVisible] = useState(false);
@@ -62,32 +62,26 @@ const Account = () => {
         chrome.storage.local.get(
             [AJAX_INTERCEPTOR_CURRENT_PROJECT],
             result => {
-                function refreshTab() {
-                    location.reload();
-                }
-                setCurrentProject(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
-
                 console.log('currentProject', currentProject)
                 chrome.runtime.sendMessage({ action: "refreshTab" });
             }
         )
         chrome.runtime.onMessage.addListener(event => {
-            console.log('event', event)
+            console.log('eventaccount', event)
             try {
                 if (event.type === "ajaxInterceptor") {
+                    const data = event.data;
                     const result = {
-                        path: event.data.url,
-                        status: event.data.status ?? 200,
+                        path: data.request.url,
+                        status: data.response.status,
                         mock: '穿透',
-                        type: "xhr",
-                        method: event.data.method ?? 'post',
-                    };
-                    console.log('result', result)
-                    // 把每次的result放到list里
-                    setList(prevList => [...prevList, result]);
-
+                        type: data.request.type,
+                        method: data.request.method,
+                    }
+                    setList(prevList => [result, ...prevList]);
+ 
                 }
-            } catch (e) { }
+            } catch (e) { console.error('e', e) }
         })
     }, []
     )
@@ -118,16 +112,16 @@ const Account = () => {
                         <div>
                             <Table
                                 size="small"
-                                pagination={{
-                                    position: ['none', 'none'],
-                                }}
+                                // pagination={{
+                                //     position: ['none', 'none'],
+                                // }}
                                 onRow={(record) => {
                                     return {
                                         onClick: () => {
                                             console.log('record', record)
                                             setdetailData(record);
                                             setdetailVisible(true);
-                                        }, // 点击行
+                                        },
 
                                     };
                                 }}

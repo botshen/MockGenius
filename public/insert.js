@@ -1,10 +1,10 @@
 console.log('insert.js loaded')
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
-import { parse, stringify, toJSON, fromJSON } from 'flatted';
+import { parse, stringify } from 'flatted';
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
-const INJECT_ELEMENT_ID = 'ajaxInterceptor'
+const INJECT_ELEMENT_ID = 'api-mock-12138'
 
 function mockCore(url, method) {
 
@@ -41,14 +41,12 @@ function mockCore(url, method) {
 }
 const sendMsg = (msg, isMock = false) => {
 
-  console.log('msg', msg)
   const jsonString = parse(stringify(msg));
-  console.log('msgjsonString', jsonString)
   const result = {
     ...jsonString,
     isMock
   }
-  const event = new CustomEvent('request', {
+  const event = new CustomEvent(CUSTOM_EVENT_NAME, {
     detail: result,
   })
   window.dispatchEvent(event)
@@ -59,7 +57,7 @@ function handMockResult({ res, request, config }) {
     config,
     status,
     headers: [],
-    response: JSON.stringify(response),
+    response: stringify(response),
   }
   const payload = {
     request,
@@ -67,7 +65,7 @@ function handMockResult({ res, request, config }) {
       status: result.status,
       headers: result.headers,
       url: config.url,
-      responseTxt: JSON.stringify(response),
+      responseTxt: stringify(response),
       isMock: true,
       rulePath,
     },
@@ -96,33 +94,76 @@ function getCurrentProject() {
 }
 proxy({
   onRequest: (config, handler) => {
-    console.log('config11111111', config)
     if (getCurrentProject().isRealRequest) {
       handler.next(config)
     } else {
-      console.log('1213000', 1213000)
       // TODO: url 对象里面的信息非常有用啊
       const url = new Url(config.url)
 
+      const request = {
+        url: url.href,
+        method: config.method,
+        headers: config.headers,
+        type: 'xhr',
+      }
+      mockCore(url.href, config.method)
+        .then((res) => {
+          const { payload, result } = handMockResult({ res, request, config })
+          console.log('payload',payload)
+          sendMsg(payload, true)
+          if (getCurrentProject().isTerminalLogOpen) {
+            logTerminalMockMessage(config, result, request)
 
+          }
 
-      // handler.resolve(result)
-
-      sendMsg({
-        type: 'request',
-        config
-      }, false)
-      handler.next(config)
-
+          handler.resolve(result)
+        })
+        .catch(() => {
+          handler.next(config)
+        })
     }
+
   },
-  //请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
-  onError: (err, handler) => {
-    handler.next(err)
-  },
-  //请求成功后进入
   onResponse: (response, handler) => {
-    console.log('response', response)
-    handler.next(response)
-  }
+    const { statusText, status, config, headers, response: res } = response
+    const url = new Url(config.url)
+    mockCore(url.href, config.method)
+      .then((res) => {
+        const request = {
+          url: url.href,
+          method: config.method,
+          headers: config.headers,
+          type: 'xhr',
+        }
+        const { payload, result } = handMockResult({ res, request, config })
+        sendMsg(payload, true)
+        if (getCurrentProject().isTerminalLogOpen) {
+          logTerminalMockMessage(config, result, request)
+        }
+        handler.resolve(result)
+      })
+      .catch(() => {
+        const url = new Url(config.url)
+        const payload = {
+          request: {
+            method: config.method,
+            url: url.href,
+            headers: config.headers,
+            type: 'xhr',
+          },
+          response: {
+            status: status,
+            statusText,
+            url: config.url,
+            headers: headers,
+            responseTxt: res,
+            isMock: false,
+            rulePath: '',
+          },
+        }
+        sendMsg(payload)
+        handler.resolve(response)
+      })
+
+  },
 })

@@ -12,7 +12,8 @@ import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../
 function Login() {
     // 路由跳转钩子
     const navigate = useNavigate()
-    const { setDomain } = useDomainStore()
+    const { setDomain, setCurrentProject, currentProject } = useDomainStore()
+
 
     const [detailModalVisible, setdetailModalVisible] = useState(false)
     const [projectFormData, setProjectFormData] = useState({})
@@ -37,6 +38,8 @@ function Login() {
     const onLogin = (item) => {
         setDomain(item.pathUrl)
         saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, item.name)
+        setCurrentProject(item)
+
         navigate('/account')
     }
     const onClose = () => {

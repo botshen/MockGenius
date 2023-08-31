@@ -83,17 +83,34 @@ chrome.system.display.getInfo(function (displays) {
 });
 function injectScriptToPage() {
     try {
-        let insertScript = document.createElement('script');
+        // 创建新的 script 元素
+        let newInsertScript = document.createElement('script');
+        newInsertScript.setAttribute('type', 'text/javascript');
+        newInsertScript.src = chrome.runtime.getURL('insert.js'); // 新的脚本文件
 
-        insertScript.setAttribute('type', 'text/javascript');
-        insertScript.src = chrome.runtime.getURL('insert.js');
+        // 创建新的 input 元素
+        const newInput = document.createElement('input');
+        newInput.setAttribute('id', 'api-mock-12138');
+        newInput.setAttribute('style', 'display:none');
 
-        document.body.appendChild(insertScript);
+        // 找到要替换的旧的 script 元素和 input 元素
+        const oldInsertScript = document.querySelector('script[src*="insert.js"]');
+        const oldInput = document.getElementById('api-mock-12138');
 
-        const input = document.createElement('input');
-        input.setAttribute('id', 'api-mock-12138');
-        input.setAttribute('style', 'display:none');
-        document.documentElement.appendChild(input);
+        // 如果找到旧的 script 元素和 input 元素，进行替换
+        // 如果找到旧的 script 元素和 input 元素，先删除它们
+        if (oldInsertScript) {
+            oldInsertScript.parentNode.removeChild(oldInsertScript);
+        }
+
+        if (oldInput) {
+            oldInput.parentNode.removeChild(oldInput);
+        }
+
+         
+        document.body.appendChild(newInsertScript);
+        document.documentElement.appendChild(newInput);
+
     } catch (err) {
         console.error('err', err);
     }
@@ -104,13 +121,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             const matchingTabs = getMatchingTabs(tabs, "http://localhost:9528");
             if (matchingTabs.length > 0) {
                 const matchingTabId = matchingTabs[0].id;
-                //   chrome.tabs.reload(matchingTabId, {}, function () {
-                //     console.log("Tab refreshed:", matchingTabId);
-                //   });
-                chrome.scripting.executeScript({
-                    target: { tabId: matchingTabId },
-                    function: injectScriptToPage
-                  });
+                // 插入js之后会报错，暂时注释掉
+                // chrome.scripting.executeScript({
+                //     target: { tabId: matchingTabId },
+                //     function: injectScriptToPage
+                // });
+                // 刷新页面注入拦截脚本
+                chrome.tabs.reload(matchingTabId);
+
+                
             } else {
                 console.log("No matching tab found.");
             }
@@ -122,8 +141,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 function getMatchingTabs(tabs, url) {
     const matchingTabs = [];
     for (const tab of tabs) {
-        console.log('tab', tab)
-        if (tab.url.startsWith(url)) {
+         if (tab.url.startsWith(url)) {
             matchingTabs.push(tab);
         }
     }
