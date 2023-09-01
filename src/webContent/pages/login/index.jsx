@@ -40,20 +40,20 @@ function Login() {
     setdetailModalVisible(false)
   }
   useEffect(() => {
-    saveStorage(AJAX_INTERCEPTOR_PROJECTS, apiList);
+    (async () => {
+      await saveStorage(AJAX_INTERCEPTOR_PROJECTS, apiList);
+    })();
   }, [apiList]);
   const handleDelete = (index) => {
-    return () => {
-      // 获取index对应的name
+    return async () => {
       const deleteName = apiList.find((item, i) => i === index)
       console.log('deleteName.name', deleteName.name)
       const newApiList = [...apiList]
       newApiList.splice(index, 1)
       setApiList(newApiList)
-      saveStorage(AJAX_INTERCEPTOR_PROJECTS, newApiList)
-
+      await saveStorage(AJAX_INTERCEPTOR_PROJECTS, newApiList)
       if (newApiList.length === 0) {
-        saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, null)
+        await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, null)
         setDomain('')
       }
     }
@@ -102,5 +102,4 @@ function Login() {
 
   )
 }
-
 export default Login
