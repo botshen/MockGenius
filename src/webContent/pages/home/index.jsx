@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, List, message} from 'antd';
 import Detail from '../../components/detail';
-import imgLogo from '../login/logo.png'
 import './home.scss'
 import {AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS} from '../../const';
 import {saveStorage, readLocalStorage} from '../../utils';
@@ -69,7 +68,7 @@ const Home = () => {
           detailVisible ?
             (<Detail onSubmit={DetailSubmit} onCancel={setDetailFalse}/>) :
             <div className='home-wrapper'>
-               <Button type="primary" onClick={() => {
+              <Button type="primary" onClick={() => {
                 setDetailTrue(true)
               }}>添加规则</Button>
               <List className='account-wrapper'

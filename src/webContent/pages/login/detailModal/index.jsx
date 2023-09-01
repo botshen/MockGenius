@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Modal, Checkbox, Form, Input } from 'antd';
+import React, {useEffect} from 'react';
+import {Modal, Form, Input} from 'antd';
 
 
-const DetailModal = ({ onClose, saveProject, formData }) => {
+const DetailModal = ({onClose, saveProject, formData}) => {
   const [form] = Form.useForm();
 
   const handleCancel = () => {
@@ -35,7 +35,7 @@ const DetailModal = ({ onClose, saveProject, formData }) => {
             });
         }}
         onCancel={handleCancel}
-        okButtonProps={{ htmlType: 'submit', form: 'editForm' }}
+        okButtonProps={{htmlType: 'submit', form: 'editForm'}}
       >
         <Form
           form={form}
@@ -64,7 +64,7 @@ const DetailModal = ({ onClose, saveProject, formData }) => {
               },
             ]}
           >
-            <Input />
+            <Input/>
           </Form.Item>
 
           <Form.Item
@@ -77,7 +77,7 @@ const DetailModal = ({ onClose, saveProject, formData }) => {
               },
             ]}
           >
-            <Input />
+            <Input/>
           </Form.Item>
         </Form>
       </Modal>
