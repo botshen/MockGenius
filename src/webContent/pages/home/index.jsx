@@ -26,12 +26,10 @@ const Home = () => {
             [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
             result => {
                 currentProject = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
-                // const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
-                // console.log('currentProject', currentProject);
-                // console.log('projectList', projectList);
             }
         )
-        saveStorage(currentProject, datalist)
+        console.log('currentProjec-----t', currentProject)
+        console.log('datalist', datalist)
 
     }, [datalist])
     const handleTitleClick = () => {

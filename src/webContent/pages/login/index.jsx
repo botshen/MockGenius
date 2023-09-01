@@ -10,31 +10,47 @@ import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../
 
 
 function Login() {
-    // 路由跳转钩子
     const navigate = useNavigate()
-    const { setDomain, setCurrentProject, currentProject } = useDomainStore()
-
-
+    const { setDomain, setCurrentProject, domain } = useDomainStore()
     const [detailModalVisible, setdetailModalVisible] = useState(false)
     const [projectFormData, setProjectFormData] = useState({})
     const [apiList, setApiList] = useState([
-
     ])
     useEffect(() => {
-        console.log('mounted')
         chrome.storage.local.get(
             [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
             result => {
-                console.log('result', result)
-                setApiList(result[AJAX_INTERCEPTOR_PROJECTS] || [])
+                console.log('result[AJAX_INTERCEPTOR_PROJECTS]', result[AJAX_INTERCEPTOR_PROJECTS])
+                setApiList(result[AJAX_INTERCEPTOR_PROJECTS])
+                setDomain(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
             }
         )
     }, [])
-    useEffect(() => {
-        console.log('apiList has changed:', apiList);
-        saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...apiList])
-    }, [apiList]);
-    // 登录
+    // const getStorageItem = (key) => {
+    //     return new Promise((resolve) => {
+    //         chrome.storage.local.get(key, (result) => {
+    //             resolve(result[key])
+    //         })
+    //     })
+    // }
+
+    // useEffect(() => {
+    //     const setStrong = async () => {
+    //         saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...apiList])
+    //         const curretnUrl = await getStorageItem(AJAX_INTERCEPTOR_CURRENT_PROJECT)
+    //         console.log('curretnUrl', curretnUrl)
+    //         console.log('apiList', apiList)
+    //         if (apiList.length === 0) {
+    //             console.log('1213', 1213)
+    //             await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, null)
+    //         } else {
+    //             await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, curretnUrl)
+
+    //         }
+    //     }
+    //     setStrong()
+
+    // }, [apiList]);
     const onLogin = (item) => {
         setDomain(item.pathUrl)
         saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, item.name)
@@ -46,17 +62,28 @@ function Login() {
         setdetailModalVisible(false)
         setProjectFormData({})
     }
-    const DetailModalClose = (formData) => {
+    const DetailModalClose = async (formData) => {
         setProjectFormData({})
-        console.log('formData', formData)
-        setApiList(pre => [...pre, formData])
+        setApiList((prevApiList) => [...prevApiList, formData]);
         setdetailModalVisible(false)
     }
+    useEffect(() => {
+        saveStorage(AJAX_INTERCEPTOR_PROJECTS, apiList);
+    }, [apiList]);
     const handleDelete = (index) => {
         return () => {
+            // 获取index对应的name
+            const deleteName = apiList.find((item, i) => i === index)
+            console.log('deleteName.name', deleteName.name)
             const newApiList = [...apiList]
             newApiList.splice(index, 1)
             setApiList(newApiList)
+            saveStorage(AJAX_INTERCEPTOR_PROJECTS, newApiList)
+
+            if (newApiList.length === 0) {
+                saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, null)
+                setDomain('')
+            }
         }
     }
     const handleEdit = (item) => {
@@ -71,7 +98,10 @@ function Login() {
                 detailModalVisible && <DetailModal formData={projectFormData} onClose={onClose} saveProject={DetailModalClose} />
             }
             <div className="login-wrapper">
-                <img onClick={() => { setdetailModalVisible(true) }} src={imgLogo} alt="" className="logo" />
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <span>url: {domain}</span>
+                    <img onClick={() => { setdetailModalVisible(true) }} src={imgLogo} alt="" className="logo" />
+                </div>
                 <List
                     itemLayout="horizontal"
                     dataSource={apiList}
