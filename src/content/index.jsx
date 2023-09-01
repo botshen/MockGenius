@@ -53,16 +53,12 @@ const injectScriptToPage = () => {
 
 isProduction && chrome.storage.local.get(keys, (result) => {
     const currentName = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
-    console.log('currentName', currentName)
-    const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
-    console.log('projectList', projectList)
-    const { origin } = location
-    console.log('origin', origin)
-    const currentProject =
+     const projectList = result[AJAX_INTERCEPTOR_PROJECTS] || []
+     const { origin } = location
+     const currentProject =
         projectList.find((item) => item.name === currentName) || ({})
     if (origin === currentProject.pathUrl) {
-        console.log('121', 121)
-        injectScriptToPage()
+         injectScriptToPage()
         setGlobalData()
     }
 })
@@ -70,8 +66,6 @@ isProduction && chrome.storage.local.get(keys, (result) => {
 window.addEventListener(
     CUSTOM_EVENT_NAME,
     (event) => {
-        console.log('event',event)
-        
         if (chrome.runtime?.id) {
             chrome.runtime.sendMessage({
                 type: "ajaxInterceptor",
