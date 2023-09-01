@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Modal, Form, Input} from 'antd';
 
 
-const DetailModal = ({onClose, saveProject, formData}) => {
+const DetailModal = ({onClose, saveProject, formData, mode}) => {
   const [form] = Form.useForm();
 
   const handleCancel = () => {
@@ -20,15 +20,13 @@ const DetailModal = ({onClose, saveProject, formData}) => {
   return (
     <>
       <Modal
-        title="新增项目"
+        title={mode === 'edit' ? '编辑项目' : '新增项目'}
         open={true}
         onOk={() => {
           form
             .validateFields()
             .then((values) => {
-              console.log(values, 111)
               saveProject(values)
-
             })
             .catch((info) => {
               console.log('Validate Failed:', info);

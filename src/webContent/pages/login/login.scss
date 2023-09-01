@@ -1,13 +1,19 @@
- 
-.login-wrapper{
+
+.login-wrapper {
   padding: 20px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
 
-  img{
+  img {
     margin: 0 auto 20px;
     width: 30px;
     text-align: center;
   }
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -15,6 +15,7 @@ function Login() {
   const [detailModalVisible, setdetailModalVisible] = useState(false)
   const [projectFormData, setProjectFormData] = useState({})
   const [apiList, setApiList] = useState([])
+  const [detailModalMode, setDetailModalMode] = useState('add')
   useEffect(() => {
     chrome.storage.local.get(
       [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
@@ -60,17 +61,24 @@ function Login() {
   }
   const handleEdit = (item) => {
     setProjectFormData(item)
+    setDetailModalMode('edit')
     setdetailModalVisible(true)
   }
   return (
     <>
       {
-        detailModalVisible && <DetailModal formData={projectFormData} onClose={onClose} saveProject={DetailModalClose}/>
+        detailModalVisible &&
+        <DetailModal
+          mode={detailModalMode}
+          formData={projectFormData}
+          onClose={onClose}
+          saveProject={DetailModalClose}/>
       }
       <div className="login-wrapper">
         <div style={{display: 'flex', alignItems: 'center'}}>
           <span>url: {domain}</span>
           <img onClick={() => {
+            setDetailModalMode('add')
             setdetailModalVisible(true)
           }} src={imgLogo} alt="" className="logo"/>
         </div>
@@ -102,4 +110,5 @@ function Login() {
 
   )
 }
+
 export default Login
