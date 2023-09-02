@@ -1,3 +1,5 @@
+import Url from "url-parse";
+
 console.log('env:', import.meta.env.MODE)
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
@@ -35,11 +37,10 @@ const injectScriptToPage = () => {
       insertScript.setAttribute('type', 'module');
       insertScript.src = '../../public/insert.js'
     } else {
-      insertScript.setAttribute('type', 'text/javascript')
+      insertScript.setAttribute('type', 'module')
       insertScript.src = window.chrome.runtime.getURL('insert.js')
     }
     document.body.appendChild(insertScript)
-
     const input = document.createElement('input')
     input.setAttribute('id', INJECT_ELEMENT_ID)
     input.setAttribute('style', 'display:none')
@@ -71,3 +72,35 @@ window.addEventListener(
   },
   false
 )
+
+function isInsertScriptAndInputExist() {
+  console.log(document);
+
+  const oldInsertScript = document && document.querySelector('script[src*="insert.js"]');
+  const oldInput = document && document.getElementById('api-mock-12138');
+  return oldInsertScript && oldInput;
+}
+
+
+// 获取匹配特定地址的选项卡信息
+function getMatchingTabs(tabs, url) {
+  const matchingTabs = [];
+  for (const tab of tabs) {
+    if (tab.url.startsWith(url)) {
+      matchingTabs.push(tab);
+    }
+  }
+  return matchingTabs;
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log(121333, request);
+  if (request.action === "refreshTabToContent") {
+    console.log('request', request)
+    const {pathUrl} = request.data
+    const {origin} = location;
+    if (origin === pathUrl) {
+      injectScriptToPage()
+    }
+  }
+});

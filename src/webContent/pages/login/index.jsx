@@ -24,7 +24,9 @@ function Login() {
         setDomain(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
       }
     )
+
   }, [])
+
   const onLogin = async (item) => {
     setDomain(item.pathUrl)
     await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, item.pathUrl)
@@ -81,6 +83,7 @@ function Login() {
             setDetailModalMode('add')
             setdetailModalVisible(true)
           }} src={imgLogo} alt="" className="logo"/>
+
         </div>
         <List
           itemLayout="horizontal"

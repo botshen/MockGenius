@@ -13,7 +13,7 @@ export default defineConfig({
                 path.resolve(__dirname, 'public/insert.js'),
             ],
             // content script不支持ES6，因此不用使用es模式，需要改为cjs模式
-            formats: ['cjs'],
+            formats: ['es'],
             // 设置生成文件的文件名
             fileName: () => {
                 // 将文件后缀名强制定为js，否则会生成cjs的后缀名

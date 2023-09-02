@@ -10,7 +10,7 @@ const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
   name: '将军令',
-  pathUrl: 'http://localhost:9528',
+  pathUrl: 'http://localhost:9527',
   color: '#04B34C',
   switchOn: true,
   isRealRequest: false,
@@ -74,77 +74,6 @@ chrome.system.display.getInfo(function (displays) {
   }
 });
 
-function injectScriptToPage() {
-  try {
-    // 创建新的 script 元素
-    let newInsertScript = document.createElement('script');
-    newInsertScript.setAttribute('type', 'text/javascript');
-    newInsertScript.src = chrome.runtime.getURL('insert.js'); // 新的脚本文件
-
-    // 创建新的 input 元素
-    const newInput = document.createElement('input');
-    newInput.setAttribute('id', 'api-mock-12138');
-    newInput.setAttribute('style', 'display:none');
-
-    // 找到要替换的旧的 script 元素和 input 元素
-    const oldInsertScript = document.querySelector('script[src*="insert.js"]');
-    const oldInput = document.getElementById('api-mock-12138');
-
-    // 如果找到旧的 script 元素和 input 元素，进行替换
-    // 如果找到旧的 script 元素和 input 元素，先删除它们
-    if (oldInsertScript) {
-      oldInsertScript.parentNode.removeChild(oldInsertScript);
-    }
-
-    if (oldInput) {
-      oldInput.parentNode.removeChild(oldInput);
-    }
-
-
-    document.body.appendChild(newInsertScript);
-    document.documentElement.appendChild(newInput);
-
-  } catch (err) {
-    console.error('err', err);
-  }
-}
-
-function isInsertScriptAndInputExist() {
-  const oldInsertScript = document.querySelector('script[src*="insert.js"]');
-  const oldInput = document.getElementById('api-mock-12138');
-  return oldInsertScript && oldInput;
-}
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.action === "refreshTab" && isInsertScriptAndInputExist()) {
-    chrome.tabs.query({}, async function (tabs) {
-      const targetUrl = new Url(request.data.pathUrl.pathUrl)
-      const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
-      if (matchingTabs.length > 0) {
-        const matchingTabId = matchingTabs[0].id;
-        // 插入js之后会报错，暂时注释掉
-        await chrome.scripting.executeScript({
-          target: {tabId: matchingTabId}, function: injectScriptToPage
-        });
-        // 刷新页面注入拦截脚本
-        // await chrome.tabs.reload(matchingTabId);
-      } else {
-        console.log("No matching tab found.");
-      }
-    });
-  }
-});
-
-// 获取匹配特定地址的选项卡信息
-function getMatchingTabs(tabs, url) {
-  const matchingTabs = [];
-  for (const tab of tabs) {
-    if (tab.url.startsWith(url)) {
-      matchingTabs.push(tab);
-    }
-  }
-  return matchingTabs;
-}
 
 
 // 点击 icon 事件
@@ -183,4 +112,44 @@ chrome.action.onClicked.addListener(() => {
 
 });
 
+function getMatchingTabs(tabs, url) {
+  const matchingTabs = [];
+  for (const tab of tabs) {
+    if (tab.url.startsWith(url)) {
+      matchingTabs.push(tab);
+    }
+  }
+  return matchingTabs;
+}
+
+function xxx(matchingTabId) {
+  chrome.runtime.sendMessage({action: "refreshTabToContent", data: {id: matchingTabId}});
+
+}
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log(121333);
+  console.log(request);
+  if (request.action === 'refreshTab') {
+    const currentProject = request.data.pathUrl;
+    console.log(currentProject);
+    chrome.tabs.query({}, async function (tabs) {
+      console.log(tabs, 121222222);
+      const targetUrl = new Url(request.data.pathUrl)
+      const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
+      if (matchingTabs.length > 0) {
+        const matchingTabId = matchingTabs[0].id;
+        console.log(matchingTabId, 'matchingTabId');
+        if (matchingTabId) {
+          // xxx(matchingTabId)
+
+        }
+
+      } else {
+        console.log("No matching tab found.");
+      }
+    });
+
+  }
+});
 
