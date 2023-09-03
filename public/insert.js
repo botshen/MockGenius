@@ -8,22 +8,29 @@ const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
 
 function mockCore(url, method) {
-
-
+  console.log('method',method)
   // 看下插件设置的数据结构
   const targetUrl = new Url(url)
+  console.log(targetUrl, 21232133132);
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
+  console.log(currentProject, 321321);
   return new Promise((resolve, reject) => {
     // 进入 mock 的逻辑判断
+    console.log('currentProject332323232', currentProject)
     if (currentProject.switchOn) {
       const rules = currentProject.rules || []
       const currentRule = rules.find((item) => {
-        const re = pathToRegexp(item.path) // 匹配规则
-        const match1 = re.exec(str)
+        // console.log('item', item)
+        // console.log('pathToRegexp', pathToRegexp)
+        // const re = pathToRegexp(item.pathRule) // 匹配规则
+        // console.log('re', re)
+        // const match1 = re.exec(str)
+        // console.log('match1', match1)
 
-        return item.method === method && match1 && item.switchOn
+        return item.method === method && item.switchOn
       })
+      console.log(currentRule, 32321332);
 
       if (currentRule) {
         setTimeout(() => {
@@ -40,18 +47,17 @@ function mockCore(url, method) {
     reject()
   })
 }
-const sendMsg = (msg, isMock = false) => {
 
-  const jsonString = parse(stringify(msg));
+
+const sendMsg = (msg, isMock = false) => {
   const result = {
-    ...jsonString,
+    ...msg,
     isMock
   }
-  const event = new CustomEvent(CUSTOM_EVENT_NAME, {
-    detail: result,
-  })
+  const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: result })
   window.dispatchEvent(event)
 }
+
 function handMockResult({ res, request, config }) {
   const { response, path: rulePath, status } = res
   const result = {
@@ -73,31 +79,46 @@ function handMockResult({ res, request, config }) {
   }
   return { result, payload }
 }
+
 function getCurrentProject() {
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
   )
+  console.log('inputElem', inputElem)
   if (!inputElem) {
     return {};
   }
   const configStr = inputElem.value
+  console.log('configStr', configStr, '32')
   try {
     const config = JSON.parse(configStr);
+    console.log('config', config)
     const { ajaxInterceptor_current_project, ajaxInterceptor_projects } = config
-    const currentProject =
-      ajaxInterceptor_projects?.find(
-        (item) => item.name === ajaxInterceptor_current_project
-      ) || ({})
-    return currentProject;
+    return ajaxInterceptor_projects?.find(
+      (item) => item.pathUrl === ajaxInterceptor_current_project
+    ) || ({});
   } catch (e) {
     return {};
   }
 }
+
+function logTerminalMockMessage(config, result, request) {
+  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
+  if (JSON.parse(config.body)) {
+    console.log('%c请求:', 'color: red;', JSON.parse(config.body))
+  }
+  if (JSON.parse(result.response)) {
+    console.log('%c响应:', 'color: red;', JSON.parse(result.response))
+  }
+}
+
 proxy({
   onRequest: (config, handler) => {
     if (getCurrentProject().isRealRequest) {
+      console.log('isRealRequest');
       handler.next(config)
     } else {
+      console.log('isNotRealRequest');
       // TODO: url 对象里面的信息非常有用啊
       const url = new Url(config.url)
 
@@ -110,19 +131,18 @@ proxy({
       mockCore(url.href, config.method)
         .then((res) => {
           const { payload, result } = handMockResult({ res, request, config })
-          console.log('payload',payload)
           sendMsg(payload, true)
           if (getCurrentProject().isTerminalLogOpen) {
             logTerminalMockMessage(config, result, request)
-
           }
-
           handler.resolve(result)
         })
         .catch(() => {
+          console.log('catch');
           handler.next(config)
         })
     }
+
 
   },
   onResponse: (response, handler) => {

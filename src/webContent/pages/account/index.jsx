@@ -63,10 +63,8 @@ const Account = () => {
 
 
   function checkAndInjectScript() {
-    // 检查页面中是否存在<script src="inject.js">
-    console.log('检查页面中是否存');
     const scriptExists = document.querySelector('script[src*="insert.js"]');
-    console.log(scriptExists);
+    console.log('scriptExists',scriptExists)
     if (!scriptExists) {
       console.log('inject.js 不存在');
       const script = document.createElement('script')
@@ -79,9 +77,18 @@ const Account = () => {
       input.setAttribute('id', 'api-mock-12138')
       input.setAttribute('style', 'display:none')
       document.documentElement.appendChild(input)
+    } else {
+      console.log('inject.js 存在');
     }
   }
 
+  const isMockText = (isMock) => {
+    if (isMock) {
+      return '穿透'
+    } else {
+      return '拦截'
+    }
+  }
   useEffect(() => {
       (async () => {
         let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
@@ -106,59 +113,34 @@ const Account = () => {
           }
 
         })
-        // await chrome.runtime.sendMessage({action: "refreshTab", data: {pathUrl: currentProject}});
       })();
-      // chrome.storage.local.get(
-      //   [AJAX_INTERCEPTOR_CURRENT_PROJECT],
-      //   result => {
-      //     console.log('currentProject', currentProject)
-      //     // chrome.tabs.sendMessage(currentProject, {action: "getAjaxInterceptor"}, function (response) {
-      //     //   console.log('response', response)
-      //     // }
-      //     chrome.runtime.sendMessage({action: "refreshTab", data: {pathUrl: currentProject}});
-      //   }
-      // )
-      // chrome.runtime.onMessage.addListener(event => {
-      //   try {
-      //     if (event.type === "ajaxInterceptor") {
-      //       const data = event.data;
-      //       const result = {
-      //         path: data.request.url,
-      //         status: data.response.status,
-      //         mock: '穿透',
-      //         type: data.request.type,
-      //         method: data.request.method,
-      //         response: JSON.parse(data.response.responseTxt)
-      //       }
-      //       setList(prevList => [result, ...prevList]);
-      //
-      //     }
-      //   } catch (e) {
-      //     console.error('e', e)
-      //   }
-      // })
+
+      chrome.runtime.onMessage.addListener(event => {
+        try {
+          console.log(event, 1200);
+          if (event.type === "ajaxInterceptor") {
+            const data = event.data;
+            const result = {
+              path: data.request.url,
+              status: data.response.status,
+              mock: isMockText(data.isMock),
+              type: data.request.type,
+              method: data.request.method,
+              response: JSON.parse(data.response.responseTxt)
+            }
+            setList(prevList => [result, ...prevList]);
+          }
+        } catch (e) {
+          console.error('e', e)
+        }
+      })
     }, []
   )
-  const handleTitleClick = (e) => {
-    console.log('e', e)
-    console.log('title clicked!');
-    setdetailData({
-      code: '2111100',
-      switchOn: true,
-      delay: 100,
-      Method: 'get',
-      pathRule: '/api',
-      Response: '',
-      name: 'api1'
-    });
-    setdetailVisible(true);
-  }
+
   const setDetailFalse = () => {
     setdetailVisible(false);
   }
   const handleDetailSubmit = (formData) => {
-    console.log('formData', formData)
-    // setList(pre=>[formData,...pre])
     setdetailVisible(false);
 
   }
@@ -175,7 +157,6 @@ const Account = () => {
                 onRow={(record) => {
                   return {
                     onClick: () => {
-                      console.log('record', record)
                       setdetailData(record);
                       setdetailVisible(true);
                     },

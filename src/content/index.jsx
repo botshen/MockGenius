@@ -1,4 +1,3 @@
-import Url from "url-parse";
 
 console.log('env:', import.meta.env.MODE)
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
@@ -53,9 +52,11 @@ const injectScriptToPage = () => {
 
 chrome.storage.local.get(keys, (result) => {
   const currentName = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
-  const {origin} = location;
+  const { origin } = location;
   if (origin === currentName) {
     injectScriptToPage()
+    setGlobalData()
+
   }
 })
 
@@ -73,34 +74,15 @@ window.addEventListener(
   false
 )
 
-function isInsertScriptAndInputExist() {
-  console.log(document);
-
-  const oldInsertScript = document && document.querySelector('script[src*="insert.js"]');
-  const oldInput = document && document.getElementById('api-mock-12138');
-  return oldInsertScript && oldInput;
-}
-
-
-// 获取匹配特定地址的选项卡信息
-function getMatchingTabs(tabs, url) {
-  const matchingTabs = [];
-  for (const tab of tabs) {
-    if (tab.url.startsWith(url)) {
-      matchingTabs.push(tab);
-    }
-  }
-  return matchingTabs;
-}
-
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(121333, request);
   if (request.action === "refreshTabToContent") {
     console.log('request', request)
-    const {pathUrl} = request.data
-    const {origin} = location;
+    const { pathUrl } = request.data
+    const { origin } = location;
     if (origin === pathUrl) {
       injectScriptToPage()
+      setGlobalData()
+
     }
   }
 });

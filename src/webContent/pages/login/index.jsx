@@ -1,17 +1,17 @@
-import {useEffect, useState} from 'react'
-import {useNavigate} from 'react-router-dom'
-import {List, Button} from 'antd';
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { List, Button } from 'antd';
 import imgLogo from './logo.png'
 import './login.scss'
 import DetailModal from './detailModal';
-import {saveStorage} from '../../utils';
-import {useDomainStore} from '../../store';
-import {AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS} from '../../const';
+import { saveStorage } from '../../utils';
+import { useDomainStore } from '../../store';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 
 
 function Login() {
   const navigate = useNavigate()
-  const {setDomain, setCurrentProject, domain} = useDomainStore()
+  const { setDomain, setCurrentProject, domain } = useDomainStore()
   const [detailModalVisible, setdetailModalVisible] = useState(false)
   const [projectFormData, setProjectFormData] = useState({})
   const [apiList, setApiList] = useState([])
@@ -38,8 +38,12 @@ function Login() {
     setProjectFormData({})
   }
   const DetailModalClose = async (formData) => {
+    const result = {
+      ...formData,
+      switchOn: true,
+    }
     setProjectFormData({})
-    setApiList((prevApiList) => [...prevApiList, formData]);
+    setApiList((prevApiList) => [...prevApiList, result]);
     setdetailModalVisible(false)
   }
   useEffect(() => {
@@ -74,15 +78,15 @@ function Login() {
           mode={detailModalMode}
           formData={projectFormData}
           onClose={onClose}
-          saveProject={DetailModalClose}/>
+          saveProject={DetailModalClose} />
       }
       <div className="login-wrapper">
-        <div style={{display: 'flex', alignItems: 'center'}}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <span>url: {domain}</span>
           <img onClick={() => {
             setDetailModalMode('add')
             setdetailModalVisible(true)
-          }} src={imgLogo} alt="" className="logo"/>
+          }} src={imgLogo} alt="" className="logo" />
 
         </div>
         <List
@@ -94,9 +98,9 @@ function Login() {
                 [<Button type="text" onClick={() => {
                   handleEdit(item)
                 }}>edit</Button>,
-                  <Button danger type="text" onClick={handleDelete(index)}>
-                    delete
-                  </Button>
+                <Button danger type="text" onClick={handleDelete(index)}>
+                  delete
+                </Button>
                 ]}
             >
               <List.Item.Meta

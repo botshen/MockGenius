@@ -10,7 +10,7 @@ const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
   name: '将军令',
-  pathUrl: 'http://localhost:9527',
+  pathUrl: 'http://localhost:9528',
   color: '#04B34C',
   switchOn: true,
   isRealRequest: false,
@@ -75,7 +75,6 @@ chrome.system.display.getInfo(function (displays) {
 });
 
 
-
 // 点击 icon 事件
 chrome.action.onClicked.addListener(() => {
   if (ftdWindow && ftdWindow.id) {
@@ -112,44 +111,11 @@ chrome.action.onClicked.addListener(() => {
 
 });
 
-function getMatchingTabs(tabs, url) {
-  const matchingTabs = [];
-  for (const tab of tabs) {
-    if (tab.url.startsWith(url)) {
-      matchingTabs.push(tab);
-    }
-  }
-  return matchingTabs;
-}
-
-function xxx(matchingTabId) {
-  chrome.runtime.sendMessage({action: "refreshTabToContent", data: {id: matchingTabId}});
-
-}
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(121333);
   console.log(request);
-  if (request.action === 'refreshTab') {
-    const currentProject = request.data.pathUrl;
-    console.log(currentProject);
-    chrome.tabs.query({}, async function (tabs) {
-      console.log(tabs, 121222222);
-      const targetUrl = new Url(request.data.pathUrl)
-      const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
-      if (matchingTabs.length > 0) {
-        const matchingTabId = matchingTabs[0].id;
-        console.log(matchingTabId, 'matchingTabId');
-        if (matchingTabId) {
-          // xxx(matchingTabId)
+ })
 
-        }
 
-      } else {
-        console.log("No matching tab found.");
-      }
-    });
 
-  }
-});
 
