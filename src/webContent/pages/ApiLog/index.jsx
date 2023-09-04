@@ -5,9 +5,9 @@ import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../
 import { useDomainStore } from '../../store';
 import { readLocalStorage } from "../../utils/index.js";
 import Url from "url-parse";
+import './apiLog.scss'
 
-
-const Account = () => {
+export const ApiLog = () => {
   const columns = [
     {
       title: 'Path',
@@ -167,4 +167,4 @@ const Account = () => {
     </>
   );
 };
-export default Account;
+ 

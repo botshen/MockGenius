@@ -3,7 +3,7 @@ import { mockFetch } from 'mockjs-fetch'
 mockFetch(Mock)
 
 // 模拟登录
-Mock.mock(/login/, {
+Mock.mock(/projectList/, {
     code: 200,
     msg: 'OK',
     data: {

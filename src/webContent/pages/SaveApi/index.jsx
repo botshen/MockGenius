@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Table, Tag, Space } from 'antd';
 import Detail from '../../components/detail';
-import './home.scss'
+import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { saveStorage, readLocalStorage } from '../../utils';
 
-const Home = () => {
+export const SaveApi = () => {
   const columns = [
     {
       title: 'Name',
@@ -135,5 +135,4 @@ const Home = () => {
     </>
   );
 }
-  ;
-export default Home;
+

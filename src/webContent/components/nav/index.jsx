@@ -14,12 +14,12 @@ function Nav(props) {
 
     const items = [
         {
-            key: '/home',
-            label: 'Saved Intercepts',
+            key: '/saveApi',
+            label: 'Save API',
         },
         {
-            key: '/account',
-            label: 'API Intercept Log',
+            key: '/apiLog',
+            label: 'API Log',
         },
     ]
 
@@ -30,7 +30,7 @@ function Nav(props) {
 
     // 退出到Login页面
     const onExit = () => {
-        navigate('/login')
+        navigate('/projectList')
     }
 
     return (

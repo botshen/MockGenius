@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { List, Button } from 'antd';
 import imgLogo from './logo.png'
-import './login.scss'
+import './ProjectList.scss'
 import DetailModal from './detailModal';
 import { saveStorage } from '../../utils';
 import { useDomainStore } from '../../store';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 
 
-function Login() {
+export const ProjectList = () => {
   const navigate = useNavigate()
   const { setDomain, setCurrentProject, domain } = useDomainStore()
   const [detailModalVisible, setdetailModalVisible] = useState(false)
@@ -31,7 +31,7 @@ function Login() {
     setDomain(item.pathUrl)
     await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, item.pathUrl)
     setCurrentProject(item)
-    navigate('/account')
+    navigate('/apiLog')
   }
   const onClose = () => {
     setdetailModalVisible(false)
@@ -118,4 +118,4 @@ function Login() {
   )
 }
 
-export default Login
+ 

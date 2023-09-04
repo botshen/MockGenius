@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Nav from '@/webContent/components/nav'
 import './entry.scss'
 
-function Entry() {
+export const Entry = () => {
     // 获取当前路由location
     const location = useLocation()
 
@@ -16,4 +16,3 @@ function Entry() {
     )
 }
 
-export default Entry
