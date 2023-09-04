@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Detail from '../../components/detail';
-import {Table, Tag} from 'antd';
-import {AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS} from '../../const';
-import {useDomainStore} from '../../store';
-import {readLocalStorage} from "../../utils/index.js";
+import { Table, Tag } from 'antd';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
+import { useDomainStore } from '../../store';
+import { readLocalStorage } from "../../utils/index.js";
 import Url from "url-parse";
 
 
@@ -45,7 +45,7 @@ const Account = () => {
 
     }
   ];
-  const {setCurrentProject, currentProject} = useDomainStore()
+  const { setCurrentProject, currentProject } = useDomainStore()
 
   const [list, setList] = useState([]);
   const [detailVisible, setdetailVisible] = useState(false);
@@ -64,7 +64,7 @@ const Account = () => {
 
   function checkAndInjectScript() {
     const scriptExists = document.querySelector('script[src*="insert.js"]');
-    console.log('scriptExists',scriptExists)
+    console.log('scriptExists', scriptExists)
     if (!scriptExists) {
       console.log('inject.js 不存在');
       const script = document.createElement('script')
@@ -90,51 +90,45 @@ const Account = () => {
     }
   }
   useEffect(() => {
-      (async () => {
-        let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-        let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-        // 第一次进来的时候设置一下当前 project 的 rules
-        console.log(currentProject);
-        chrome.tabs.query({}, function (tabs) {
-          console.log('tabs', tabs);
-          const targetUrl = new Url(currentProject)
-          const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
-          if (matchingTabs.length > 0) {
-            const matchingTabId = matchingTabs[0].id;
-            if (matchingTabId) {
-              console.log('matchingTabId', matchingTabId)
-              chrome.scripting.executeScript({
-                target: {tabId: matchingTabId},
-                function: checkAndInjectScript
-              });
-            }
-          } else {
-            console.log("No matching tab found.");
+    (async () => {
+      // let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+      let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+      // 第一次进来的时候设置一下当前 project 的 rules
+      chrome.tabs.query({}, function (tabs) {
+        const targetUrl = new Url(currentProject)
+        const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
+        if (matchingTabs.length > 0) {
+          const matchingTabId = matchingTabs[0].id;
+          if (matchingTabId) {
+            chrome.scripting.executeScript({
+              target: { tabId: matchingTabId },
+              function: checkAndInjectScript
+            });
           }
-
-        })
-      })();
-
-      chrome.runtime.onMessage.addListener(event => {
-        try {
-          console.log(event, 1200);
-          if (event.type === "ajaxInterceptor") {
-            const data = event.data;
-            const result = {
-              path: data.request.url,
-              status: data.response.status,
-              mock: isMockText(data.isMock),
-              type: data.request.type,
-              method: data.request.method,
-              response: JSON.parse(data.response.responseTxt)
-            }
-            setList(prevList => [result, ...prevList]);
-          }
-        } catch (e) {
-          console.error('e', e)
         }
       })
-    }, []
+    })();
+
+    chrome.runtime.onMessage.addListener(event => {
+      try {
+        console.log(event, 1200);
+        if (event.type === "ajaxInterceptor") {
+          const data = event.data;
+          const result = {
+            path: data.request.url,
+            status: data.response.status,
+            mock: isMockText(data.isMock),
+            type: data.request.type,
+            method: data.request.method,
+            response: JSON.parse(data.response.responseTxt)
+          }
+          setList(prevList => [result, ...prevList]);
+        }
+      } catch (e) {
+        console.error('e', e)
+      }
+    })
+  }, []
   )
 
   const setDetailFalse = () => {
@@ -148,7 +142,7 @@ const Account = () => {
     <>
       {
         detailVisible ?
-          (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse}/>)
+          (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse} />)
           :
           (
             <div>
@@ -164,7 +158,7 @@ const Account = () => {
                   };
                 }}
                 columns={columns}
-                dataSource={list}/>
+                dataSource={list} />
             </div>
 
           )

@@ -1,37 +1,26 @@
 console.log('insert.js loaded')
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
-import { parse, stringify } from 'flatted';
-import { pathToRegexp } from 'path-to-regexp'
-
+import {  stringify } from 'flatted';
+ 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
 
 function mockCore(url, method) {
-  console.log('method',method)
-  // 看下插件设置的数据结构
+   // 看下插件设置的数据结构
   const targetUrl = new Url(url)
-  console.log(targetUrl, 21232133132);
-  const str = targetUrl.pathname
+   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
-  console.log(currentProject, 321321);
-  return new Promise((resolve, reject) => {
+   return new Promise((resolve, reject) => {
     // 进入 mock 的逻辑判断
-    console.log('currentProject332323232', currentProject)
-    if (currentProject.switchOn) {
+     if (currentProject.switchOn) {
       const rules = currentProject.rules || []
       const currentRule = rules.find((item) => {
-        // console.log('item', item)
-        // console.log('pathToRegexp', pathToRegexp)
-        // const re = pathToRegexp(item.pathRule) // 匹配规则
-        // console.log('re', re)
-        // const match1 = re.exec(str)
-        // console.log('match1', match1)
+      
 
         return item.method === method && item.switchOn
       })
-      console.log(currentRule, 32321332);
-
+ 
       if (currentRule) {
         setTimeout(() => {
           resolve({
@@ -60,6 +49,7 @@ const sendMsg = (msg, isMock = false) => {
 
 function handMockResult({ res, request, config }) {
   const { response, path: rulePath, status } = res
+  console.log('respon22se',response)
   const result = {
     config,
     status,
@@ -84,12 +74,10 @@ function getCurrentProject() {
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
   )
-  console.log('inputElem', inputElem)
-  if (!inputElem) {
+   if (!inputElem) {
     return {};
   }
   const configStr = inputElem.value
-  console.log('configStr', configStr, '32')
   try {
     const config = JSON.parse(configStr);
     console.log('config', config)
@@ -132,9 +120,11 @@ proxy({
         .then((res) => {
           const { payload, result } = handMockResult({ res, request, config })
           sendMsg(payload, true)
-          if (getCurrentProject().isTerminalLogOpen) {
-            logTerminalMockMessage(config, result, request)
-          }
+          // if (getCurrentProject().isTerminalLogOpen) {
+          //   logTerminalMockMessage(config, result, request)
+          // }
+          console.log('result',result)
+          logTerminalMockMessage(config, result, request)
           handler.resolve(result)
         })
         .catch(() => {
