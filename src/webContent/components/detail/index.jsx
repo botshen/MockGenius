@@ -5,15 +5,26 @@ import SvelteJSONEditor from '../json/index'
 
 export default function Detail({ onCancel, onSubmit, data }) {
   const [readOnly, setReadOnly] = useState(false);
-  const [content, setContent] = useState({ json: {} });
+  const [content, setContent] = useState({
+    json: {},
+    text: undefined
+  });
   useEffect(() => {
     setContent({
-      json: data?.response ?? {}
+      json: data?.Response ?? {},
+      text: undefined
     })
+    console.log('data', data)
   }, [])
   const onFinish = (formData) => {
     console.log('Success:formData', formData);
-    onSubmit(formData)
+    console.log('content', content)
+    const form = {
+      ...formData,
+      Response: content.text ? JSON.parse(content.text) : content.json
+    }
+    console.log('form', form)
+    onSubmit(form)
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -33,12 +44,12 @@ export default function Detail({ onCancel, onSubmit, data }) {
           span: 24,
         }}
         initialValues={{
-          code: data?.status ?? '200',
-          switchOn: true,
-          delay: data?.delay ?? '',
+          code: data?.code ?? '200',
+          switchOn: data.switchOn ?? true,
+          delay: data?.delay ?? '0',
           method: data?.method ?? 'get',
-          pathRule: data?.path ?? '',
-          name: data?.path ?? ''
+          pathRule: data?.pathRule ?? '',
+          name: data?.name ?? ''
 
         }}
         onFinish={onFinish}

@@ -1,7 +1,7 @@
 import { createHashRouter, Navigate } from 'react-router-dom'
 import { ApiLog } from '../pages/ApiLog'
 import { SaveApi } from '../pages/SaveApi'
-import { ProjectList } from '../pages/login'
+import { ProjectList } from '../pages/projectList'
 import { Entry } from '../pages/entry'
 
 // 全局路由

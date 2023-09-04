@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Tabs } from 'antd'
 import './nav.scss'
 import { useDomainStore } from '../../store'
- 
+
 function Nav(props) {
     const bears = useDomainStore((state) => state.domain)
 
@@ -28,7 +28,6 @@ function Nav(props) {
         navigate(key)
     }
 
-    // 退出到Login页面
     const onExit = () => {
         navigate('/projectList')
     }

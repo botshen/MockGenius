@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, message, Table, Tag, Space } from 'antd';
+import { Button, message, Table, Tag, Space, Popconfirm } from 'antd';
 import Detail from '../../components/detail';
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { saveStorage, readLocalStorage } from '../../utils';
 
 export const SaveApi = () => {
+  const confirm = (record) => {
+    handleDelete(record)
+  };
   const columns = [
     {
       title: 'Name',
@@ -14,18 +17,31 @@ export const SaveApi = () => {
     },
     {
       title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      dataIndex: 'code',
+      key: 'code',
     },
     {
-      title: 'Mock',
-      dataIndex: 'mock',
-      key: 'mock',
-    },
-    {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type',
+      title: 'SwitchOn',
+      dataIndex: 'switchOn',
+      key: 'switchOn',
+      render: (switchOn) => {
+        let color = 'green';
+        let closeColor = 'red';
+        if (switchOn) {
+          return (
+            <Tag color={color} key={switchOn}>
+              开启
+            </Tag>
+          )
+        } else {
+          return (
+            <Tag color={closeColor} key={switchOn}>
+              关闭
+            </Tag>
+          )
+        }
+
+      },
     },
     {
       title: 'Method',
@@ -39,16 +55,22 @@ export const SaveApi = () => {
           </Tag>
         )
       },
-
-
     },
     {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <a onClick={(record) => handleEdit(record)}>Edit</a>
-          <a onClick={(record) => handleDelete(record)}>Delete</a>
+          <Button type="text" onClick={() => handleEdit(record)} >Edit</Button>
+          <Popconfirm
+            title="删除警告"
+            description="你确定要删除吗?"
+            onConfirm={() => confirm(record)}
+            okText="是"
+            cancelText="否"
+          >
+            <Button type="text" danger >Delete</Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -92,7 +114,10 @@ export const SaveApi = () => {
   }, [datalist]
   )
   const handleDelete = (record) => {
-    console.log('record', record)
+    const newDatalist = [...datalist]
+    const deleteIndex = newDatalist.findIndex(item => item.pathRule === record.pathRule)
+    newDatalist.splice(deleteIndex, 1)
+    setDatalist(newDatalist)
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
@@ -109,9 +134,27 @@ export const SaveApi = () => {
     setDetailVisible(true);
   }
   const DetailSubmit = (formData) => {
-    console.log('444444',)
-    setDatalist([formData, ...datalist]); // 直接替换 datalist
+    const pathRule = formData.pathRule
+    if (datalist.some(item => item.pathRule === pathRule && item.pathRule !== detailData.pathRule)) {
+      messageApi.error('pathRule重复');
+      return
+    }
+    // 区分新增和修改
+    if (detailData.pathRule) {
+      const newDatalist = [...datalist]
+      const updateIndex = newDatalist.
+        findIndex(item => item.pathRule === detailData.pathRule)
+      newDatalist.splice(updateIndex, 1, formData)
+      setDatalist(newDatalist)
+      messageApi.success('修改成功');
+
+    } else {
+      setDatalist([formData, ...datalist]);
+      messageApi.success('新增成功');
+
+    }
     setDetailVisible(false);
+    console.log('datalist', datalist)
   }
   return (
     <>
@@ -121,11 +164,13 @@ export const SaveApi = () => {
           (<Detail data={detailData} onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
           <div className='home-wrapper'>
             <Button type="primary" onClick={() => {
+              setdetailData({})
               setDetailTrue()
-            }}>添加规则</Button>
+            }}>
+              添加规则
+            </Button>
             <Table
               size="small"
-
               columns={columns}
               dataSource={datalist} />
           </div>
