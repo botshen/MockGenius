@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
 import chokidar from 'chokidar';
 const filesToWatch = ['src', 'public']; // 监视的文件或文件夹
-const buildCommand = 'npm run build'; // 构建命令
+const buildCommand = 'npm run build'; // 构建
 
 const watcher = chokidar.watch(filesToWatch);
 
