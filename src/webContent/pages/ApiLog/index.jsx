@@ -3,7 +3,7 @@ import Detail from '../../components/detail';
 import { Table, Tag } from 'antd';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { useDomainStore } from '../../store';
-import { readLocalStorage } from "../../utils/index.js";
+import { readLocalStorage, setGlobalData } from "../../utils/index.js";
 import Url from "url-parse";
 import './apiLog.scss'
 
@@ -62,9 +62,8 @@ export const ApiLog = () => {
   }
 
 
-  function checkAndInjectScript() {
+  async function checkAndInjectScript() {
     const scriptExists = document.querySelector('script[src*="insert.js"]');
-    console.log('scriptExists', scriptExists)
     if (!scriptExists) {
       console.log('inject.js 不存在');
       const script = document.createElement('script')
@@ -72,11 +71,11 @@ export const ApiLog = () => {
       console.log(script);
       script.setAttribute('src', chrome.runtime.getURL('insert.js'))
       document.documentElement.appendChild(script)
-
       const input = document.createElement('input')
       input.setAttribute('id', 'api-mock-12138')
       input.setAttribute('style', 'display:none')
       document.documentElement.appendChild(input)
+      await setGlobalData()
     } else {
       console.log('inject.js 存在');
     }
@@ -84,22 +83,21 @@ export const ApiLog = () => {
 
   const isMockText = (isMock) => {
     if (isMock) {
-      return '穿透'
+      return 'Mock'
     } else {
-      return '拦截'
+      return '穿透'
     }
   }
   useEffect(() => {
     (async () => {
-      // let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-      // 第一次进来的时候设置一下当前 project 的 rules
       chrome.tabs.query({}, function (tabs) {
         const targetUrl = new Url(currentProject)
         const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
         if (matchingTabs.length > 0) {
           const matchingTabId = matchingTabs[0].id;
-          if (matchingTabId) {
+          const scriptExists = document.querySelector('script[src*="insert.js"]');
+          if (matchingTabId && !scriptExists) {
             chrome.scripting.executeScript({
               target: { tabId: matchingTabId },
               function: checkAndInjectScript
@@ -167,4 +165,3 @@ export const ApiLog = () => {
     </>
   );
 };
- 

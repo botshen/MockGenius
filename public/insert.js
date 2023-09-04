@@ -1,40 +1,32 @@
 console.log('insert.js loaded')
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
-import {  stringify } from 'flatted';
- 
+import { stringify } from 'flatted';
+
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
 
-function mockCore(url, method) {
-   // 看下插件设置的数据结构
-  const targetUrl = new Url(url)
-   const str = targetUrl.pathname
+async function mockCore(url, method) {
+   const targetUrl = new Url(url)
+  const str = targetUrl.pathname
   const currentProject = getCurrentProject()
-   return new Promise((resolve, reject) => {
-    // 进入 mock 的逻辑判断
-     if (currentProject.switchOn) {
-      const rules = currentProject.rules || []
-      const currentRule = rules.find((item) => {
-      
-
-        return item.method === method && item.switchOn
-      })
- 
-      if (currentRule) {
-        setTimeout(() => {
-          resolve({
-            response: currentRule.response,
-            path: currentRule.path,
-            status: currentRule.status,
-          })
-        }, currentRule.delay || 0)
-
-        return
-      }
+  console.log('currentProject',currentProject)
+  if (currentProject.switchOn) {
+    const rules = currentProject.rules || []
+    const currentRule = rules.find((item) => {
+      const med = item.method.toUpperCase()
+      return med === method && item.switchOn
+    })
+    if (currentRule) {
+      await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
+      return {
+        response: currentRule.response,
+        path: currentRule.path,
+        status: currentRule.status,
+      };
     }
-    reject()
-  })
+  }
+  throw new Error("没有匹配的规则"); // 没有匹配的规则时，抛出错误
 }
 
 
@@ -49,7 +41,7 @@ const sendMsg = (msg, isMock = false) => {
 
 function handMockResult({ res, request, config }) {
   const { response, path: rulePath, status } = res
-  console.log('respon22se',response)
+  console.log('respon22se', response)
   const result = {
     config,
     status,
@@ -74,7 +66,7 @@ function getCurrentProject() {
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
   )
-   if (!inputElem) {
+  if (!inputElem) {
     return {};
   }
   const configStr = inputElem.value
@@ -101,36 +93,54 @@ function logTerminalMockMessage(config, result, request) {
 }
 
 proxy({
-  onRequest: (config, handler) => {
+  onRequest: async (config, handler) => {
     if (getCurrentProject().isRealRequest) {
       console.log('isRealRequest');
       handler.next(config)
     } else {
       console.log('isNotRealRequest');
-      // TODO: url 对象里面的信息非常有用啊
       const url = new Url(config.url)
-
       const request = {
         url: url.href,
         method: config.method,
         headers: config.headers,
         type: 'xhr',
       }
-      mockCore(url.href, config.method)
-        .then((res) => {
-          const { payload, result } = handMockResult({ res, request, config })
-          sendMsg(payload, true)
-          // if (getCurrentProject().isTerminalLogOpen) {
-          //   logTerminalMockMessage(config, result, request)
-          // }
-          console.log('result',result)
-          logTerminalMockMessage(config, result, request)
-          handler.resolve(result)
-        })
-        .catch(() => {
-          console.log('catch');
-          handler.next(config)
-        })
+      try {
+        const res = await mockCore(url.href, config.method);
+        // 处理匹配到规则的情况
+        console.log('匹配到规则:', res);
+        const { payload, result } = handMockResult({ res, request, config })
+        sendMsg(payload, true)
+        // if (getCurrentProject().isTerminalLogOpen) {
+        //   logTerminalMockMessage(config, result, request)
+        // }
+        console.log('result', result)
+        logTerminalMockMessage(config, result, request)
+        handler.resolve(result)
+      } catch (error) {
+        // 处理没有匹配到规则的情况
+        console.log('没有匹配到规则');
+        console.log('catch');
+        handler.next(config)
+      }
+      // mockCore(url.href, config.method)
+      //   .then((res) => {
+      //     const { payload, result } = handMockResult({ res, request, config })
+      //     sendMsg(payload, true)
+      //     // if (getCurrentProject().isTerminalLogOpen) {
+      //     //   logTerminalMockMessage(config, result, request)
+      //     // }
+      //     console.log('result', result)
+      //     logTerminalMockMessage(config, result, request)
+      //     handler.resolve(result)
+      //   })
+      //   .catch(() => {
+      //     console.log('catch');
+      //     handler.next(config)
+      //   })
+
+
     }
 
 
