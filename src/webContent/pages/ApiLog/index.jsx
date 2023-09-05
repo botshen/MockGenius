@@ -129,12 +129,17 @@ export const ApiLog = () => {
           (
             <div>
               <Table
-                size="small"
+                size="middle"
+                rowClassName={(record, index) => {
+                  if (index === 0) {
+                    return 'even-row';
+                  }
+                }}
+                pagination={false}
                 onRow={(record) => {
                   return {
                     onClick: () => {
                       setdetailData(record);
-                      console.log('recordno', record)
                       setdetailVisible(true);
                     },
 
