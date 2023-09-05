@@ -109,8 +109,9 @@ export const ApiLog = () => {
         console.log('event-apilog', event)
         if (event.type === "ajaxInterceptor") {
           const data = event.data;
+          const targetUrl = new Url(data.request.url)
           const result = {
-            pathRule: data.request.url,
+            pathRule: targetUrl.pathname,
             status: data.response.status,
             mock: isMockText(data.isMock),
             type: data.request.type,

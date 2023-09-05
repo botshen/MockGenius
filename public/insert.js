@@ -101,6 +101,7 @@ proxy({
       handler.next(config)
     } else {
       const url = new Url(config.url)
+      console.log('url',url)
       const request = {
         url: url.href,
         method: config.method,
