@@ -64,6 +64,7 @@ window.addEventListener(
   async (event) => {
     console.log('event-content',event)
     if (chrome.runtime?.id) {
+      console.log('发了一次请求')
       await chrome.runtime.sendMessage({
         type: "ajaxInterceptor",
         message: "content_to_background",
