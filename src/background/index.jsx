@@ -8,9 +8,8 @@ let screenHeight = null
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
-  name: '将军令',
-  pathUrl: 'http://localhost:9528',
-  color: '#04B34C',
+  name: 'test',
+  pathUrl: 'http://localhost:3000',
   switchOn: true,
   isRealRequest: false,
   isTerminalLogOpen: false,
@@ -18,9 +17,6 @@ const defaultProjectProduct = {
 // manifest.json的Permissions配置需添加declarativeContent权限
 chrome.runtime.onInstalled.addListener(async function () {
   console.log('onInstalled')
-  const currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-  // if(currentProject===)
-  console.log(currentProject, 1200000);
   // 默认先禁止Page Action。如果不加这一句，则无法生效下面的规则
   // chrome.action.disable()
   // chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {

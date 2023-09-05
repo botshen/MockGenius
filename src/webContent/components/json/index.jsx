@@ -21,10 +21,11 @@ export default function SvelteJSONEditor(props) {
   }, []);
 
   useEffect(() => {
+    console.log('props', props)
     if (refEditor.current) {
       refEditor.current.updateProps(props);
     }
-  }, [props]);
+  }, [props.content]);
 
   return <div className="jsoneditor-wrapper" ref={refContainer}></div>;
 }

@@ -6,14 +6,22 @@ import SvelteJSONEditor from '../json/index'
 export default function Detail({ onCancel, onSubmit, data }) {
   const [readOnly, setReadOnly] = useState(false);
   const [content, setContent] = useState({
-    json: {},
+    json: {
+      greeting: "Hello World",
+      color: "#ff3e00",
+      ok: true,
+      values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    },
     text: undefined
   });
   useEffect(() => {
-    setContent({
-      json: data?.Response ?? {},
-      text: undefined
-    })
+    if (data && data.Response) {
+      setContent({
+        json: data.Response,
+        text: undefined
+      })
+    }
+
   }, [])
   const onFinish = (formData) => {
     const form = {

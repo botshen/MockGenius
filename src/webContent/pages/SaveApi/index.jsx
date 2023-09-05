@@ -117,6 +117,7 @@ export const SaveApi = () => {
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
+    console.log('recordyes',record)
     setdetailData(record);
     setDetailVisible(true);
   }

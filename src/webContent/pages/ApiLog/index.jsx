@@ -134,6 +134,7 @@ export const ApiLog = () => {
                   return {
                     onClick: () => {
                       setdetailData(record);
+                      console.log('recordno', record)
                       setdetailVisible(true);
                     },
 
