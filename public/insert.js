@@ -40,7 +40,7 @@ const sendMsg = (msg, isMock = false) => {
 
 function handMockResult({ res, request, config }) {
   const { response, path: rulePath, status } = res
-   const result = {
+  const result = {
     config,
     status,
     headers: [],
@@ -80,18 +80,17 @@ function getCurrentProject() {
 }
 
 function logTerminalMockMessage(config, result, request) {
-   console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
+  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
   if (JSON.parse(config.body)) {
     console.log('%c请求:', 'color: red;', JSON.parse(config.body))
   }
-  if (JSON.parse(result.response)) {
+  if (result.response) {
     console.log('%c响应:', 'color: red;', result.response)
   }
 }
 
 proxy({
   onRequest: async (config, handler) => {
-    console.log('12138',12138)
     if (getCurrentProject().isRealRequest) {
       handler.next(config)
     } else {
@@ -105,12 +104,11 @@ proxy({
       try {
         const res = await mockCore(url.href, config.method);
         const { payload, result } = handMockResult({ res, request, config })
-        console.log('被拦截，发消息')
         sendMsg(payload, true)
         // if (getCurrentProject().isTerminalLogOpen) {
         //   logTerminalMockMessage(config, result, request)
         // }
-        // logTerminalMockMessage(config, result, request)
+        logTerminalMockMessage(config, result, request)
         handler.resolve(result)
       } catch (error) {
         handler.next(config)
@@ -129,13 +127,12 @@ proxy({
         type: 'xhr',
       }
       const { payload, result } = handMockResult({ res, request, config })
-      console.log('返回被拦截，发消息')
 
       sendMsg(payload, true)
       // if (getCurrentProject().isTerminalLogOpen) {
       //   logTerminalMockMessage(config, result, request)
       // }
-      // logTerminalMockMessage(config, result, request)
+      logTerminalMockMessage(config, result, request)
       handler.resolve(result)
     } catch (error) {
       const url = new Url(config.url)
@@ -156,7 +153,7 @@ proxy({
           rulePath: '',
         },
       }
-      console.log('返回未被拦截，发消息')
+
       sendMsg(payload)
       handler.resolve(response)
     }
