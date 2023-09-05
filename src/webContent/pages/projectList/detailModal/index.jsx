@@ -14,9 +14,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
-  useEffect(() => {
-    console.log('formData1', formData)
-  }, [])
+ 
   return (
     <>
       <Modal

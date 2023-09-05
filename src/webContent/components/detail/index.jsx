@@ -14,16 +14,12 @@ export default function Detail({ onCancel, onSubmit, data }) {
       json: data?.Response ?? {},
       text: undefined
     })
-    console.log('data', data)
   }, [])
   const onFinish = (formData) => {
-    console.log('Success:formData', formData);
-    console.log('content', content)
     const form = {
       ...formData,
       Response: content.text ? JSON.parse(content.text) : content.json
     }
-    console.log('form', form)
     onSubmit(form)
   };
   const onFinishFailed = (errorInfo) => {
@@ -49,8 +45,7 @@ export default function Detail({ onCancel, onSubmit, data }) {
           delay: data?.delay ?? '0',
           method: data?.method ?? 'get',
           pathRule: data?.pathRule ?? '',
-          name: data?.name ?? ''
-
+          name: data?.name ?? data.pathRule,
         }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}

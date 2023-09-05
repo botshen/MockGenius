@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Detail from '../../components/detail';
-import { Table, Tag } from 'antd';
+import { Table, Tag, message } from 'antd';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { useDomainStore } from '../../store';
 import { readLocalStorage, setGlobalData } from "../../utils/index.js";
@@ -11,8 +11,8 @@ export const ApiLog = () => {
   const columns = [
     {
       title: 'Path',
-      dataIndex: 'path',
-      key: 'path',
+      dataIndex: 'pathRule',
+      key: 'pathRule',
     },
     {
       title: 'Status',
@@ -46,6 +46,7 @@ export const ApiLog = () => {
     }
   ];
   const { setCurrentProject, currentProject } = useDomainStore()
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [list, setList] = useState([]);
   const [detailVisible, setdetailVisible] = useState(false);
@@ -65,10 +66,8 @@ export const ApiLog = () => {
   async function checkAndInjectScript() {
     const scriptExists = document.querySelector('script[src*="insert.js"]');
     if (!scriptExists) {
-      console.log('inject.js 不存在');
       const script = document.createElement('script')
       script.setAttribute('type', 'module')
-      console.log(script);
       script.setAttribute('src', chrome.runtime.getURL('insert.js'))
       document.documentElement.appendChild(script)
       const input = document.createElement('input')
@@ -76,8 +75,6 @@ export const ApiLog = () => {
       input.setAttribute('style', 'display:none')
       document.documentElement.appendChild(input)
       await setGlobalData()
-    } else {
-      console.log('inject.js 存在');
     }
   }
 
@@ -109,16 +106,15 @@ export const ApiLog = () => {
 
     chrome.runtime.onMessage.addListener(event => {
       try {
-        console.log(event, 1200);
         if (event.type === "ajaxInterceptor") {
           const data = event.data;
           const result = {
-            path: data.request.url,
+            pathRule: data.request.url,
             status: data.response.status,
             mock: isMockText(data.isMock),
             type: data.request.type,
             method: data.request.method,
-            response: JSON.parse(data.response.responseTxt)
+            Response: JSON.parse(data.response.responseTxt)
           }
           setList(prevList => [result, ...prevList]);
         }
@@ -132,12 +128,31 @@ export const ApiLog = () => {
   const setDetailFalse = () => {
     setdetailVisible(false);
   }
-  const handleDetailSubmit = (formData) => {
+  const handleDetailSubmit = async (formData) => {
+    let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+    let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+    const arr = projectList.find(item => item.pathUrl === currentProject)?.rules
+    let isExist = false;
+    arr.forEach((item, index) => {
+      if (item.pathRule === formData.pathRule) {
+        arr[index] = formData
+        isExist = true;
+      }
+    })
+    if (!isExist) {
+      arr.unshift(formData)
+    }
+    await chrome.storage.local.set({ [AJAX_INTERCEPTOR_PROJECTS]: projectList });
+    if (isExist) {
+      messageApi.success('修改成功');
+    } else {
+      messageApi.success('新增成功');
+    }
     setdetailVisible(false);
-
   }
   return (
     <>
+      {contextHolder}
       {
         detailVisible ?
           (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse} />)

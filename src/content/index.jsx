@@ -1,5 +1,4 @@
 
-console.log('env:', import.meta.env.MODE)
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'

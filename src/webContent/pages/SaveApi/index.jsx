@@ -82,11 +82,9 @@ export const SaveApi = () => {
   const [messageApi, contextHolder] = message.useMessage();
   useEffect(() => {
     (async () => {
-      console.log('mounted')
       let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
       const arr = projectList.find(item => item.pathUrl === currentProject)?.rules
-      console.log('arr', arr)
       if (arr.length) {
         setDatalist(arr)
       }
@@ -95,8 +93,6 @@ export const SaveApi = () => {
 
   useEffect(() => {
     (async () => {
-      console.log('datalist update', datalist)
-
       let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
       const data = projectList.map((item, index) => {
@@ -121,16 +117,13 @@ export const SaveApi = () => {
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
-    console.log('1111111', record)
     setdetailData(record);
     setDetailVisible(true);
   }
   const setDetailFalse = () => {
-    console.log('222222')
     setDetailVisible(false);
   }
   const setDetailTrue = () => {
-    console.log('333333')
     setDetailVisible(true);
   }
   const DetailSubmit = (formData) => {
@@ -154,7 +147,6 @@ export const SaveApi = () => {
 
     }
     setDetailVisible(false);
-    console.log('datalist', datalist)
   }
   return (
     <>
