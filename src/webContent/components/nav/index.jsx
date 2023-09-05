@@ -2,9 +2,17 @@ import { useNavigate } from 'react-router-dom'
 import { Button, Tabs } from 'antd'
 import './nav.scss'
 import { useDomainStore } from '../../store'
+import { useEffect } from 'react'
 
 function Nav(props) {
-    const bears = useDomainStore((state) => state.domain)
+    const { setDomain, domain } = useDomainStore()
+
+    useEffect(() => {
+        chrome.storage.local.get(['ajaxInterceptor_current_project'], (result) => {
+            setDomain(result['ajaxInterceptor_current_project'])
+        })
+    })
+
 
     // 通过当前路由的location来匹配Tab的激活态
     const { location } = props
@@ -34,7 +42,7 @@ function Nav(props) {
 
     return (
         <div className="M-nav">
-            <span className='domain'>{bears}</span>
+            <span className='domain'>{domain}</span>
             <Tabs
                 activeKey={location.pathname}
                 items={items}

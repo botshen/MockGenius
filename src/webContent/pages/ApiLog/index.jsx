@@ -45,11 +45,9 @@ export const ApiLog = () => {
 
     }
   ];
-  // FIXME: 1. 从store中获取当前项目 
-  const { apiLogList, addApiLogList } = useDomainStore()
+  // FIXME:  domain处理 
+  const { apiLogList } = useDomainStore()
   const [messageApi, contextHolder] = message.useMessage();
-
-  // const [list, setList] = useState([]);
   const [detailVisible, setdetailVisible] = useState(false);
   const [detailData, setdetailData] = useState({});
 
@@ -62,8 +60,6 @@ export const ApiLog = () => {
     }
     return matchingTabs;
   }
-
-
   async function checkAndInjectScript() {
     const scriptExists = document.querySelector('script[src*="insert.js"]');
     if (!scriptExists) {
@@ -78,15 +74,6 @@ export const ApiLog = () => {
       await setGlobalData()
     }
   }
-
-  const isMockText = (isMock) => {
-    if (isMock) {
-      return 'Mock'
-    } else {
-      return '穿透'
-    }
-  }
-  
   useEffect(() => {
     (async () => {
       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
@@ -105,31 +92,8 @@ export const ApiLog = () => {
         }
       })
     })();
-
-    // chrome.runtime.onMessage.addListener(event => {
-    //   try {
-    //     console.log('event-apilog', event)
-    //     if (event.type === "ajaxInterceptor") {
-    //       const data = event.data;
-    //       const targetUrl = new Url(data.request.url)
-    //       const result = {
-    //         pathRule: targetUrl.pathname,
-    //         status: data.response.status,
-    //         mock: isMockText(data.isMock),
-    //         type: data.request.type,
-    //         method: data.request.method,
-    //         Response: data.response.responseTxt
-    //       }
-    //       console.log('apiLogList',apiLogList)
-    //       addApiLogList(result);
-    //     }
-    //   } catch (e) {
-    //     console.error('e', e)
-    //   }
-    // })
   }, []
   )
-
   const setDetailFalse = () => {
     setdetailVisible(false);
   }

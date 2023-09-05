@@ -5,12 +5,9 @@ const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
 
 async function mockCore(url, method) {
-  console.log('method', method)
   const targetUrl = new Url(url)
-  console.log('targetUrl', targetUrl)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
-  console.log('currentProject', currentProject)
   if (currentProject.switchOn) {
     const rules = currentProject.rules || []
     const currentRule = rules.find((item) => {
@@ -19,7 +16,6 @@ async function mockCore(url, method) {
       const pathname = pathRule.pathname
       return med === method && item.switchOn && str === pathname
     })
-    console.log('currentRule', currentRule)
     if (currentRule) {
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
       return {
@@ -44,8 +40,7 @@ const sendMsg = (msg, isMock = false) => {
 
 function handMockResult({ res, request, config }) {
   const { response, path: rulePath, status } = res
-  console.log('response-insert', response)
-  const result = {
+   const result = {
     config,
     status,
     headers: [],
@@ -85,8 +80,7 @@ function getCurrentProject() {
 }
 
 function logTerminalMockMessage(config, result, request) {
-  console.log('result', result)
-  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
+   console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
   if (JSON.parse(config.body)) {
     console.log('%c请求:', 'color: red;', JSON.parse(config.body))
   }
@@ -97,11 +91,11 @@ function logTerminalMockMessage(config, result, request) {
 
 proxy({
   onRequest: async (config, handler) => {
+    console.log('12138',12138)
     if (getCurrentProject().isRealRequest) {
       handler.next(config)
     } else {
       const url = new Url(config.url)
-      console.log('url',url)
       const request = {
         url: url.href,
         method: config.method,
@@ -110,10 +104,8 @@ proxy({
       }
       try {
         const res = await mockCore(url.href, config.method);
-        // 处理匹配到规则的情况
-        console.log('匹配到规则:', res);
         const { payload, result } = handMockResult({ res, request, config })
-        console.log('payload', payload)
+        console.log('被拦截，发消息')
         sendMsg(payload, true)
         // if (getCurrentProject().isTerminalLogOpen) {
         //   logTerminalMockMessage(config, result, request)
@@ -121,8 +113,6 @@ proxy({
         // logTerminalMockMessage(config, result, request)
         handler.resolve(result)
       } catch (error) {
-        // 处理没有匹配到规则的情况
-        console.log('没有匹配到规则');
         handler.next(config)
       }
     }
@@ -139,6 +129,8 @@ proxy({
         type: 'xhr',
       }
       const { payload, result } = handMockResult({ res, request, config })
+      console.log('返回被拦截，发消息')
+
       sendMsg(payload, true)
       // if (getCurrentProject().isTerminalLogOpen) {
       //   logTerminalMockMessage(config, result, request)
@@ -146,7 +138,6 @@ proxy({
       // logTerminalMockMessage(config, result, request)
       handler.resolve(result)
     } catch (error) {
-      console.log('返回没有匹配到规则')
       const url = new Url(config.url)
       const payload = {
         request: {
@@ -165,7 +156,7 @@ proxy({
           rulePath: '',
         },
       }
-      console.log('payload', payload)
+      console.log('返回未被拦截，发消息')
       sendMsg(payload)
       handler.resolve(response)
     }

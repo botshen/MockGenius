@@ -1,6 +1,5 @@
 /*global chrome*/
-import Url from 'url-parse'
-import {readLocalStorage} from "../webContent/utils/index.js";
+import { readLocalStorage } from "../webContent/utils/index.js";
 
 console.log('background running')
 let ftdWindow = null
@@ -61,7 +60,7 @@ chrome.runtime.onInstalled.addListener(async function () {
 })
 chrome.windows.onRemoved.addListener(async (windowId) => {
   if (ftdWindow && ftdWindow.id === windowId) {
-    await chrome.action.setBadgeText({text: ''});
+    await chrome.action.setBadgeText({ text: '' });
     ftdWindow = null;
   }
 });
@@ -114,7 +113,7 @@ chrome.action.onClicked.addListener(() => {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   console.log(request);
- })
+})
 
 
 

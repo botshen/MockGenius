@@ -54,12 +54,11 @@ export const ProjectList = () => {
   const handleDelete = (index) => {
     return async () => {
       const deleteName = apiList.find((item, i) => i === index)
-      console.log('deleteName.name', deleteName.name)
       const newApiList = [...apiList]
       newApiList.splice(index, 1)
       setApiList(newApiList)
       await saveStorage(AJAX_INTERCEPTOR_PROJECTS, newApiList)
-      if (newApiList.length === 0) {
+      if (newApiList && newApiList.length === 0) {
         await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, null)
         setDomain('')
       }
@@ -82,7 +81,7 @@ export const ProjectList = () => {
       }
       <div className="login-wrapper">
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span>url: {domain}</span>
+          <span style={{fontSize:'16px'}}>currentUrl: {domain}</span>
           <img onClick={() => {
             setDetailModalMode('add')
             setdetailModalVisible(true)
@@ -118,4 +117,3 @@ export const ProjectList = () => {
   )
 }
 
- 

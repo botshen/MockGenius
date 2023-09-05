@@ -7,7 +7,6 @@ import { useDomainStore } from './store';
 
 function WebContent() {
     const { addApiLogList } = useDomainStore()
-
     const isMockText = (isMock) => {
         if (isMock) {
             return 'Mock'
@@ -16,11 +15,9 @@ function WebContent() {
         }
     }
     useEffect(() => {
-        console.log('webcontent mounted')
-        chrome.runtime.onMessage.addListener(event => {
+         chrome.runtime.onMessage.addListener(event => {
             try {
-                console.log('event-apilog', event)
-                if (event.type === "ajaxInterceptor") {
+                 if (event.type === "ajaxInterceptor") {
                     const data = event.data;
                     const targetUrl = new Url(data.request.url)
                     const result = {

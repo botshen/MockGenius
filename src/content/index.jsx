@@ -62,9 +62,7 @@ chrome.storage.local.get(keys, (result) => {
 window.addEventListener(
   CUSTOM_EVENT_NAME,
   async (event) => {
-    console.log('event-content',event)
     if (chrome.runtime?.id) {
-      console.log('发了一次请求')
       await chrome.runtime.sendMessage({
         type: "ajaxInterceptor",
         message: "content_to_background",
@@ -77,7 +75,6 @@ window.addEventListener(
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "refreshTabToContent") {
-    console.log('request', request)
     const { pathUrl } = request.data
     const { origin } = location;
     if (origin === pathUrl) {
