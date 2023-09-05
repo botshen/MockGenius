@@ -1,12 +1,13 @@
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
-// import { stringify } from 'flatted';
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
 
 async function mockCore(url, method) {
+  console.log('method', method)
   const targetUrl = new Url(url)
+  console.log('targetUrl', targetUrl)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
   console.log('currentProject', currentProject)
@@ -14,9 +15,11 @@ async function mockCore(url, method) {
     const rules = currentProject.rules || []
     const currentRule = rules.find((item) => {
       const med = item.method.toUpperCase()
-      return med === method && item.switchOn
+      const pathRule = new Url(item.pathRule)
+      const pathname = pathRule.pathname
+      return med === method && item.switchOn && str === pathname
     })
-    console.log('currentRul11e', currentRule)
+    console.log('currentRule', currentRule)
     if (currentRule) {
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
       return {
@@ -41,6 +44,7 @@ const sendMsg = (msg, isMock = false) => {
 
 function handMockResult({ res, request, config }) {
   const { response, path: rulePath, status } = res
+  console.log('response-insert', response)
   const result = {
     config,
     status,
@@ -105,15 +109,15 @@ proxy({
       }
       try {
         const res = await mockCore(url.href, config.method);
-        console.log('res11111', res)
         // 处理匹配到规则的情况
         console.log('匹配到规则:', res);
         const { payload, result } = handMockResult({ res, request, config })
+        console.log('payload', payload)
         sendMsg(payload, true)
         // if (getCurrentProject().isTerminalLogOpen) {
         //   logTerminalMockMessage(config, result, request)
         // }
-        logTerminalMockMessage(config, result, request)
+        // logTerminalMockMessage(config, result, request)
         handler.resolve(result)
       } catch (error) {
         // 处理没有匹配到规则的情况
@@ -138,9 +142,10 @@ proxy({
       // if (getCurrentProject().isTerminalLogOpen) {
       //   logTerminalMockMessage(config, result, request)
       // }
-      logTerminalMockMessage(config, result, request)
+      // logTerminalMockMessage(config, result, request)
       handler.resolve(result)
     } catch (error) {
+      console.log('返回没有匹配到规则')
       const url = new Url(config.url)
       const payload = {
         request: {
@@ -154,7 +159,7 @@ proxy({
           statusText,
           url: config.url,
           headers: headers,
-          responseTxt: res,
+          responseTxt: JSON.parse(res),
           isMock: false,
           rulePath: '',
         },

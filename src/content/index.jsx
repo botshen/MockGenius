@@ -62,6 +62,7 @@ chrome.storage.local.get(keys, (result) => {
 window.addEventListener(
   CUSTOM_EVENT_NAME,
   async (event) => {
+    console.log('event-content',event)
     if (chrome.runtime?.id) {
       await chrome.runtime.sendMessage({
         type: "ajaxInterceptor",
@@ -85,3 +86,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
   }
 });
+
+/**
+ * 监听插件的操作界面，设置拦截规则，设置项目的打开关闭或者规则的开启关闭，实时通知给用户的页面
+ */
+chrome.storage.onChanged.addListener((changes) => {
+  for (const [key] of Object.entries(changes)) {
+    if (keys.find((item) => item === key)) {
+      setGlobalData()
+    }
+  }
+})

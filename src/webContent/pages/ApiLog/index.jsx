@@ -106,6 +106,7 @@ export const ApiLog = () => {
 
     chrome.runtime.onMessage.addListener(event => {
       try {
+        console.log('event-apilog', event)
         if (event.type === "ajaxInterceptor") {
           const data = event.data;
           const result = {
@@ -114,7 +115,7 @@ export const ApiLog = () => {
             mock: isMockText(data.isMock),
             type: data.request.type,
             method: data.request.method,
-            Response: JSON.parse(data.response.responseTxt)
+            Response: data.response.responseTxt
           }
           setList(prevList => [result, ...prevList]);
         }
