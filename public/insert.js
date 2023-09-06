@@ -80,12 +80,15 @@ function getCurrentProject() {
 }
 
 function logTerminalMockMessage(config, result, request) {
-  console.log(`%cURL:${request.url} METHOD:${request.method}`, 'color: red')
-  if (JSON.parse(config.body)) {
-    console.log('%c请求:', 'color: red;', JSON.parse(config.body))
-  }
+  const targetUrl = new Url(request.url)
+  const str = targetUrl.pathname
+  console.log(`%cURL:%c${str} METHOD:${request.method}`, 'color: red;background-color:yellow', 'color: red;background-color:yellow');
+
+  // if (JSON.parse(config.body)) {
+  //   console.log('%c请求:', 'color: red;', JSON.parse(config.body))
+  // }
   if (result.response) {
-    console.log('%c响应:', 'color: red;', result.response)
+    console.log('%c响应:', 'color: red;background-color:yellow', result.response)
   }
 }
 

@@ -16,15 +16,16 @@ function WebContent() {
             return '穿透'
         }
     }
+
     useEffect(() => {
         (async () => {
             try {
-                let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-                console.log('currentProject',currentProject)
-                if (!currentProject) {
-                    return
-                }
-                chrome.runtime.onMessage.addListener(event => {
+                chrome.runtime.onMessage.addListener(async (event) => {
+                    let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+                    console.log('currentProject', currentProject)
+                    if (!currentProject) {
+                        return
+                    }
                     console.log('event-WebContent', event)
                     const domainPath = event.data.request.url
                     const domainUrl = new Url(domainPath)
@@ -41,6 +42,7 @@ function WebContent() {
                                 method: data.request.method,
                                 Response: data.response.responseTxt
                             }
+                            console.log('result', result)
                             addApiLogList(result);
                         }
                     }

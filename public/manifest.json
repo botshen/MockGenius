@@ -1,7 +1,7 @@
 {
-  "name": "Chrome插件V3",
-  "version": "1.0",
-  "description": "基于Vite的chrome插件V3 Demo",
+  "name": "MockGenius",
+  "version": "0.0.1",
+  "description": "MockGenius is a powerful and intuitive Chrome extension that empowers developers to seamlessly mock backend data. Whether you're a frontend engineer, web developer, or testing professional, MockGenius makes it effortless to create, manage, and apply simulated data, saving time and enhancing efficiency throughout your development process.",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
