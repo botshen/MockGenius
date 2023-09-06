@@ -128,6 +128,7 @@ export const SaveApi = () => {
     setDetailVisible(true);
   }
   const DetailSubmit = (formData) => {
+    console.log('formData',formData)
     const pathRule = formData.pathRule
     if (datalist.some(item => item.pathRule === pathRule && item.pathRule !== detailData.pathRule)) {
       messageApi.error('pathRule重复');

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { List, Button } from 'antd';
+import { List, Button, message } from 'antd';
 import imgLogo from './logo.png'
 import './ProjectList.scss'
 import DetailModal from './detailModal';
@@ -11,6 +11,8 @@ import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../
 
 export const ProjectList = () => {
   const navigate = useNavigate()
+  const [messageApi, contextHolder] = message.useMessage();
+
   const { setDomain, setCurrentProject, domain } = useDomainStore()
   const [detailModalVisible, setdetailModalVisible] = useState(false)
   const [projectFormData, setProjectFormData] = useState({})
@@ -38,13 +40,37 @@ export const ProjectList = () => {
     setProjectFormData({})
   }
   const DetailModalClose = async (formData) => {
-    const result = {
-      ...formData,
-      switchOn: true,
+    console.log('formData', formData)
+    if (detailModalMode === 'edit') {
+      if (apiList.some(item => item.pathUrl === formData.pathUrl && item.pathUrl !== projectFormData.pathUrl)) {
+        messageApi.error('pathRule重复');
+        return
+      } else {
+        const newApiList = [...apiList]
+        const editIndex = newApiList.findIndex(item => item.pathUrl === formData.pathUrl)
+        newApiList.splice(editIndex, 1, formData)
+        setApiList(newApiList)
+        setdetailModalVisible(false)
+        return
+      }
+    } else if (detailModalMode === 'add') {
+      console.log('apiList', apiList)
+      console.log('formData', formData)
+      if (apiList.some(item => item.pathUrl === formData.pathUrl)) {
+        messageApi.error('pathRule重复');
+        return
+      } else {
+        const result = {
+          ...formData,
+          switchOn: true,
+        }
+        setProjectFormData({})
+        setApiList((prevApiList) => [...prevApiList, result]);
+        setdetailModalVisible(false)
+      }
+
     }
-    setProjectFormData({})
-    setApiList((prevApiList) => [...prevApiList, result]);
-    setdetailModalVisible(false)
+
   }
   useEffect(() => {
     (async () => {
@@ -71,6 +97,7 @@ export const ProjectList = () => {
   }
   return (
     <>
+      {contextHolder}
       {
         detailModalVisible &&
         <DetailModal
@@ -81,9 +108,11 @@ export const ProjectList = () => {
       }
       <div className="login-wrapper">
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <span style={{fontSize:'16px'}}>currentUrl: {domain}</span>
+          <span style={{ fontSize: '16px' }}>currentUrl: {domain}</span>
           <img onClick={() => {
             setDetailModalMode('add')
+            setProjectFormData({})
+
             setdetailModalVisible(true)
           }} src={imgLogo} alt="" className="logo" />
 
