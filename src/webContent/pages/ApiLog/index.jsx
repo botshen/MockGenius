@@ -45,8 +45,7 @@ export const ApiLog = () => {
 
     }
   ];
-  // FIXME:  domain处理 
-  const { apiLogList } = useDomainStore()
+  const { apiLogList, setApiLogList } = useDomainStore()
   const [messageApi, contextHolder] = message.useMessage();
   const [detailVisible, setdetailVisible] = useState(false);
   const [detailData, setdetailData] = useState({});
@@ -91,6 +90,11 @@ export const ApiLog = () => {
           }
         }
       })
+      // 不是一个项目的请求不展示
+      const currentLog = apiLogList.filter(item => {
+        return item.origin === currentProject
+      })
+      setApiLogList(currentLog)
     })();
   }, []
   )

@@ -33,6 +33,7 @@ function WebContent() {
                     if (domainUrl.origin === currentProject) {
                         if (event.type === "ajaxInterceptor") {
                             const data = event.data;
+                            console.log('dat------a',data)
                             const targetUrl = new Url(data.request.url)
                             const result = {
                                 pathRule: targetUrl.pathname,
@@ -40,7 +41,8 @@ function WebContent() {
                                 mock: isMockText(data.isMock),
                                 type: data.request.type,
                                 method: data.request.method,
-                                Response: data.response.responseTxt
+                                Response: data.response.responseTxt,
+                                origin: targetUrl.origin,
                             }
                             console.log('result', result)
                             addApiLogList(result);
