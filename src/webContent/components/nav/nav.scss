@@ -1,5 +1,7 @@
 .M-nav {
     position: relative;
+    display: flex;
+    align-items: center;
 
     .ant-tabs .ant-tabs-nav {
         margin-bottom: 0;
@@ -12,8 +14,6 @@
     }
     .domain{
         font-size: 16px;
-        top:15px;
-        position: absolute;
-        left: 10px;
+        margin: 0 20px;
     }
 }

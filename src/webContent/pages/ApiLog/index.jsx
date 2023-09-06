@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Detail from '../../components/detail';
-import { Table, Tag, message } from 'antd';
+import { Table, Tag, message, FloatButton } from 'antd';
+import { MinusCircleFilled } from '@ant-design/icons';
+
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { useDomainStore } from '../../store';
 import { readLocalStorage, setGlobalData } from "../../utils/index.js";
@@ -98,6 +100,9 @@ export const ApiLog = () => {
     })();
   }, []
   )
+  const handleClearLog = () => {
+    setApiLogList([])
+  }
   const setDetailFalse = () => {
     setdetailVisible(false);
   }
@@ -125,6 +130,7 @@ export const ApiLog = () => {
   }
   return (
     <>
+      <FloatButton onClick={handleClearLog} icon={<MinusCircleFilled />} type="default" />
       {contextHolder}
       {
         detailVisible ?

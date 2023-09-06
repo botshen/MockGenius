@@ -4,7 +4,8 @@ import {Modal, Form, Input} from 'antd';
 
 const DetailModal = ({onClose, saveProject, formData, mode}) => {
   const [form] = Form.useForm();
-
+  const originReg = /^(?=^.{3,255}$)(http(s)?:\/\/)(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}){0,}(:\d+)*$/
+  const originPlaceholder = 'protocol://hostname[:port]'
   const handleCancel = () => {
     onClose()
   };
@@ -56,7 +57,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
             rules={[
               {
                 required: true,
-                message: 'Please input your username!',
+                message: '请输入项目名称!',
               },
             ]}
           >
@@ -69,8 +70,11 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
             rules={[
               {
                 required: true,
-                message: 'Please input your password!',
+                message: '请输入项目域名!',
               },
+              {
+                pattern: originReg, message: `请输入符合规格的域名，${originPlaceholder}`
+              }
             ]}
           >
             <Input/>
