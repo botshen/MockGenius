@@ -1,5 +1,8 @@
 # MockGenius
-MockGenius is a powerful and intuitive Chrome extension that empowers developers to seamlessly mock backend data. Whether you're a frontend engineer, web developer, or testing professional, MockGenius makes it effortless to create, manage, and apply simulated data, saving time and enhancing efficiency throughout your development process.
+Intercept requests and directly return Mock data , including XMLHttpRequest, fetch class interface This is a Mock tool to intercept the corresponding request and directly return configuration data . It can help us in the development process , to reduce the dependence on interfaces , as far as possible to ensure that we can and more clear logic to develop or test code .
+
+拦截请求并直接返回 Mock 数据，包括 XMLHttpRequest、fetch类接口
+这是一款拦截对应请求并直接返回配置数据的 Mock 工具。它能帮助我们在开发过程中，减少对接口的依赖，尽可能保证我们能及更加清晰的逻辑来开发或者测试代码。
 
 ## Key Features:
 
@@ -34,6 +37,25 @@ Run：
 ```
 yarn build
 ```
-
- 
+TODO: 
+- [ ] mock返回的config的mock
+- [ ] 增加动态前缀
+- [ ] 根据字段含义能生成mock数据
+- [ ] 支持对请求fetch类进行拦截
+- [ ] 根据 swagger2.0 文档自动生成 Mock 数据
+- [ ] 支持 GraphQL 请求的 Mock。
+- [ ] 允许对匹配的接口进行 Redirect 操作。
+- [ ] 提供 contains、equals 和 regexp 三种匹配模式，以满足不同的接口匹配需求
+- [ ] 支持中英文两种语言。根据浏览器语言环境，自动显示对应的语言。
+- [ ] 支持一键重置。
+- [ ] 支持对 Mock 的配置进行 Clone。
+- [ ] 支持 Mock 列表分组。
+- [ ] 根据入参不同返回mock不同的返回值
+- [ ] 支持期望来重复循环上百条数据
+- [ ] 提取json数据结构
+- [ ] 分页数据，根据入参的页数返回不同的数据
+- [ ] 备选常用的生活数据进行mock
+- [ ] 多语言
+- [ ] 换肤
+  
  
