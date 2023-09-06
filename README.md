@@ -1,4 +1,4 @@
- # MockGenius
+# MockGenius
 MockGenius is a powerful and intuitive Chrome extension that empowers developers to seamlessly mock backend data. Whether you're a frontend engineer, web developer, or testing professional, MockGenius makes it effortless to create, manage, and apply simulated data, saving time and enhancing efficiency throughout your development process.
 
 ## Key Features:
@@ -17,31 +17,20 @@ By embracing MockGenius, you'll unlock unparalleled development velocity and fle
 ## Installation
 Run：
 ```
-npm install
-```
-Or
-```
 yarn
 ```
 
-## Usage: Development Environment
+## Usage: Development
 
 Run：
 ```
-npm run dev
+node watch.js
 ```
-Or
-```
-yarn dev
-```
+Saving a random file triggers compilation, which then loads or expands in the browser
 
-## Usage 
+## Build: Production Environment
  
 Run：
-```
-npm run build
-```
-Or
 ```
 yarn build
 ```
