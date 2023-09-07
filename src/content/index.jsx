@@ -4,7 +4,7 @@ const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
 const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
-
+console.log('inject')
 const executeScript = (data) => {
   const code = JSON.stringify(data)
   const inputElem = document.getElementById(
@@ -62,6 +62,7 @@ chrome.storage.local.get(keys, (result) => {
 window.addEventListener(
   CUSTOM_EVENT_NAME,
   async (event) => {
+    console.log('event',event)
     if (chrome.runtime?.id) {
       await chrome.runtime.sendMessage({
         type: "ajaxInterceptor",

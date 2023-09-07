@@ -108,26 +108,51 @@ export const ApiLog = () => {
   }
   const handleDetailSubmit = async (formData) => {
     let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-    let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-    const arr = projectList.find(item => item.pathUrl === currentProject)?.rules
-    let isExist = false;
-    arr.forEach((item, index) => {
-      if (item.pathRule === formData.pathRule) {
-        arr[index] = formData
-        isExist = true;
+    let currentProjectUrl = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+    console.log('currentProjectUrl', currentProjectUrl)
+    console.log('projectList', projectList)
+    const currentProject = projectList.find(item => item.pathUrl === currentProjectUrl)
+
+    console.log('currentProject', currentProject)
+    let currentResult = []
+    // 如果currentProject.rules里面没有pathUrl，就新增
+    if (!currentProject.rules.find(item => item.pathRule === formData.pathRule)) {
+      console.log('121',121)
+      //currentResult等于新的数组，数据不可变
+      currentResult = [formData, ...currentProject.rules]
+    } else {
+      console.log('1222221',12221)
+
+      currentResult = currentProject.rules.map(item => {
+        if (item.pathRule === formData.pathRule) {
+          return {
+            ...item,
+            ...formData
+          }
+        } else {
+          return item
+        }
+      })
+    }
+
+    console.log('currentResult', currentResult)
+    const newProjectList = projectList.map(item => {
+      if (item.pathUrl === currentProjectUrl) {
+        return {
+          ...item,
+          rules: currentResult
+        }
+      } else {
+        return item
       }
     })
-    if (!isExist) {
-      arr.unshift(formData)
-    }
-    await chrome.storage.local.set({ [AJAX_INTERCEPTOR_PROJECTS]: projectList });
-    if (isExist) {
-      messageApi.success('修改成功');
-    } else {
-      messageApi.success('新增成功');
-    }
+    console.log('newProjectList', newProjectList)
+    await chrome.storage.local.set({ [AJAX_INTERCEPTOR_PROJECTS]: newProjectList });
     setdetailVisible(false);
   }
+
+
+
   return (
     <>
       <FloatButton onClick={handleClearLog} icon={<MinusCircleFilled />} type="default" />

@@ -18,6 +18,7 @@
     }
   ],
   "permissions": [
+    "<all_urls>",
     "storage",
     "declarativeContent",
     "system.display",
@@ -25,7 +26,10 @@
     "activeTab",
     "tabs"
   ],
-  "host_permissions": [],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "web_accessible_resources": [
     {
       "resources": [

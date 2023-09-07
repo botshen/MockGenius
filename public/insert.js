@@ -1,5 +1,7 @@
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
+import FetchInterceptor from './fetch'
+
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'api-mock-12138'
@@ -94,6 +96,7 @@ function logTerminalMockMessage(config, result, request) {
 
 proxy({
   onRequest: async (config, handler) => {
+    console.log('config',config)
     if (getCurrentProject().isRealRequest) {
       handler.next(config)
     } else {
@@ -129,6 +132,7 @@ proxy({
         headers: config.headers,
         type: 'xhr',
       }
+      console.log('111111', 111111)
       const { payload, result } = handMockResult({ res, request, config })
 
       sendMsg(payload, true)
@@ -139,6 +143,8 @@ proxy({
       handler.resolve(result)
     } catch (error) {
       const url = new Url(config.url)
+      console.log('res', res)
+
       const payload = {
         request: {
           method: config.method,
@@ -166,3 +172,98 @@ proxy({
 
   },
 })
+
+if (window.fetch !== undefined) {
+  FetchInterceptor.register({
+    onBeforeRequest(request) {
+      console.log('request',request)
+      return mockCore(request.url, request.method).then((res) => {
+        try {
+          const { path: rulePath } = res
+          const text = JSON.stringify(res.response)
+          const response = new Response()
+          response.json = () => Promise.resolve(res.response)
+          response.text = () => Promise.resolve(text)
+          response.isMock = true
+          response.rulePath = rulePath
+          return response
+        } catch (err) {
+          console.error(err)
+        }
+      })
+    },
+    onRequestSuccess(
+      response,
+      request
+    ) {
+      const payload = {
+        request: {
+          type: 'fetch',
+          method: request.method,
+          url: request.url,
+          headers: request.headers,
+        },
+        response: {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          headers: response.headers,
+          responseTxt: '',
+          isMock: false,
+          rulePath: '',
+        },
+      }
+
+      // TODO: 数据格式化，流是不能直接转成字符串的, 如何获取到 response 中的字符串返回
+      if (response.isMock) {
+        response.json().then((res) => {
+          const result = {
+            status: response.status,
+            url: request.url,
+            headers: [],
+            responseTxt: JSON.stringify(res),
+            isMock: true,
+            rulePath: response.rulePath,
+          }
+          payload.response = result
+          sendMsg(payload, true)
+        })
+      } else {
+        const cloneRes = response.clone()
+        cloneRes.json().then((res) => {
+          const result = {
+            status: response.status,
+            url: request.url,
+            headers: [],
+            responseTxt: JSON.stringify(res),
+            isMock: false,
+            rulePath: '',
+          }
+          payload.response = result
+          sendMsg(payload)
+        })
+      }
+    },
+    onRequestFailure(response, request) {
+      const payload = {
+        request: {
+          type: 'fetch',
+          method: request.method,
+          url: request.url,
+          headers: request.headers,
+        },
+        response: {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.url,
+          headers: response.headers,
+          responseTxt: '',
+          isMock: false,
+          rulePath: '',
+        },
+      }
+
+      sendMsg(payload)
+    },
+  }, getCurrentProject().isRealRequest)
+}

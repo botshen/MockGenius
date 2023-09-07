@@ -3,6 +3,7 @@ import { readLocalStorage } from "../webContent/utils/index.js";
 
 console.log('background running')
 let ftdWindow = null
+let ftdTab = null
 let screenWith = null
 let screenHeight = null
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
@@ -71,6 +72,40 @@ chrome.system.display.getInfo(function (displays) {
 
 
 // 点击 icon 事件
+// chrome.action.onClicked.addListener(() => {
+//   if (ftdWindow && ftdWindow.id) {
+//     console.log('The window exists!')
+//     const info = {
+//       focused: true,
+//     }
+//     chrome.windows.update(ftdWindow.id, info, (w) => {
+//       if (!w) {
+//         ftdWindow = null
+//       }
+//     })
+//   } else {
+//     chrome.storage.local.get(['windowSize'], function (result) {
+//       let width = 800
+//       let height = 600
+//       /// 从storage中获取窗口大小
+
+//       if (result.windowSize) {
+//         width = parseInt(result.windowSize.width)
+//         height = parseInt(result.windowSize.height)
+//       }
+//       const left = parseInt((screenWith - width) / 2)
+//       const top = parseInt((screenHeight - height) / 2)
+
+//       chrome.windows.create({
+//         url: chrome.runtime.getURL('index.html'), type: 'popup', left, top, width, height,
+//       }, function (window) {
+//         ftdWindow = window
+//       })
+//     })
+//   }
+
+
+// });
 chrome.action.onClicked.addListener(() => {
   if (ftdWindow && ftdWindow.id) {
     console.log('The window exists!')
@@ -84,28 +119,28 @@ chrome.action.onClicked.addListener(() => {
     })
   } else {
     chrome.storage.local.get(['windowSize'], function (result) {
-      let width = 800
-      let height = 600
-      /// 从storage中获取窗口大小
+      // let width = 800
+      // let height = 600
+      // /// 从storage中获取窗口大小
 
-      if (result.windowSize) {
-        width = parseInt(result.windowSize.width)
-        height = parseInt(result.windowSize.height)
-      }
-      const left = parseInt((screenWith - width) / 2)
-      const top = parseInt((screenHeight - height) / 2)
+      // if (result.windowSize) {
+      //   width = parseInt(result.windowSize.width)
+      //   height = parseInt(result.windowSize.height)
+      // }
+      // const left = parseInt((screenWith - width) / 2)
+      // const top = parseInt((screenHeight - height) / 2)
 
-      chrome.windows.create({
-        url: chrome.runtime.getURL('index.html'), type: 'popup', left, top, width, height,
-      }, function (window) {
-        ftdWindow = window
-      })
+      // 创建一个新标签页面而不是窗口
+      chrome.tabs.create({
+        url: chrome.runtime.getURL('index.html'),
+        active: true, // 设置标签页为活动状态
+      }, function (tab) {
+        // 在标签页创建后的回调函数
+        ftdTab = tab;
+      });
     })
   }
-
-
 });
-
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   console.log(request);
