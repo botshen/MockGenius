@@ -1,5 +1,14 @@
-.ProjectDetail-wrapper{
+.ProjectDetail-wrapper {
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: calc(100vh - 100px);
+  padding: 20px;
+}
+
+ 
+
+.ant-layout-content {
+  padding: 24px;
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
 }

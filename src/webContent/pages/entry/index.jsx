@@ -8,7 +8,7 @@ export const Entry = () => {
 
     return (
         <div className="M-entry">
-            <Nav location={location} />
+            {/* <Nav location={location} /> */}
             <div className="main-container">
                 <Outlet />
             </div>

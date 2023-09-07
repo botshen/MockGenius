@@ -31,11 +31,11 @@ export const globalRouters = createHashRouter([
             },
             {
                 path: '/',
-                element: <Navigate to="/projectList" />,
+                element: <Navigate to="/ProjectDetail" />,
             },
             {
                 path: '*',
-                element: <Navigate to="/projectList" />,
+                element: <Navigate to="/ProjectDetail" />,
             },
         ],
     },
