@@ -10,13 +10,13 @@ async function mockCore(url, method) {
   const targetUrl = new Url(url)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
-  if (currentProject.switchOn) {
+  if (currentProject?.switchOn) {
     const rules = currentProject.rules || []
     const currentRule = rules.find((item) => {
       const med = item.method.toUpperCase()
       const pathRule = new Url(item.pathRule)
       const pathname = pathRule.pathname
-      return med === method && item.switchOn && str === pathname
+      return med === method && item?.switchOn && str === pathname
     })
     if (currentRule) {
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));

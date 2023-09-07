@@ -43,12 +43,7 @@ function Nav(props) {
     return (
         <div className="M-nav">
             <span className='domain'>{domain}</span>
-            <Tabs
-                activeKey={location.pathname}
-                items={items}
-                onChange={onTabChange}
-                centered
-            />
+            
             <Button className="btn-exit" type="primary" onClick={onExit}>
                 Exit
             </Button>

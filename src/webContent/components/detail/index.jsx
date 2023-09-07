@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Form, Switch, InputNumber, Select } from 'antd';
+import { Button, Input, Form, Switch, InputNumber, Select, Drawer,Space } from 'antd';
 import SvelteJSONEditor from '../json/index'
 
-
+const tailLayout = {
+  wrapperCol: {
+    offset: 8,
+    span: 16,
+  },
+};
 export default function Detail({ onCancel, onSubmit, data }) {
   const [readOnly, setReadOnly] = useState(false);
   const [content, setContent] = useState({
@@ -14,6 +19,18 @@ export default function Detail({ onCancel, onSubmit, data }) {
     },
     text: undefined
   });
+  const [open, setOpen] = useState(true);
+  const [placement, setPlacement] = useState('right');
+  const showDrawer = () => {
+      setOpen(true);
+  };
+  const onChange = (e) => {
+      setPlacement(e.target.value);
+  };
+  const onClose = () => {
+      setOpen(false);
+  };
+ 
   useEffect(() => {
     if (data && data.Response) {
       setContent({
@@ -37,139 +54,154 @@ export default function Detail({ onCancel, onSubmit, data }) {
     console.log(`selected ${value}`);
   };
   return (
-    <div className='detail-wrapper'>
-      <Form
-        className='form-wrapper'
-        name="basic"
-        labelCol={{
-          span: 3,
-        }}
-        wrapperCol={{
-          span: 24,
-        }}
-        initialValues={{
-          code: data?.code ?? '200',
-          switchOn: data.switchOn ?? true,
-          delay: data?.delay ?? '0',
-          method: data?.method ?? 'get',
-          pathRule: data?.pathRule ?? '',
-          name: data?.name ?? data.pathRule,
-        }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        <Form.Item
-          wrapperCol={{
-            offset: 1,
-            span: 16,
+    <Drawer
+      title="Drawer with extra actions"
+      placement={placement}
+      width={800}
+      onClose={onClose}
+      open={open}
+      extra={
+        <Space>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button type="primary" onClick={onClose}>
+            OK
+          </Button>
+        </Space>
+      }
+    >
+      <div className='detail-wrapper'>
+        <Form
+          className='form-wrapper'
+          name="basic"
+          labelCol={{
+            span: 3,
           }}
+          wrapperCol={{
+            span: 24,
+          }}
+          initialValues={{
+            code: data?.code ?? '200',
+            switchOn: data?.switchOn ?? true,
+            delay: data?.delay ?? '0',
+            method: data?.method ?? 'get',
+            pathRule: data?.pathRule ?? '',
+            name: data?.name ?? data?.pathRule,
+          }}
+          onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
+          autoComplete="off"
         >
-          <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
-            Submit
-          </Button>
-          <Button onClick={onCancel} type="primary">
-            Cancel
-          </Button>
-        </Form.Item>
-        <Form.Item
-          label="name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your username!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="switchOn"
-          name="switchOn"
-          valuePropName="checked"
 
-        >
-          <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
-        </Form.Item>
-        <Form.Item
-          label="pathRule"
-          name="pathRule"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your pathRule!',
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          label="Response"
-          name="Response"
-        >
-          <SvelteJSONEditor
-            content={content}
-            readOnly={readOnly}
-            onChange={setContent}
-            mode="text"
-          />
-        </Form.Item>
-
-
-
-        <Form.Item
-          label="Method"
-          name="method"
-        >
-          <Select
-            style={{
-              width: 120,
-            }}
-            onChange={handleChange}
-            options={[
+          <Form.Item
+            label="name"
+            name="name"
+            rules={[
               {
-                value: 'get',
-                label: 'get',
+                required: true,
+                message: 'Please input your username!',
               },
-              {
-                value: 'post',
-                label: 'post',
-              }
             ]}
-          />
-        </Form.Item>
-        <Form.Item
-          label="Delay"
-          name="delay"
-        >
-          <InputNumber addonAfter="ms" />
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="switchOn"
+            name="switchOn"
+            valuePropName="checked"
 
-        </Form.Item>
-
-
-        <Form.Item
-          label="code"
-          name="code"
-        >
-          <Select
-            style={{
-              width: 120,
-            }}
-            onChange={handleChange}
-            options={[
+          >
+            <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+          </Form.Item>
+          <Form.Item
+            label="pathRule"
+            name="pathRule"
+            rules={[
               {
-                value: '200',
-                label: '200',
+                required: true,
+                message: 'Please input your pathRule!',
               },
-              {
-                value: '404',
-                label: '404',
-              }
             ]}
-          />
-        </Form.Item>
-      </Form>
-    </div>
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Response"
+            name="Response"
+          >
+            <SvelteJSONEditor
+              content={content}
+              readOnly={readOnly}
+              onChange={setContent}
+              mode="text"
+            />
+          </Form.Item>
+
+
+
+          <Form.Item
+            label="Method"
+            name="method"
+          >
+            <Select
+              style={{
+                width: 120,
+              }}
+              onChange={handleChange}
+              options={[
+                {
+                  value: 'get',
+                  label: 'get',
+                },
+                {
+                  value: 'post',
+                  label: 'post',
+                }
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Delay"
+            name="delay"
+          >
+            <InputNumber addonAfter="ms" />
+
+          </Form.Item>
+
+
+          <Form.Item
+            label="code"
+            name="code"
+          >
+            <Select
+              style={{
+                width: 120,
+              }}
+              onChange={handleChange}
+              options={[
+                {
+                  value: '200',
+                  label: '200',
+                },
+                {
+                  value: '404',
+                  label: '404',
+                }
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            {...tailLayout}
+          >
+            <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
+              Submit
+            </Button>
+            <Button onClick={onCancel} type="primary">
+              Cancel
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+    </Drawer>
+
   );
 }

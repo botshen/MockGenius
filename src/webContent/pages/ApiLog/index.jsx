@@ -155,17 +155,16 @@ export const ApiLog = () => {
 
   return (
     <>
-      <FloatButton onClick={handleClearLog} icon={<MinusCircleFilled />} type="default" />
+      {/* <FloatButton onClick={handleClearLog} icon={<MinusCircleFilled />} type="default" /> */}
       {contextHolder}
       {
         detailVisible ?
           (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse} />)
           :
           (
-            <div>
+            <div className='log-wrapper'>
               <Table
-                size="middle"
-                rowClassName={(record, index) => {
+                 rowClassName={(record, index) => {
                   if (index === 0) {
                     return 'even-row';
                   }

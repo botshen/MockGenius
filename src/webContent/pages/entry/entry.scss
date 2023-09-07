@@ -1,14 +1,17 @@
 .M-entry {
     display: flex;
     flex-direction: column;
+    height: 100vh;
     // height: 100%;
     // width: 800px;
     // height: 600px;
 
     .main-container {
-        position: relative;
-        flex: 1;
+        // position: relative;
+        // flex: 1;
         padding: 20px;
+        height: 100%;
+
 
     }
 }

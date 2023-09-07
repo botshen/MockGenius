@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm } from 'antd';
 import Detail from '../../components/detail';
+import { SearchOutlined } from '@ant-design/icons';
+
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { saveStorage, readLocalStorage } from '../../utils';
 
-export const SaveApi = () => {
+export const SaveApi = ({onAddRule}) => {
   const confirm = (record) => {
     handleDelete(record)
   };
@@ -85,7 +87,7 @@ export const SaveApi = () => {
       let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
       const arr = projectList.find(item => item.pathUrl === currentProject)?.rules
-      if (arr.length) {
+      if (arr && arr.length) {
         setDatalist(arr)
       }
     })();
@@ -117,7 +119,7 @@ export const SaveApi = () => {
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
-    console.log('recordyes',record)
+    console.log('recordyes', record)
     setdetailData(record);
     setDetailVisible(true);
   }
@@ -128,7 +130,7 @@ export const SaveApi = () => {
     setDetailVisible(true);
   }
   const DetailSubmit = (formData) => {
-    console.log('formData',formData)
+    console.log('formData', formData)
     const pathRule = formData.pathRule
     if (datalist.some(item => item.pathRule === pathRule && item.pathRule !== detailData.pathRule)) {
       messageApi.error('pathRule重复');
@@ -150,6 +152,13 @@ export const SaveApi = () => {
     }
     setDetailVisible(false);
   }
+  const handleAddRule = () => {
+    // setdetailData({})
+    // setDetailTrue()
+    onAddRule({
+      mode: 'add'
+    })
+  }
   return (
     <>
       {contextHolder}
@@ -157,14 +166,10 @@ export const SaveApi = () => {
         detailVisible ?
           (<Detail data={detailData} onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
           <div className='home-wrapper'>
-            <Button type="primary" onClick={() => {
-              setdetailData({})
-              setDetailTrue()
-            }}>
+            <Button type="primary" onClick={handleAddRule} icon={<SearchOutlined />}>
               添加规则
             </Button>
             <Table
-              size="small"
               columns={columns}
               dataSource={datalist} />
           </div>

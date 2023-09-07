@@ -9,8 +9,8 @@ let screenHeight = null
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
-  name: 'test',
-  pathUrl: 'http://localhost:3000',
+  name: 'vite-test',
+  pathUrl: 'http://localhost:5173',
   switchOn: true,
   isRealRequest: false,
   isTerminalLogOpen: false,

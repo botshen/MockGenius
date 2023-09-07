@@ -33,7 +33,7 @@ export const ProjectList = () => {
     setDomain(item.pathUrl)
     await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, item.pathUrl)
     setCurrentProject(item)
-    navigate('/apiLog')
+    navigate('/projectDetail')
   }
   const onClose = () => {
     setdetailModalVisible(false)
