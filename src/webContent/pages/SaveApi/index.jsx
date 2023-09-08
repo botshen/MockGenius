@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, message, Table, Tag, Space, Popconfirm } from 'antd';
+import { Button, message, Table, Tag, Space, Popconfirm, Tabs } from 'antd';
 import Detail from '../../components/detail';
-import { PlusOutlined, ClearOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
@@ -77,21 +77,51 @@ export const SaveApi = ({ onAddRule }) => {
       ),
     },
   ];
+
   const [datalist, setDatalist] = useState([]);
   const [detailData, setdetailData] = useState({});
-
+  const [items, setItems] = useState([])
+  const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [detailVisible, setDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  // useEffect(() => {
+  //   (async () => {
+  //     try {
+  //       let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+  //       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+  //       if (!projectList) {
+  //         // 设置初始
+  //         const defaultProjectProduct = {
+  //           pathUrl: 'localhost:3000',
+  //           rules: []
+  //         }
+  //         await saveStorage(AJAX_INTERCEPTOR_PROJECTS, [defaultProjectProduct])
+  //         await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, defaultProjectProduct.pathUrl)
+  //       }
+  //       console.log('projectList', projectList)
+  //       setItems(projectList.map((item, index) => {
+  //         return {
+  //           key: item.pathUrl,
+  //           label: item.pathUrl,
+  //           children: <Table
+  //             columns={columns}
+  //             dataSource={item.rules} />,
+  //         }
+  //       }))
+  //       setDefaultActiveKey(currentProject)
+  //     } catch (error) {
+  //       // Handle the exception here
+  //       console.error('An error occurred:', error);
+  //     }
+  //   })();
+  // }, []);
   useEffect(() => {
-    (async () => {
-      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-      let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-      const arr = projectList.find(item => item.pathUrl === currentProject)?.rules
-      if (arr && arr.length) {
-        setDatalist(arr)
-      }
-    })();
+    chrome.storage.local.get([AJAX_INTERCEPTOR_PROJECTS]).then((result) => {
+      console.log("Value currently is " + result);
+    });
+
   }, [])
+
 
   useEffect(() => {
     (async () => {
@@ -111,6 +141,28 @@ export const SaveApi = ({ onAddRule }) => {
     })();
   }, [datalist]
   )
+  const remove = (targetKey) => {
+    let newActiveKey = defaultActiveKey;
+    let lastIndex = -1;
+    items.forEach((item, i) => {
+      if (item.key === targetKey) {
+        lastIndex = i - 1;
+      }
+    });
+    const newPanes = items.filter((item) => item.key !== targetKey);
+    if (newPanes.length && newActiveKey === targetKey) {
+      if (lastIndex >= 0) {
+        newActiveKey = newPanes[lastIndex].key;
+      } else {
+        newActiveKey = newPanes[0].key;
+      }
+    }
+    setItems(newPanes);
+    setDefaultActiveKey(newActiveKey);
+  };
+  const onEdit = (targetKey) => {
+    remove(targetKey);
+  }
   const handleDelete = (record) => {
     const newDatalist = [...datalist]
     const deleteIndex = newDatalist.findIndex(item => item.pathRule === record.pathRule)
@@ -159,6 +211,29 @@ export const SaveApi = ({ onAddRule }) => {
       mode: 'add'
     })
   }
+  // const items = [
+  //   {
+  //     key: '1',
+  //     label: 'localhost:3000',
+  //     children: <Table
+  //       columns={columns}
+  //       dataSource={datalist} />,
+  //   },
+  //   {
+  //     key: '2',
+  //     label: 'localhost:3001',
+  //     children: <Table
+  //       columns={columns}
+  //       dataSource={datalist} />,
+  //   },
+  //   {
+  //     key: '3',
+  //     label: 'localhost:3002',
+  //     children: <Table
+  //       columns={columns}
+  //       dataSource={datalist} />,
+  //   },
+  // ];
   return (
     <>
       {contextHolder}
@@ -167,17 +242,31 @@ export const SaveApi = ({ onAddRule }) => {
           (<Detail data={detailData} onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
           <div className='home-wrapper'>
             <div className="saved-api">
-              <div style={{ marginLeft: '10px' }} className="mock-page-title">已保存接口：</div>
-              <div>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                gap: '20px',
+              }}
+              >
+                <Button type="primary" icon={<PlusOutlined />}  >
+                  添加地址
+                </Button>
+                <Button type="primary" icon={<EditOutlined />}  >
+                  编辑地址
+                </Button>
                 <Button type="primary" onClick={handleAddRule} icon={<PlusOutlined />}>
                   添加规则
                 </Button>
               </div>
 
             </div>
-            <Table
-              columns={columns}
-              dataSource={datalist} />
+            <Tabs
+              defaultActiveKey={defaultActiveKey}
+              type="editable-card"
+              items={items}
+              hideAdd
+              onEdit={onEdit}
+            />
           </div>
       }
 

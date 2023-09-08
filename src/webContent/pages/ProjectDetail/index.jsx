@@ -1,14 +1,15 @@
 import { ApiLog } from "../ApiLog"
-import { Switch, Divider, Radio, Layout, Dropdown, theme, Button } from 'antd';
-import { PlusOutlined, ClearOutlined } from '@ant-design/icons';
+import { Switch, Divider, Layout, Dropdown, theme, Button } from 'antd';
+import { ClearOutlined } from '@ant-design/icons';
 import { SettingOutlined, SmileOutlined } from '@ant-design/icons';
-
-const { Header, Content, Footer } = Layout;
 import { SaveApi } from "../SaveApi"
 import './projectDetail.scss'
 import Detail from "../../components/detail";
-import { SearchOutlined } from '@ant-design/icons';
+import { useEffect, useState } from "react";
+import { useDomainStore } from '../../store';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from "../../const";
 
+const { Header, Content } = Layout;
 
 export const ProjectDetail = () => {
     const items = [
@@ -30,24 +31,23 @@ export const ProjectDetail = () => {
             icon: <SmileOutlined />,
             disabled: true,
         },
-        {
-            key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    3rd menu item (disabled)
-                </a>
-            ),
-            disabled: true,
-        },
-        {
-            key: '4',
-            danger: true,
-            label: 'a danger item',
-        },
+
     ];
+    const [apiList, setApiList] = useState([])
+    const { setDomain, setCurrentProject, domain } = useDomainStore()
+
+    useEffect(() => {
+        chrome.storage.local.get(
+            [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
+            result => {
+                setApiList(result[AJAX_INTERCEPTOR_PROJECTS])
+                setDomain(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
+            }
+        )
+
+    }, [])
     const handleAddRule = (val) => {
         console.log(val)
-        // setOpen(true)
 
     }
     const {
@@ -66,15 +66,11 @@ export const ProjectDetail = () => {
                     }}
                 >
                     <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '20px',
-
+                        color: '#fff',
+                        fontSize: '20px',
+                        fontWeight: 'bold',
                     }}>
-                        <Button type="primary" icon={<PlusOutlined />}  >
-                            编辑地址
-                        </Button>
-                        
+                        MockGenius
                     </div>
 
                     <div style={{
@@ -85,9 +81,7 @@ export const ProjectDetail = () => {
 
                     }}> <Switch defaultChecked checkedChildren="开启" unCheckedChildren="关闭" />
 
-                        <Button type="primary" icon={<PlusOutlined />}  >
-                            添加地址
-                        </Button>
+
                         <Button danger icon={<ClearOutlined />} >一键清空</Button>
                         <Dropdown
                             menu={{
@@ -103,9 +97,7 @@ export const ProjectDetail = () => {
 
                 </Header>
                 <Content
-
                 >
-
                     <div
                         className="site-layout-content"
                         style={{
@@ -113,35 +105,18 @@ export const ProjectDetail = () => {
                         }}
                     >
                         <div className="ProjectDetail-wrapper">
-                            {/* <div className="mock-page-header">
-                                <div className="mock-page-title">全局拦截日志：</div>
-                                <div className="saved-api">
-                                    <div style={{ marginLeft: '10px' }} className="mock-page-title">已保存接口：</div>
-                                    <div>
-                                        <Button type="primary" onClick={handleAddRule} icon={<PlusOutlined />}>
-                                            添加规则
-                                        </Button>
-                                    </div>
-
-                                </div>
-                            </div> */}
                             <div className="mock-page-content">
-
-                                <ApiLog></ApiLog>
-                                <Divider type="vertical" className="divier" />
                                 <SaveApi ></SaveApi>
+                                <Divider type="vertical" className="divier" />
+                                <ApiLog></ApiLog>
                             </div>
-
-
                         </div>
                     </div>
                 </Content>
-
             </Layout>
-            <Detail></Detail>
+            <Detail>
+            </Detail>
         </>
-
-
     )
 }
 

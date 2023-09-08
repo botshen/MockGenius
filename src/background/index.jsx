@@ -48,6 +48,7 @@ chrome.runtime.onInstalled.addListener(async function () {
   chrome.storage.local.set({
     [AJAX_INTERCEPTOR_PROJECTS]: [defaultProjectProduct],
     [AJAX_INTERCEPTOR_CURRENT_PROJECT]: defaultProjectProduct.pathUrl,
+    "mockPluginSwitchOn": true,
   }, function () {
     console.log('生产环境')
     chrome.storage.local.get([AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT], result => {
