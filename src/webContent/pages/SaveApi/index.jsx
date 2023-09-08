@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm } from 'antd';
 import Detail from '../../components/detail';
+import { PlusOutlined, ClearOutlined } from '@ant-design/icons';
 
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { saveStorage, readLocalStorage } from '../../utils';
 
-export const SaveApi = ({onAddRule}) => {
+export const SaveApi = ({ onAddRule }) => {
   const confirm = (record) => {
     handleDelete(record)
   };
@@ -165,7 +166,15 @@ export const SaveApi = ({onAddRule}) => {
         detailVisible ?
           (<Detail data={detailData} onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
           <div className='home-wrapper'>
-           
+            <div className="saved-api">
+              <div style={{ marginLeft: '10px' }} className="mock-page-title">已保存接口：</div>
+              <div>
+                <Button type="primary" onClick={handleAddRule} icon={<PlusOutlined />}>
+                  添加规则
+                </Button>
+              </div>
+
+            </div>
             <Table
               columns={columns}
               dataSource={datalist} />

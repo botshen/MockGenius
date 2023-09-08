@@ -16,7 +16,16 @@
 .mock-page-header {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   padding: 10px;
+
+  > .saved-api{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 50%;
+  }
 }
 
 .mock-page-content {
@@ -30,7 +39,7 @@
   background-color: #ddd;
 }
 .divier{
-  height: calc(100vh - 116px);
+  height: calc(100vh - 64px);
 }
 .icon-more {
   // position: relative;

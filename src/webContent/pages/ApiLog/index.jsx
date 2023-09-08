@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Detail from '../../components/detail';
 import { Table, Tag, message, FloatButton } from 'antd';
 import { MinusCircleFilled } from '@ant-design/icons';
+import { PlusOutlined, ClearOutlined } from '@ant-design/icons';
 
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { useDomainStore } from '../../store';
@@ -157,12 +158,14 @@ export const ApiLog = () => {
     <>
       {/* <FloatButton onClick={handleClearLog} icon={<MinusCircleFilled />} type="default" /> */}
       {contextHolder}
+      
       {
         detailVisible ?
           (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse} />)
           :
           (
             <div className='log-wrapper'>
+              <div className="mock-page-title">全局拦截日志：</div>
               <Table
                  rowClassName={(record, index) => {
                   if (index === 0) {
