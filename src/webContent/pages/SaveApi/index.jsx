@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm } from 'antd';
 import Detail from '../../components/detail';
-import { SearchOutlined } from '@ant-design/icons';
 
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
@@ -166,9 +165,7 @@ export const SaveApi = ({onAddRule}) => {
         detailVisible ?
           (<Detail data={detailData} onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
           <div className='home-wrapper'>
-            <Button type="primary" onClick={handleAddRule} icon={<SearchOutlined />}>
-              添加规则
-            </Button>
+           
             <Table
               columns={columns}
               dataSource={datalist} />

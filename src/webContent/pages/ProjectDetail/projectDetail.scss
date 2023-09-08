@@ -1,14 +1,44 @@
 .ProjectDetail-wrapper {
   display: flex;
-  flex-direction: row;
-  height: calc(100vh - 100px);
-  padding: 20px;
+  flex-direction: column;
+  height: 100%;
 }
 
- 
 
+.ant-layout-header{
+  padding: 0 20px;
+}
 .ant-layout-content {
-  padding: 24px;
   max-height: calc(100vh - 64px);
   overflow-y: auto;
+}
+
+.mock-page-header {
+  display: flex;
+  flex-direction: row;
+  padding: 10px;
+}
+
+.mock-page-content {
+  display: flex;
+  flex-direction: row;
+}
+.ant-switch{
+  background-color: #ccc;
+}
+.ant-switch:hover:not(.ant-switch-disabled){
+  background-color: #ddd;
+}
+.divier{
+  height: calc(100vh - 116px);
+}
+.icon-more {
+  // position: relative;
+  // display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: white;
+  // top: -2px;
+  color: white;
 }
