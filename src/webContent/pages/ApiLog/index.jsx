@@ -76,31 +76,31 @@ export const ApiLog = () => {
       await setGlobalData()
     }
   }
-  useEffect(() => {
-    (async () => {
-      let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-      chrome.tabs.query({}, function (tabs) {
-        const targetUrl = new Url(currentProject)
-        const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
-        if (matchingTabs.length > 0) {
-          const matchingTabId = matchingTabs[0].id;
-          const scriptExists = document.querySelector('script[src*="insert.js"]');
-          if (matchingTabId && !scriptExists) {
-            chrome.scripting.executeScript({
-              target: { tabId: matchingTabId },
-              function: checkAndInjectScript
-            });
-          }
-        }
-      })
-      // 不是一个项目的请求不展示
-      const currentLog = apiLogList.filter(item => {
-        return item.origin === currentProject
-      })
-      setApiLogList(currentLog)
-    })();
-  }, []
-  )
+  // useEffect(() => {
+  //   (async () => {
+  //     let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+  //     chrome.tabs.query({}, function (tabs) {
+  //       const targetUrl = new Url(currentProject)
+  //       const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
+  //       if (matchingTabs.length > 0) {
+  //         const matchingTabId = matchingTabs[0].id;
+  //         const scriptExists = document.querySelector('script[src*="insert.js"]');
+  //         if (matchingTabId && !scriptExists) {
+  //           chrome.scripting.executeScript({
+  //             target: { tabId: matchingTabId },
+  //             function: checkAndInjectScript
+  //           });
+  //         }
+  //       }
+  //     })
+  //     // 不是一个项目的请求不展示
+  //     const currentLog = apiLogList.filter(item => {
+  //       return item.origin === currentProject
+  //     })
+  //     setApiLogList(currentLog)
+  //   })();
+  // }, []
+  // )
   const handleClearLog = () => {
     setApiLogList([])
   }

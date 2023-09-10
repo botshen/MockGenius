@@ -5,7 +5,7 @@ import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
-import { saveStorage, readLocalStorage } from '../../utils';
+import { getOrCreateLocalStorageValues } from '../../utils';
 
 export const SaveApi = ({ onAddRule }) => {
   const confirm = (record) => {
@@ -84,63 +84,32 @@ export const SaveApi = ({ onAddRule }) => {
   const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [detailVisible, setDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-  //       let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-  //       if (!projectList) {
-  //         // 设置初始
-  //         const defaultProjectProduct = {
-  //           pathUrl: 'localhost:3000',
-  //           rules: []
-  //         }
-  //         await saveStorage(AJAX_INTERCEPTOR_PROJECTS, [defaultProjectProduct])
-  //         await saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, defaultProjectProduct.pathUrl)
-  //       }
-  //       console.log('projectList', projectList)
-  //       setItems(projectList.map((item, index) => {
-  //         return {
-  //           key: item.pathUrl,
-  //           label: item.pathUrl,
-  //           children: <Table
-  //             columns={columns}
-  //             dataSource={item.rules} />,
-  //         }
-  //       }))
-  //       setDefaultActiveKey(currentProject)
-  //     } catch (error) {
-  //       // Handle the exception here
-  //       console.error('An error occurred:', error);
-  //     }
-  //   })();
-  // }, []);
-  useEffect(() => {
-    chrome.storage.local.get([AJAX_INTERCEPTOR_PROJECTS]).then((result) => {
-      console.log("Value currently is " + result);
-    });
 
+  useEffect(() => {
+    getOrCreateLocalStorageValues({
+      [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'localhost:3000',
+      [AJAX_INTERCEPTOR_PROJECTS]: [{
+        pathUrl: 'localhost:3000',
+        rules: []
+      }]
+    }, function (values) {
+      console.log('获取或创建的值为:', values);
+
+      setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item, index) => {
+        return {
+          key: item.pathUrl,
+          label: item.pathUrl,
+          children: <Table
+            columns={columns}
+            dataSource={item.rules} />,
+        }
+      }))
+      setDefaultActiveKey(values[AJAX_INTERCEPTOR_CURRENT_PROJECT])
+
+    })
   }, [])
 
 
-  useEffect(() => {
-    (async () => {
-      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-      let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-      const data = projectList.map((item, index) => {
-        if (item.pathUrl !== currentProject) {
-          return item
-        } else {
-          return {
-            ...item,
-            rules: datalist
-          }
-        }
-      })
-      await saveStorage(AJAX_INTERCEPTOR_PROJECTS, data)
-    })();
-  }, [datalist]
-  )
   const remove = (targetKey) => {
     let newActiveKey = defaultActiveKey;
     let lastIndex = -1;
@@ -211,29 +180,6 @@ export const SaveApi = ({ onAddRule }) => {
       mode: 'add'
     })
   }
-  // const items = [
-  //   {
-  //     key: '1',
-  //     label: 'localhost:3000',
-  //     children: <Table
-  //       columns={columns}
-  //       dataSource={datalist} />,
-  //   },
-  //   {
-  //     key: '2',
-  //     label: 'localhost:3001',
-  //     children: <Table
-  //       columns={columns}
-  //       dataSource={datalist} />,
-  //   },
-  //   {
-  //     key: '3',
-  //     label: 'localhost:3002',
-  //     children: <Table
-  //       columns={columns}
-  //       dataSource={datalist} />,
-  //   },
-  // ];
   return (
     <>
       {contextHolder}
@@ -262,6 +208,7 @@ export const SaveApi = ({ onAddRule }) => {
             </div>
             <Tabs
               defaultActiveKey={defaultActiveKey}
+              activeKey={defaultActiveKey}
               type="editable-card"
               items={items}
               hideAdd
