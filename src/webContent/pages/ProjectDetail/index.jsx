@@ -106,7 +106,7 @@ export const ProjectDetail = () => {
                     >
                         <div className="ProjectDetail-wrapper">
                             <div className="mock-page-content">
-                                <SaveApi ></SaveApi>
+                                <SaveApi onAddRule={handleAddRule} ></SaveApi>
                                 <Divider type="vertical" className="divier" />
                                 <ApiLog></ApiLog>
                             </div>

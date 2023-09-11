@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm, Tabs } from 'antd';
-import Detail from '../../components/detail';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
-import { getOrCreateLocalStorageValues } from '../../utils';
+import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
+import DetailModal from './detailModal';
 
-export const SaveApi = ({ onAddRule }) => {
+export const SaveApi = () => {
   const confirm = (record) => {
     handleDelete(record)
   };
@@ -84,13 +84,16 @@ export const SaveApi = ({ onAddRule }) => {
   const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [detailVisible, setDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [projectMode, setProjectMode] = useState('add');
+  const [projectFormData, setProjectFormData] = useState({})
 
   useEffect(() => {
     getOrCreateLocalStorageValues({
-      [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'localhost:3000',
+      [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'http://localhost:3000',
       [AJAX_INTERCEPTOR_PROJECTS]: [{
-        pathUrl: 'localhost:3000',
-        rules: []
+        pathUrl: 'http://localhost:3000',
+        rules: [],
+        projectName: '默认项目'
       }]
     }, function (values) {
       console.log('获取或创建的值为:', values);
@@ -98,7 +101,7 @@ export const SaveApi = ({ onAddRule }) => {
       setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item, index) => {
         return {
           key: item.pathUrl,
-          label: item.pathUrl,
+          label: item.projectName,
           children: <Table
             columns={columns}
             dataSource={item.rules} />,
@@ -110,7 +113,9 @@ export const SaveApi = ({ onAddRule }) => {
   }, [])
 
 
-  const remove = (targetKey) => {
+  const remove = async (targetKey) => {
+    const projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS)
+    if (projectList.length === 1) return;
     let newActiveKey = defaultActiveKey;
     let lastIndex = -1;
     items.forEach((item, i) => {
@@ -128,9 +133,16 @@ export const SaveApi = ({ onAddRule }) => {
     }
     setItems(newPanes);
     setDefaultActiveKey(newActiveKey);
+    saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, newActiveKey)
+    const newProjectList = projectList.filter(item => item.pathUrl !== targetKey)
+    saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
   };
   const onEdit = (targetKey) => {
     remove(targetKey);
+  }
+  const handleChangeProject = (activeKey) => {
+    setDefaultActiveKey(activeKey)
+    saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
   }
   const handleDelete = (record) => {
     const newDatalist = [...datalist]
@@ -173,51 +185,112 @@ export const SaveApi = ({ onAddRule }) => {
     }
     setDetailVisible(false);
   }
+  const handleAddProject = () => {
+    setProjectMode('add')
+    setDetailVisible(true)
+  }
+  const handleEditProject = () => {
+    setProjectMode('edit')
+    setDetailVisible(true)
+  }
   const handleAddRule = () => {
-    // setdetailData({})
-    // setDetailTrue()
-    onAddRule({
-      mode: 'add'
-    })
+    // setProjectMode('addRule')
+    // setDetailVisible(true)
+  }
+
+  const saveProject = async (formData) => {
+    console.log('formData', formData)
+    if (projectMode === 'edit') {
+      if (items.some(item => item.key === formData.pathUrl && item.key !== projectFormData.pathUrl)) {
+        messageApi.error('pathRule重复');
+        return
+      } else {
+        const newApiList = [...items]
+        const editIndex = newApiList.findIndex(item => item.key === formData.pathUrl)
+        newApiList.splice(editIndex, 1, formData)
+        setItems(newApiList)
+        setDetailVisible(false)
+        return
+      }
+    } else if (projectMode === 'add') {
+      console.log('items', items)
+      console.log('formData', formData)
+      if (items.some(item => item.key === formData.pathUrl)) {
+        messageApi.error('pathRule重复');
+        return
+      } else {
+        const result = {
+          key: formData.pathUrl,
+          label: formData.name,
+          children: <Table
+            columns={columns}
+            dataSource={[]}
+          />,
+        }
+        setProjectFormData({})
+        setItems((prevApiList) => {
+          const newlist = [...prevApiList, result]
+          return newlist
+        });
+        setDetailVisible(false)
+        setDefaultActiveKey(formData.pathUrl)
+        saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, formData.pathUrl)
+        const projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS)
+        saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...projectList, {
+          pathUrl: formData.pathUrl,
+          rules: [],
+          projectName: formData.name
+        }])
+      }
+
+    }
+
+  }
+  const onClose = () => {
+    setDetailVisible(false)
   }
   return (
     <>
       {contextHolder}
       {
-        detailVisible ?
-          (<Detail data={detailData} onSubmit={DetailSubmit} onCancel={setDetailFalse} />) :
-          <div className='home-wrapper'>
-            <div className="saved-api">
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: '20px',
-              }}
-              >
-                <Button type="primary" icon={<PlusOutlined />}  >
-                  添加地址
-                </Button>
-                <Button type="primary" icon={<EditOutlined />}  >
-                  编辑地址
-                </Button>
-                <Button type="primary" onClick={handleAddRule} icon={<PlusOutlined />}>
-                  添加规则
-                </Button>
-              </div>
-
-            </div>
-            <Tabs
-              defaultActiveKey={defaultActiveKey}
-              activeKey={defaultActiveKey}
-              type="editable-card"
-              items={items}
-              hideAdd
-              onEdit={onEdit}
-            />
-          </div>
+        detailVisible &&
+        <DetailModal
+          mode={projectMode}
+          onClose={onClose}
+          formData={projectFormData}
+          saveProject={saveProject}
+        />
       }
+      <div className='home-wrapper'>
+        <div className="saved-api">
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: '20px',
+          }}
+          >
+            <Button onClick={handleAddProject} type="primary" icon={<PlusOutlined />}  >
+              添加地址
+            </Button>
+            <Button onClick={handleEditProject} type="primary" icon={<EditOutlined />}  >
+              编辑地址
+            </Button>
+            <Button onClick={handleAddRule} type="primary" icon={<PlusOutlined />}>
+              添加规则
+            </Button>
+          </div>
 
-
+        </div>
+        <Tabs
+          defaultActiveKey={defaultActiveKey}
+          activeKey={defaultActiveKey}
+          type="editable-card"
+          items={items}
+          hideAdd
+          onEdit={onEdit}
+          onChange={handleChangeProject}
+        />
+      </div>
     </>
   );
 }

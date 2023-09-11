@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
-import {Modal, Form, Input} from 'antd';
+import React, { useEffect } from 'react';
+import { Modal, Form, Input } from 'antd';
 
 
-const DetailModal = ({onClose, saveProject, formData, mode}) => {
+const DetailModal = ({ onClose, saveProject, formData, mode }) => {
   const [form] = Form.useForm();
   const originReg = /^(?=^.{3,255}$)(http(s)?:\/\/)(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}){0,}(:\d+)*$/
   const originPlaceholder = 'protocol://hostname[:port]'
@@ -15,7 +15,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
- 
+
   return (
     <>
       <Modal
@@ -32,7 +32,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
             });
         }}
         onCancel={handleCancel}
-        okButtonProps={{htmlType: 'submit', form: 'editForm'}}
+        okButtonProps={{ htmlType: 'submit', form: 'editForm' }}
       >
         <Form
           form={form}
@@ -46,7 +46,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
           // style={{
           //   maxWidth: 600,
           // }}
-          initialValues={formData}
+          initialValues={{ ...formData, pathUrl: 'http://localhost:3000' }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -61,7 +61,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
               },
             ]}
           >
-            <Input/>
+            <Input />
           </Form.Item>
 
           <Form.Item
@@ -77,7 +77,7 @@ const DetailModal = ({onClose, saveProject, formData, mode}) => {
               }
             ]}
           >
-            <Input/>
+            <Input />
           </Form.Item>
         </Form>
       </Modal>
