@@ -7,7 +7,7 @@ import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../
 import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
 import DetailModal from './detailModal';
 
-export const SaveApi = () => {
+export const SaveApi = ({ onAddRule }) => {
   const confirm = (record) => {
     handleDelete(record)
   };
@@ -199,8 +199,7 @@ export const SaveApi = () => {
     setDetailVisible(true)
   }
   const handleAddRule = () => {
-    console.log('111', 111)
-    setApiDetailVisible(true)
+    onAddRule(defaultActiveKey)
   }
 
   const saveProject = async (formData) => {

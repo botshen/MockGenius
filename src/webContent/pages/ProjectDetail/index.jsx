@@ -33,7 +33,7 @@ export const ProjectDetail = () => {
 
     ];
     const [defaultChecked, setDefaultChecked] = useState(true)
-
+    const [detailVisible, setDetailVisible] = useState(false)
     useEffect(() => {
         getOrCreateLocalStorageValues({
             mockPluginSwitchOn: true,
@@ -47,8 +47,9 @@ export const ProjectDetail = () => {
             }
         })
     }, [])
-    const handleAddRule = (val) => {
-        console.log(val)
+    const handleAddRule = (url) => {
+        console.log(url)
+        setDetailVisible(true)
     }
     const {
         token: { colorBgContainer },
@@ -64,6 +65,9 @@ export const ProjectDetail = () => {
     }
     return (
         <>
+            {
+                detailVisible && <Detail></Detail>
+            }
             <Layout className="layout">
                 <Header
                     style={{
@@ -137,8 +141,7 @@ export const ProjectDetail = () => {
                     </div>
                 </Content>
             </Layout>
-            <Detail>
-            </Detail>
+
         </>
     )
 }
