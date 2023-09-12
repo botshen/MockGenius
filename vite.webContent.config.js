@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { CRX_OUTDIR } from './globalConfig'
+import obfuscatorPlugin from 'vite-plugin-javascript-obfuscator'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -31,5 +32,14 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'src'),
         },
     },
-    plugins: [react()],
+    plugins: [
+        react(),
+        // obfuscatorPlugin({
+        //     options: {
+        //         // your javascript-obfuscator options
+        //         debugProtection: true,
+        //         // ...  [See more options](https://github.com/javascript-obfuscator/javascript-obfuscator)
+        //     },
+        // })
+    ],
 })

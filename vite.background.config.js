@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { CRX_BACKGROUND_OUTDIR } from './globalConfig'
+import obfuscatorPlugin from 'vite-plugin-javascript-obfuscator'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,7 +14,7 @@ export default defineConfig({
             // background script不支持ES6，因此不用使用es模式，需要改为cjs模式
             formats: ['cjs'],
             // 设置生成文件的文件名
-            fileName:  () => {
+            fileName: () => {
                 // 将文件后缀名强制定为js，否则会生成cjs的后缀名
                 return 'background.js'
             }
@@ -24,5 +25,12 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'src'),
         },
     },
-    plugins: [react()],
+    plugins: [
+        react(),
+        // obfuscatorPlugin({
+        //     options: {
+        //         debugProtection: true,
+        //     },
+        // })
+    ],
 })
