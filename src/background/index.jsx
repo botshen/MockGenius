@@ -9,11 +9,12 @@ let screenHeight = null
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
-  name: 'vite-test',
+  projectName: 'vite-test',
   pathUrl: 'http://localhost:5173',
   switchOn: true,
   isRealRequest: false,
   isTerminalLogOpen: false,
+  rules: []
 }
 // manifest.json的Permissions配置需添加declarativeContent权限
 chrome.runtime.onInstalled.addListener(async function () {
