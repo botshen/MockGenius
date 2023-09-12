@@ -18,7 +18,6 @@
     }
   ],
   "permissions": [
-    "<all_urls>",
     "storage",
     "declarativeContent",
     "system.display",
@@ -33,7 +32,8 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "/images/app.png"
+        "/images/app.png",
+        "/images/gray.png"
       ],
       "matches": [
         "<all_urls>"

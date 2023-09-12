@@ -6,8 +6,7 @@ import { SaveApi } from "../SaveApi"
 import './projectDetail.scss'
 import Detail from "../../components/detail";
 import { useEffect, useState } from "react";
-import { useDomainStore } from '../../store';
-import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from "../../const";
+import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from "../../utils";
 
 const { Header, Content } = Layout;
 
@@ -33,26 +32,34 @@ export const ProjectDetail = () => {
         },
 
     ];
-    const [apiList, setApiList] = useState([])
-    const { setDomain, setCurrentProject, domain } = useDomainStore()
+    const [defaultChecked, setDefaultChecked] = useState(true)
 
     useEffect(() => {
-        chrome.storage.local.get(
-            [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT],
-            result => {
-                setApiList(result[AJAX_INTERCEPTOR_PROJECTS])
-                setDomain(result[AJAX_INTERCEPTOR_CURRENT_PROJECT])
-            }
-        )
-
+        getOrCreateLocalStorageValues({
+            mockPluginSwitchOn: true,
+        }, function (values) {
+            console.log('values', values)
+            setDefaultChecked(values.mockPluginSwitchOn)
+            readLocalStorage('mockPluginSwitchOn', function (value) {
+                setDefaultChecked(value.mockPluginSwitchOn)
+            })
+        })
     }, [])
     const handleAddRule = (val) => {
         console.log(val)
-
     }
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+    const globalSwitchChange = async (checked) => {
+        setDefaultChecked(checked => !checked)
+        await saveStorage('mockPluginSwitchOn', checked)
+        if (checked) {
+            chrome.action.setIcon({ path: '/images/app.png' });
+        } else {
+            chrome.action.setIcon({ path: '/images/gray.png' });
+        }
+    }
     return (
         <>
             <Layout className="layout">
@@ -79,7 +86,13 @@ export const ProjectDetail = () => {
                         justifyContent: 'space-between',
                         gap: '20px',
 
-                    }}> <Switch defaultChecked checkedChildren="开启" unCheckedChildren="关闭" />
+                    }}>
+                        <Switch
+                            checked={defaultChecked}
+                            onChange={globalSwitchChange}
+                            checkedChildren="开启"
+                            unCheckedChildren="关闭"
+                        />
 
 
                         <Button danger icon={<ClearOutlined />} >一键清空</Button>
