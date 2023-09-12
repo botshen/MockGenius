@@ -1,10 +1,20 @@
-# MockGenius
-Intercept requests and directly return Mock data , including XMLHttpRequest, fetch class interface This is a Mock tool to intercept the corresponding request and directly return configuration data . It can help us in the development process , to reduce the dependence on interfaces , as far as possible to ensure that we can and more clear logic to develop or test code .
+<p align="center">
+<img src="https://cdn.staticaly.com/gh/botshen/picx-images-hosting@master/20230912/mocking.kolniuolyk0.webp" height="150">
+</p>
 
-拦截请求并直接返回 Mock 数据，包括 XMLHttpRequest、fetch类接口
-这是一款拦截对应请求并直接返回配置数据的 Mock 工具。它能帮助我们在开发过程中，减少对接口的依赖，尽可能保证我们能及更加清晰的逻辑来开发或者测试代码。
+<h1 align="center">
+MockGenius
+</h1>
+<p align="center">
+Intercept requests and directly return Mock data , including XMLHttpRequest, fetch class interface This is a Mock tool to intercept the corresponding request and directly return configuration data . It can help us in the development process , to reduce the dependence on interfaces , as far as possible to ensure that we can and more clear logic to develop or test code .<p>
+<!-- <p align="center">
+  <a href="https://www.npmjs.com/package/vitest"><img src="https://img.shields.io/npm/v/vitest?color=729B1B&label="></a>
+<p>
+ -->
+<br>
+<br>
 
-## Key Features:
+## Features
 
 ### Seamless Data Mocking
 Built on Vite 4 and Chrome Extension Manifest V3, MockGenius enables swift simulation of backend API data in your development environment, ensuring a smoother frontend development experience.
