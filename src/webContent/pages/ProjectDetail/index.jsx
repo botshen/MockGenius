@@ -78,7 +78,15 @@ export const ProjectDetail = () => {
                         color: '#fff',
                         fontSize: '20px',
                         fontWeight: 'bold',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
                     }}>
+                        <img src="/images/mocking.png" alt=""
+                            style={{
+                                width: '30px',
+                                height: '30px',
+                            }} />
                         MockGenius
                     </div>
 
