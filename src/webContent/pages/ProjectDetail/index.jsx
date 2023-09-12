@@ -38,11 +38,13 @@ export const ProjectDetail = () => {
         getOrCreateLocalStorageValues({
             mockPluginSwitchOn: true,
         }, function (values) {
-            console.log('values', values)
-            setDefaultChecked(values.mockPluginSwitchOn)
-            readLocalStorage('mockPluginSwitchOn', function (value) {
-                setDefaultChecked(value.mockPluginSwitchOn)
-            })
+            const checked = values.mockPluginSwitchOn
+            setDefaultChecked(checked)
+            if (checked) {
+                chrome.action.setIcon({ path: '/images/app.png' });
+            } else {
+                chrome.action.setIcon({ path: '/images/gray.png' });
+            }
         })
     }, [])
     const handleAddRule = (val) => {
