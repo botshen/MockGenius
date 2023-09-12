@@ -46,7 +46,8 @@ const DetailModal = ({ onClose, saveProject, formData, mode }) => {
           // style={{
           //   maxWidth: 600,
           // }}
-          initialValues={{ ...formData, pathUrl: 'http://localhost:3000' }}
+          // initialValues={{ ...formData, pathUrl: 'http://localhost:3000' }}
+          initialValues={{ ...formData }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"

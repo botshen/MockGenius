@@ -191,6 +191,11 @@ export const SaveApi = () => {
   }
   const handleEditProject = () => {
     setProjectMode('edit')
+    const editProject = items.find(item => item.key === defaultActiveKey)
+    setProjectFormData({
+      name: editProject.label,
+      pathUrl: editProject.key
+    })
     setDetailVisible(true)
   }
   const handleAddRule = () => {
@@ -199,18 +204,39 @@ export const SaveApi = () => {
   }
 
   const saveProject = async (formData) => {
-    console.log('formData', formData)
     if (projectMode === 'edit') {
       if (items.some(item => item.key === formData.pathUrl && item.key !== projectFormData.pathUrl)) {
         messageApi.error('pathRule重复');
         return
       } else {
-        const newApiList = [...items]
-        const editIndex = newApiList.findIndex(item => item.key === formData.pathUrl)
-        newApiList.splice(editIndex, 1, formData)
-        setItems(newApiList)
+        const newItems = items.map(item => {
+          if (item.key === projectFormData.pathUrl) {
+            return {
+              key: formData.pathUrl,
+              label: formData.name,
+              children: item.children
+            }
+          } else {
+            return item
+          }
+        })
+        setItems(newItems)
         setDetailVisible(false)
-        return
+        setDefaultActiveKey(formData.pathUrl)
+        saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, formData.pathUrl)
+        const projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS)
+        const newProjectList = projectList.map(item => {
+          if (item.pathUrl === projectFormData.pathUrl) {
+            return {
+              pathUrl: formData.pathUrl,
+              rules: item.rules,
+              projectName: formData.name
+            }
+          } else {
+            return item
+          }
+        })
+        saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
       }
     } else if (projectMode === 'add') {
       console.log('items', items)
@@ -247,6 +273,7 @@ export const SaveApi = () => {
 
   }
   const onClose = () => {
+    setProjectFormData({})
     setDetailVisible(false)
   }
   return (

@@ -12,6 +12,6 @@ watcher.on('change', (path) => {
       console.error(`Error during build: ${error.message}`);
       return;
     }
-    console.log('构建完成😈');
+    console.log('Done=================');
   });
 });
