@@ -6,6 +6,15 @@
   "background": {
     "service_worker": "background.js"
   },
+  "commands": {
+    "toggle-extension": {
+      "suggested_key": {
+        "default": "Ctrl+E",
+        "mac": "Command+E"
+      },
+      "description": "Switch to the mock management page"
+    }
+  },
   "content_scripts": [
     {
       "matches": [
