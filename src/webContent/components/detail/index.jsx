@@ -19,7 +19,7 @@ export default function Detail({ onCancel, onSubmit, data }) {
     },
     text: undefined
   });
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [placement, setPlacement] = useState('right');
   const showDrawer = () => {
       setOpen(true);

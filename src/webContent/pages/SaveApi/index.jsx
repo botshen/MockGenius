@@ -199,8 +199,8 @@ export const SaveApi = () => {
     setDetailVisible(true)
   }
   const handleAddRule = () => {
-    // setProjectMode('addRule')
-    // setDetailVisible(true)
+    console.log('111', 111)
+    setApiDetailVisible(true)
   }
 
   const saveProject = async (formData) => {
