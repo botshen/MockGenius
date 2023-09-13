@@ -63,10 +63,17 @@ export const ProjectDetail = () => {
             chrome.action.setIcon({ path: '/images/gray.png' });
         }
     }
+    const onCancelDetail=()=>{
+        setDetailVisible(false)
+    }
+    const onSubmit=(form)=>{
+        console.log(form)
+        setDetailVisible(false)
+    }
     return (
         <>
             {
-                detailVisible && <Detail></Detail>
+                detailVisible && <Detail onSubmit={onSubmit} onCancel={onCancelDetail}></Detail>
             }
             <Layout className="layout">
                 <Header

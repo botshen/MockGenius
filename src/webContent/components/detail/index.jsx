@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, Input, Form, Switch, InputNumber, Select, Drawer,Space } from 'antd';
 import SvelteJSONEditor from '../json/index'
-
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
+ 
 export default function Detail({ onCancel, onSubmit, data }) {
   const [readOnly, setReadOnly] = useState(false);
   const [content, setContent] = useState({
@@ -21,14 +15,13 @@ export default function Detail({ onCancel, onSubmit, data }) {
   });
   const [open, setOpen] = useState(true);
   const [placement, setPlacement] = useState('right');
-  const showDrawer = () => {
-      setOpen(true);
-  };
+  const [form] = Form.useForm(); // 创建一个表单实例
+
   const onChange = (e) => {
       setPlacement(e.target.value);
   };
   const onClose = () => {
-      setOpen(false);
+      onCancel();
   };
  
   useEffect(() => {
@@ -40,12 +33,21 @@ export default function Detail({ onCancel, onSubmit, data }) {
     }
 
   }, [])
-  const onFinish = (formData) => {
-    const form = {
-      ...formData,
-      Response: content.text ? JSON.parse(content.text) : content.json
-    }
-    onSubmit(form)
+  const onFinish = () => {
+    form
+      .validateFields()
+      .then(() => {
+        const formValues = {
+          ...form.getFieldsValue(),
+          Response: content.text ? JSON.parse(content.text) : content.json
+        };
+         onSubmit(formValues);
+       })
+      .catch((errorInfo) => {
+        // 表单校验失败
+        // console.error('Validation failed:', errorInfo);
+      });
+  
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -60,10 +62,11 @@ export default function Detail({ onCancel, onSubmit, data }) {
       width={800}
       onClose={onClose}
       open={open}
+      maskClosable={false}
       extra={
         <Space>
           <Button onClick={onClose}>Cancel</Button>
-          <Button type="primary" onClick={onClose}>
+          <Button type="primary" onClick={onFinish}  >
             OK
           </Button>
         </Space>
@@ -71,6 +74,7 @@ export default function Detail({ onCancel, onSubmit, data }) {
     >
       <div className='detail-wrapper'>
         <Form
+          form={form} 
           className='form-wrapper'
           name="basic"
           labelCol={{
@@ -189,19 +193,8 @@ export default function Detail({ onCancel, onSubmit, data }) {
               ]}
             />
           </Form.Item>
-          <Form.Item
-            {...tailLayout}
-          >
-            <Button type="primary" htmlType="submit" style={{ marginRight: '10px' }}>
-              Submit
-            </Button>
-            <Button onClick={onCancel} type="primary">
-              Cancel
-            </Button>
-          </Form.Item>
         </Form>
       </div>
     </Drawer>
-
   );
 }

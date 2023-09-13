@@ -111,6 +111,23 @@ export const SaveApi = ({ onAddRule }) => {
 
     })
   }, [])
+  useEffect(() => {
+    (async () => {
+      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+      let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+      const data = projectList.map((item, index) => {
+        if (item.pathUrl !== currentProject) {
+          return item
+        } else {
+          return {
+            ...item,
+            rules: datalist
+          }
+        }
+      })
+      await saveStorage(AJAX_INTERCEPTOR_PROJECTS, data)
+    })();
+  }, [datalist])
 
 
   const remove = async (targetKey) => {
