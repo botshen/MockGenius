@@ -63,18 +63,18 @@ export const ProjectDetail = () => {
             chrome.action.setIcon({ path: '/images/gray.png' });
         }
     }
-    const onCancelDetail=()=>{
+    const onCancelDetail = () => {
         setDetailVisible(false)
     }
-    const onSubmit=(form)=>{
+    const onSubmit = (form) => {
         console.log(form)
         setDetailVisible(false)
     }
     return (
         <>
-            {
+            {/* {
                 detailVisible && <Detail onSubmit={onSubmit} onCancel={onCancelDetail}></Detail>
-            }
+            } */}
             <Layout className="layout">
                 <Header
                     style={{
@@ -140,7 +140,7 @@ export const ProjectDetail = () => {
                     >
                         <div className="ProjectDetail-wrapper">
                             <div className="mock-page-content">
-                                <SaveApi onAddRule={handleAddRule} ></SaveApi>
+                                <SaveApi ></SaveApi>
                                 <Divider type="vertical" className="divier" />
                                 <ApiLog></ApiLog>
                             </div>
