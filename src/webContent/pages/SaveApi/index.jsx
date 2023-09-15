@@ -77,14 +77,14 @@ export const SaveApi = () => {
     },
   ];
 
-  const [detailData, setdetailData] = useState({});
-  const [apiDetailData, setApiDetailData] = useState({});
+   const [apiDetailData, setApiDetailData] = useState({});
   const [items, setItems] = useState([])
   const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
   const [apiDetailVisible, setApiDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [projectMode, setProjectMode] = useState('add');
+  const [apiDetailMode, setApiDetailMode] = useState('add');
   const [projectFormData, setProjectFormData] = useState({})
 
   useEffect(() => {
@@ -184,39 +184,12 @@ export const SaveApi = () => {
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
-    console.log('record', record)
     setApiDetailData(() => record)
+    setApiDetailMode('edit')
     setApiDetailVisible(true)
 
   }
-  const setDetailFalse = () => {
-    setProjectDetailVisible(false);
-  }
-  const setDetailTrue = () => {
-    setProjectDetailVisible(true);
-  }
-  const DetailSubmit = (formData) => {
-    const pathRule = formData.pathRule
-    if (datalist.some(item => item.pathRule === pathRule && item.pathRule !== detailData.pathRule)) {
-      messageApi.error('pathRule重复');
-      return
-    }
-    // 区分新增和修改
-    if (detailData.pathRule) {
-      const newDatalist = [...datalist]
-      const updateIndex = newDatalist.
-        findIndex(item => item.pathRule === detailData.pathRule)
-      newDatalist.splice(updateIndex, 1, formData)
-      setDatalist(newDatalist)
-      messageApi.success('修改成功');
-
-    } else {
-      setDatalist([formData, ...datalist]);
-      messageApi.success('新增成功');
-
-    }
-    setDetailVisible(false);
-  }
+ 
   const handleAddProject = () => {
     setProjectMode('add')
     setProjectDetailVisible(true)
@@ -231,37 +204,89 @@ export const SaveApi = () => {
     setProjectDetailVisible(true)
   }
   const handleAddRule = () => {
+    setApiDetailMode('add')
+    setApiDetailData({})
     setApiDetailVisible(true)
   }
-  const onApiDrawDetailSubmit = async (formData) => {
-    setItems((prevApiList) => {
-      const newlist = prevApiList.map(item => {
-        if (item.key === defaultActiveKey) {
+  const onApiDrawDetailSubmit = async (formData, mode) => {
+    if (mode === 'add') {
+      const pathRule = formData.pathRule
+      // 如果存在相同的pathRule，提示错误
+      if (items.some(item => item.key === defaultActiveKey && item.children.props.dataSource.some(item => item.pathRule === pathRule))) {
+        messageApi.error('pathRule重复');
+        return
+      }
+      setItems((prevApiList) => {
+        const newlist = prevApiList.map(item => {
+          if (item.key === defaultActiveKey) {
+            return {
+              ...item,
+              children: <Table
+                columns={columns}
+                dataSource={[formData, ...item.children.props.dataSource]}
+              />,
+            }
+          } else {
+            return item
+          }
+        })
+        return newlist
+      })
+      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+      saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
+        if (item.pathUrl === defaultActiveKey) {
           return {
             ...item,
-            children: <Table
-              columns={columns}
-              dataSource={[formData, ...item.children.props.dataSource]}
-            />,
+            rules: [formData, ...item.rules]
           }
         } else {
           return item
         }
       })
-      return newlist
-    })
-    let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-    saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
-      if (item.pathUrl === defaultActiveKey) {
-        return {
-          ...item,
-          rules: [formData, ...item.rules]
+      )
+    } else if (mode === 'edit') {
+      setItems((prevApiList) => {
+        const newlist = prevApiList.map(item => {
+          if (item.key === defaultActiveKey) {
+            return {
+              ...item,
+              children: <Table
+                columns={columns}
+                dataSource={item.children.props.dataSource.map(item => {
+                  if (item.pathRule === formData.pathRule) {
+                    return formData
+                  } else {
+                    return item
+                  }
+                })}
+              />,
+            }
+          } else {
+            return item
+          }
+        })
+        return newlist
+      })
+      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+      saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
+        if (item.pathUrl === defaultActiveKey) {
+          return {
+            ...item,
+            rules: item.rules.map(item => {
+              if (item.pathRule === formData.pathRule) {
+                return formData
+              } else {
+                return item
+              }
+            })
+          }
+        } else {
+          return item
         }
-      } else {
-        return item
-      }
-    })
-    )
+      })
+      )
+    }
+
     setApiDetailVisible(false)
   }
   const onCancelDetail = () => {
@@ -356,6 +381,7 @@ export const SaveApi = () => {
           onSubmit={onApiDrawDetailSubmit}
           onCancel={onCancelDetail}
           data={apiDetailData}
+          mode={apiDetailMode}
         />
       }
       <div className='home-wrapper'>

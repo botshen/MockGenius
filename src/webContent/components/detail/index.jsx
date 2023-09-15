@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Form, Switch, InputNumber, Select, Drawer,Space } from 'antd';
+import { Button, Input, Form, Switch, InputNumber, Select, Drawer, Space } from 'antd';
 import SvelteJSONEditor from '../json/index'
- 
-export default function Detail({ onCancel, onSubmit, data }) {
+
+export default function Detail({ onCancel, onSubmit, data, mode }) {
   const [readOnly, setReadOnly] = useState(false);
   const [content, setContent] = useState({
     json: {
@@ -18,12 +18,12 @@ export default function Detail({ onCancel, onSubmit, data }) {
   const [form] = Form.useForm(); // 创建一个表单实例
 
   const onChange = (e) => {
-      setPlacement(e.target.value);
+    setPlacement(e.target.value);
   };
   const onClose = () => {
-      onCancel();
+    onCancel();
   };
- 
+
   useEffect(() => {
     if (data && data.Response) {
       setContent({
@@ -41,13 +41,13 @@ export default function Detail({ onCancel, onSubmit, data }) {
           ...form.getFieldsValue(),
           Response: content.text ? JSON.parse(content.text) : content.json
         };
-         onSubmit(formValues);
-       })
+        onSubmit(formValues, mode);
+      })
       .catch((errorInfo) => {
         // 表单校验失败
         // console.error('Validation failed:', errorInfo);
       });
-  
+
   };
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
@@ -57,7 +57,7 @@ export default function Detail({ onCancel, onSubmit, data }) {
   };
   return (
     <Drawer
-      title="Drawer with extra actions"
+      title={mode === 'add' ? '新增规则' : '编辑规则'}
       placement={placement}
       width={800}
       onClose={onClose}
@@ -74,7 +74,7 @@ export default function Detail({ onCancel, onSubmit, data }) {
     >
       <div className='detail-wrapper'>
         <Form
-          form={form} 
+          form={form}
           className='form-wrapper'
           name="basic"
           labelCol={{
@@ -126,7 +126,7 @@ export default function Detail({ onCancel, onSubmit, data }) {
               },
             ]}
           >
-            <Input />
+            <Input disabled={mode === 'edit'} />
           </Form.Item>
           <Form.Item
             label="Response"
