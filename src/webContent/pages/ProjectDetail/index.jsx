@@ -93,11 +93,8 @@ export const ProjectDetail = () => {
                         alignItems: 'center',
                         gap: '10px',
                     }}>
-                        <img src="/images/mocking.png" alt=""
-                            style={{
-                                width: '30px',
-                                height: '30px',
-                            }} />
+                        <img className="logo-mock" src="/images/mocking.png" alt=""
+                        />
                         MockGenius
                     </div>
 
@@ -116,7 +113,7 @@ export const ProjectDetail = () => {
                         />
 
 
-                        <Button danger icon={<ClearOutlined />} >一键清空</Button>
+                        <Button danger icon={<ClearOutlined />} >清空日志</Button>
                         <Dropdown
                             menu={{
                                 items,

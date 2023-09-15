@@ -77,7 +77,7 @@ export const SaveApi = () => {
     },
   ];
 
-   const [apiDetailData, setApiDetailData] = useState({});
+  const [apiDetailData, setApiDetailData] = useState({});
   const [items, setItems] = useState([])
   const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
@@ -92,7 +92,19 @@ export const SaveApi = () => {
       [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'http://localhost:3000',
       [AJAX_INTERCEPTOR_PROJECTS]: [{
         pathUrl: 'http://localhost:3000',
-        rules: [],
+        rules: [{
+          name: 'test',
+          code: '200',
+          switchOn: true,
+          delay: '0',
+          method: 'get',
+          pathRule: '/api/test',
+          Response: {
+            code: 200,
+            data: {},
+            message: 'success'
+          },
+        }],
         projectName: '默认项目'
       }]
     }, function (values) {
@@ -189,7 +201,7 @@ export const SaveApi = () => {
     setApiDetailVisible(true)
 
   }
- 
+
   const handleAddProject = () => {
     setProjectMode('add')
     setProjectDetailVisible(true)
