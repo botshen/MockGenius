@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {  useState } from 'react';
 import Detail from '../../components/detail';
-import { Table, Tag, message, FloatButton } from 'antd';
+import { Table, Tag, message } from 'antd';
 import { MinusCircleFilled } from '@ant-design/icons';
 import { PlusOutlined, ClearOutlined } from '@ant-design/icons';
 
@@ -10,7 +10,7 @@ import { readLocalStorage, setGlobalData } from "../../utils/index.js";
 import Url from "url-parse";
 import './apiLog.scss'
 
-export const ApiLog = ({apiLogSubmit}) => {
+export const ApiLog = ({ apiLogSubmit }) => {
   const columns = [
     {
       title: 'Path',
@@ -76,7 +76,7 @@ export const ApiLog = ({apiLogSubmit}) => {
       await setGlobalData()
     }
   }
- 
+
   const setDetailFalse = () => {
     setdetailVisible(false);
   }
@@ -91,11 +91,11 @@ export const ApiLog = ({apiLogSubmit}) => {
     let currentResult = []
     // 如果currentProject.rules里面没有pathUrl，就新增
     if (!currentProject.rules.find(item => item.pathRule === formData.pathRule)) {
-      console.log('121',121)
+      console.log('121', 121)
       //currentResult等于新的数组，数据不可变
       currentResult = [formData, ...currentProject.rules]
     } else {
-      console.log('1222221',12221)
+      console.log('1222221', 12221)
 
       currentResult = currentProject.rules.map(item => {
         if (item.pathRule === formData.pathRule) {
@@ -130,9 +130,8 @@ export const ApiLog = ({apiLogSubmit}) => {
 
   return (
     <>
-      {/* <FloatButton onClick={handleClearLog} icon={<MinusCircleFilled />} type="default" /> */}
       {contextHolder}
-      
+
       {
         detailVisible ?
           (<Detail data={detailData} onSubmit={handleDetailSubmit} onCancel={setDetailFalse} />)
@@ -141,12 +140,13 @@ export const ApiLog = ({apiLogSubmit}) => {
             <div className='log-wrapper'>
               <div className="mock-page-title">拦截日志：</div>
               <Table
-                 rowClassName={(record, index) => {
-                  if (index === 0) {
-                    return 'even-row';
-                  }
-                }}
-                pagination={false}
+                //  rowClassName={(record, index) => {
+                //   console.log('record',record)
+                //   if (index === 0) {
+                //     return 'even-row';
+                //   }
+                // }}
+                // pagination={false}
                 onRow={(record) => {
                   return {
                     onClick: () => {

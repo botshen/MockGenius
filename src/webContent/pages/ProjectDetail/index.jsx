@@ -6,6 +6,7 @@ import { SaveApi } from "../SaveApi"
 import './projectDetail.scss'
 import React, { useEffect, useRef, useState } from "react";
 import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from "../../utils";
+import { useDomainStore } from "../../store";
 
 const { Header, Content } = Layout;
 
@@ -32,6 +33,7 @@ export const ProjectDetail = () => {
 
     ];
     const saveApi = useRef();
+    const { setApiLogList } = useDomainStore()
 
     const [defaultChecked, setDefaultChecked] = useState(true)
     const [detailVisible, setDetailVisible] = useState(false)
@@ -76,6 +78,9 @@ export const ProjectDetail = () => {
         console.log('saveApi',saveApi)
         saveApi.current.setTabData(projectList)
     }
+    const clearLog = () => {
+        setApiLogList([])
+    }
     return (
         <>
             {/* {
@@ -119,7 +124,7 @@ export const ProjectDetail = () => {
                         />
 
 
-                        <Button danger icon={<ClearOutlined />} >清空日志</Button>
+                        <Button onClick={clearLog} danger icon={<ClearOutlined />} >清空日志</Button>
                         <Dropdown
                             menu={{
                                 items,
