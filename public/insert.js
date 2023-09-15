@@ -89,15 +89,17 @@ function logTerminalMockMessage(config, result, request) {
   // if (JSON.parse(config.body)) {
   //   console.log('%c请求:', 'color: red;', JSON.parse(config.body))
   // }
-  if (result.response) {
+
+  if (result.response && result.response !== "") {
     console.log('%c响应:', 'color: red;background-color:yellow', result.response)
+  } else if (result.response === "") {
+    console.log('%c响应:', 'color: red;background-color:yellow', '空字符串')
   }
 }
 
 proxy({
   onRequest: async (config, handler) => {
-    console.log('config',config)
-    if (getCurrentProject().isRealRequest) {
+    if (getCurrentProject().isRealRequest ?? false) {
       handler.next(config)
     } else {
       const url = new Url(config.url)
@@ -132,7 +134,6 @@ proxy({
         headers: config.headers,
         type: 'xhr',
       }
-      console.log('111111', 111111)
       const { payload, result } = handMockResult({ res, request, config })
 
       sendMsg(payload, true)
@@ -143,7 +144,6 @@ proxy({
       handler.resolve(result)
     } catch (error) {
       const url = new Url(config.url)
-      console.log('res', res)
 
       const payload = {
         request: {
@@ -157,26 +157,20 @@ proxy({
           statusText,
           url: config.url,
           headers: headers,
-          responseTxt: JSON.parse(res),
+          responseTxt: res,
           isMock: false,
           rulePath: '',
         },
       }
-
       sendMsg(payload)
       handler.resolve(response)
     }
-
-
-
-
   },
 })
 
 if (window.fetch !== undefined) {
   FetchInterceptor.register({
     onBeforeRequest(request) {
-      console.log('request',request)
       return mockCore(request.url, request.method).then((res) => {
         try {
           const { path: rulePath } = res

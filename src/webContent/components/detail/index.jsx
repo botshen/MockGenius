@@ -25,11 +25,20 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
   };
 
   useEffect(() => {
-    if (data && data.Response) {
-      setContent({
-        json: data.Response,
-        text: undefined
-      })
+    console.log('api-detail-data', data)
+    if (data) {
+      if (data.Response === '') {
+        setContent({
+          json: "",
+          text: undefined
+        })
+      } else {
+        setContent({
+          json: data.Response,
+          text: undefined
+        })
+      }
+
     }
 
   }, [])
@@ -153,12 +162,12 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
               onChange={handleChange}
               options={[
                 {
-                  value: 'get',
-                  label: 'get',
+                  value: 'GET',
+                  label: 'GET',
                 },
                 {
-                  value: 'post',
-                  label: 'post',
+                  value: 'POST',
+                  label: 'POST',
                 }
               ]}
             />

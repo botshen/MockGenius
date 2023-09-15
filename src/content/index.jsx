@@ -62,7 +62,6 @@ chrome.storage.local.get(keys, (result) => {
 window.addEventListener(
   CUSTOM_EVENT_NAME,
   async (event) => {
-    console.log('event',event)
     if (chrome.runtime?.id) {
       await chrome.runtime.sendMessage({
         type: "ajaxInterceptor",

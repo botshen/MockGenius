@@ -89,9 +89,9 @@ export const SaveApi = () => {
 
   useEffect(() => {
     getOrCreateLocalStorageValues({
-      [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'http://localhost:3000',
+      [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'http://localhost:5173',
       [AJAX_INTERCEPTOR_PROJECTS]: [{
-        pathUrl: 'http://localhost:3000',
+        pathUrl: 'http://localhost:5173',
         rules: [{
           name: 'test',
           code: '200',
@@ -105,7 +105,8 @@ export const SaveApi = () => {
             message: 'success'
           },
         }],
-        projectName: '默认项目'
+        projectName: '默认项目',
+        switchOn: true
       }]
     }, function (values) {
       console.log('获取或创建的值为:', values);
