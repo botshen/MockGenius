@@ -14,7 +14,6 @@
     "ajax-hook": "^3.0.1",
     "antd": "^5.8.3",
     "axios": "^1.5.0",
-    "default-passive-events": "^2.0.0",
     "flatted": "^3.2.7",
     "mockjs": "^1.1.0",
     "mockjs-fetch": "^2.0.0",

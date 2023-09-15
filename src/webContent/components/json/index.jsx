@@ -21,7 +21,7 @@ export default function SvelteJSONEditor(props) {
   }, []);
 
   useEffect(() => {
-    console.log('props', props)
+    console.log('12138',12138)
     if (refEditor.current) {
       refEditor.current.updateProps(props);
     }

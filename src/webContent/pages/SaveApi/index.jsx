@@ -78,6 +78,7 @@ export const SaveApi = () => {
   ];
 
   const [detailData, setdetailData] = useState({});
+  const [apiDetailData, setApiDetailData] = useState({});
   const [items, setItems] = useState([])
   const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
@@ -183,8 +184,10 @@ export const SaveApi = () => {
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
-    setdetailData(record);
-    setProjectDetailVisible(true);
+    console.log('record', record)
+    setApiDetailData(() => record)
+    setApiDetailVisible(true)
+
   }
   const setDetailFalse = () => {
     setProjectDetailVisible(false);
@@ -352,6 +355,7 @@ export const SaveApi = () => {
         <ApiDrawDetail
           onSubmit={onApiDrawDetailSubmit}
           onCancel={onCancelDetail}
+          data={apiDetailData}
         />
       }
       <div className='home-wrapper'>
@@ -381,7 +385,6 @@ export const SaveApi = () => {
 
         </div>
         <Tabs
-          // defaultActiveKey={defaultActiveKey}
           activeKey={defaultActiveKey}
           type="editable-card"
           items={items}
