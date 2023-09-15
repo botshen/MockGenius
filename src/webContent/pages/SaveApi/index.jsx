@@ -222,7 +222,9 @@ export const SaveApi = forwardRef((props, ref) => {
   }
   const handleAddRule = () => {
     setApiDetailMode('add')
-    setApiDetailData({})
+    setApiDetailData({
+      Response:{}
+    })
     setApiDetailVisible(true)
   }
   const onApiDrawDetailSubmit = async (formData, mode) => {
