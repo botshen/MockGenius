@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm, Tabs } from 'antd';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 
@@ -7,8 +7,9 @@ import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../
 import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
 import ProjectDetailModal from './detailModal';
 import ApiDrawDetail from '../../components/detail';
+import { useDomainStore } from '../../store';
 
-export const SaveApi = () => {
+export const SaveApi = forwardRef((props, ref) => {
 
   const columns = [
     {
@@ -76,6 +77,7 @@ export const SaveApi = () => {
       ),
     },
   ];
+  const { setApiLogList } = useDomainStore()
 
   const [apiDetailData, setApiDetailData] = useState({});
   const [items, setItems] = useState([])
@@ -158,9 +160,11 @@ export const SaveApi = () => {
     saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
   };
   const onEdit = (targetKey) => {
+    setApiLogList([])
     remove(targetKey);
   }
   const handleChangeProject = (activeKey) => {
+    setApiLogList([])
     setDefaultActiveKey(activeKey)
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
   }
@@ -376,6 +380,21 @@ export const SaveApi = () => {
     setProjectFormData({})
     setProjectDetailVisible(false)
   }
+  const setTabData = (projectList) => {
+    setItems(projectList.map((item, index) => {
+      return {
+        key: item.pathUrl,
+        label: item.projectName,
+        children: <Table
+          columns={columns}
+          dataSource={item.rules} />,
+      }
+    }))
+  }
+  // 将方法暴露给外部，使父组件可以调用
+  useImperativeHandle(ref, () => ({
+    setTabData,
+  }));
   return (
     <>
       {contextHolder}
@@ -435,4 +454,4 @@ export const SaveApi = () => {
     </>
   );
 }
-
+)

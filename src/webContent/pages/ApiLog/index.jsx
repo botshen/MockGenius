@@ -10,7 +10,7 @@ import { readLocalStorage, setGlobalData } from "../../utils/index.js";
 import Url from "url-parse";
 import './apiLog.scss'
 
-export const ApiLog = () => {
+export const ApiLog = ({apiLogSubmit}) => {
   const columns = [
     {
       title: 'Path',
@@ -122,6 +122,7 @@ export const ApiLog = () => {
     })
     console.log('newProjectList', newProjectList)
     await chrome.storage.local.set({ [AJAX_INTERCEPTOR_PROJECTS]: newProjectList });
+    apiLogSubmit(newProjectList)
     setdetailVisible(false);
   }
 
@@ -138,7 +139,7 @@ export const ApiLog = () => {
           :
           (
             <div className='log-wrapper'>
-              <div className="mock-page-title">全局拦截日志：</div>
+              <div className="mock-page-title">拦截日志：</div>
               <Table
                  rowClassName={(record, index) => {
                   if (index === 0) {

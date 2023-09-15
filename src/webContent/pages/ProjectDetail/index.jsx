@@ -4,8 +4,7 @@ import { ClearOutlined } from '@ant-design/icons';
 import { SettingOutlined, SmileOutlined } from '@ant-design/icons';
 import { SaveApi } from "../SaveApi"
 import './projectDetail.scss'
-import Detail from "../../components/detail";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from "../../utils";
 
 const { Header, Content } = Layout;
@@ -32,6 +31,8 @@ export const ProjectDetail = () => {
         },
 
     ];
+    const saveApi = useRef();
+
     const [defaultChecked, setDefaultChecked] = useState(true)
     const [detailVisible, setDetailVisible] = useState(false)
     useEffect(() => {
@@ -69,6 +70,11 @@ export const ProjectDetail = () => {
     const onSubmit = (form) => {
         console.log(form)
         setDetailVisible(false)
+    }
+    const apiLogSubmit = (projectList) => {
+        console.log('projectList')
+        console.log('saveApi',saveApi)
+        saveApi.current.setTabData(projectList)
     }
     return (
         <>
@@ -137,9 +143,9 @@ export const ProjectDetail = () => {
                     >
                         <div className="ProjectDetail-wrapper">
                             <div className="mock-page-content">
-                                <SaveApi ></SaveApi>
+                                <SaveApi ref={saveApi} ></SaveApi>
                                 <Divider type="vertical" className="divier" />
-                                <ApiLog></ApiLog>
+                                <ApiLog apiLogSubmit={apiLogSubmit}></ApiLog>
                             </div>
                         </div>
                     </div>
