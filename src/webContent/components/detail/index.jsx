@@ -25,7 +25,6 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
   };
 
   useEffect(() => {
-    console.log('api-detail-data', data)
     if (data) {
       if (data.Response === '') {
         setContent({
@@ -59,10 +58,8 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
 
   };
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
   };
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
   };
   return (
     <Drawer

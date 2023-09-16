@@ -1,6 +1,5 @@
 /*global chrome*/
 
-console.log('background running')
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const defaultProjectProduct = {
@@ -13,7 +12,6 @@ const defaultProjectProduct = {
 }
 // manifest.json的Permissions配置需添加declarativeContent权限
 chrome.runtime.onInstalled.addListener(async function () {
-  console.log('onInstalled')
   chrome.storage.local.set({
     [AJAX_INTERCEPTOR_PROJECTS]: [defaultProjectProduct],
     [AJAX_INTERCEPTOR_CURRENT_PROJECT]: defaultProjectProduct.pathUrl,

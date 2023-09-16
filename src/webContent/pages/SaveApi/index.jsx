@@ -111,8 +111,6 @@ export const SaveApi = forwardRef((props, ref) => {
         switchOn: true
       }]
     }, function (values) {
-      console.log('获取或创建的值为:', values);
-      console.log('values[AJAX_INTERCEPTOR_CURRENT_PROJECT]', values[AJAX_INTERCEPTOR_CURRENT_PROJECT])
 
       setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item, index) => {
         return {

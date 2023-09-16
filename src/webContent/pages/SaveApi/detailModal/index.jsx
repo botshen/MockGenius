@@ -10,10 +10,8 @@ const DetailModal = ({ onClose, saveProject, formData, mode }) => {
     onClose()
   };
   const onFinish = (values) => {
-    console.log('Success:', values);
   };
   const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
   };
 
   return (
@@ -28,7 +26,6 @@ const DetailModal = ({ onClose, saveProject, formData, mode }) => {
               saveProject(values)
             })
             .catch((info) => {
-              console.log('Validate Failed:', info);
             });
         }}
         onCancel={handleCancel}

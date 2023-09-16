@@ -22,18 +22,14 @@ function WebContent() {
             try {
                 chrome.runtime.onMessage.addListener(async (event) => {
                     let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-                    console.log('currentProject', currentProject)
                     if (!currentProject) {
                         return
                     }
-                    console.log('event-WebContent', event)
                     const domainPath = event.data.request.url
                     const domainUrl = new Url(domainPath)
-                    console.log('domainUrl', domainUrl)
                     if (domainUrl.origin === currentProject) {
                         if (event.type === "ajaxInterceptor") {
                             const data = event.data;
-                            console.log('dat------a',data)
                             const targetUrl = new Url(data.request.url)
                             const result = {
                                 pathRule: targetUrl.pathname,
@@ -43,8 +39,8 @@ function WebContent() {
                                 method: data.request.method,
                                 Response: data.response.responseTxt,
                                 origin: targetUrl.origin,
+                                switchOn: data.switchOn ?? true,
                             }
-                            console.log('result', result)
                             addApiLogList(result);
                         }
                     }
@@ -53,7 +49,6 @@ function WebContent() {
 
                 })
             } catch (error) {
-                console.log('error', error)
             }
 
         })();
