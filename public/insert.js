@@ -31,7 +31,8 @@ async function mockCore(url, method) {
         item?.switchOn &&
         str === pathname &&
         currentProject.pathUrl === pathRule.origin &&
-        targetUrl.host === pathRule.host    })
+        targetUrl.host === pathRule.host
+    })
     console.log('%c [ currentRule ]-19', 'font-size:13px; background:pink; color:#bf2c9f;', currentRule)
 
     if (currentRule) {
