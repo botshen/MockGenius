@@ -10,6 +10,7 @@ async function mockCore(url, method) {
   const targetUrl = new Url(url)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
+  currentProject.switchOn = true
   if (currentProject?.switchOn) {
     const rules = currentProject.rules || []
     const currentRule = rules.find((item) => {
