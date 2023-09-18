@@ -2,9 +2,8 @@
 const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
-const INJECT_ELEMENT_ID = 'api-mock-12138'
+const INJECT_ELEMENT_ID = 'mock-genius'
 const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
-console.log('inject')
 const executeScript = (data) => {
   const code = JSON.stringify(data)
   const inputElem = document.getElementById(
@@ -63,11 +62,16 @@ window.addEventListener(
   CUSTOM_EVENT_NAME,
   async (event) => {
     if (chrome.runtime?.id) {
-      await chrome.runtime.sendMessage({
-        type: "ajaxInterceptor",
-        message: "content_to_background",
-        data: event.detail,
-      })
+      try {
+        await chrome.runtime.sendMessage({
+          type: "ajaxInterceptor",
+          message: "content_to_background",
+          data: event.detail,
+        })
+      } catch (error) {
+        // console.log(error)
+      }
+
     }
   },
   false

@@ -1,10 +1,10 @@
 import { proxy } from "ajax-hook";
 import Url from 'url-parse'
 import FetchInterceptor from './fetch'
-
+import { parse, stringify } from 'flatted';
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
-const INJECT_ELEMENT_ID = 'api-mock-12138'
+const INJECT_ELEMENT_ID = 'mock-genius'
 
 async function mockCore(url, method) {
   const targetUrl = new Url(url)
@@ -36,7 +36,8 @@ const sendMsg = (msg, isMock = false) => {
     ...msg,
     isMock
   }
-  const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail: result })
+  const detail = parse(stringify(result))
+  const event = new CustomEvent(CUSTOM_EVENT_NAME, { detail })
   window.dispatchEvent(event)
 }
 
@@ -84,16 +85,25 @@ function getCurrentProject() {
 function logTerminalMockMessage(config, result, request) {
   const targetUrl = new Url(request.url)
   const str = targetUrl.pathname
-  console.log(`%cURL:%c${str} METHOD:${request.method}`, 'color: red;background-color:yellow', 'color: red;background-color:yellow');
+  const css = 'font-size:13px; background:pink; color:#bf2c9f;'
+  console.log(
+    `%c [ URL ] %c${str} %c [ METHOD ] %c${request.method}`,
+    css, // 样式1，用于 'URL:'
+    '', // 默认样式，用于 'str'
+    css, // 样式1，用于 'URL:'
+    '', // 默认样式，用于 'str'
+  );
 
-  // if (JSON.parse(config.body)) {
-  //   console.log('%c请求:', 'color: red;', JSON.parse(config.body))
-  // }
+
+
+  if (JSON.parse(config.body)) {
+    console.log('%c [ request-body ] ', css, JSON.parse(config.body))
+  }
 
   if (result.response && result.response !== "") {
-    console.log('%c响应:', 'color: red;background-color:yellow', result.response)
+    console.log('%c [ response ] ', css, result.response)
   } else if (result.response === "") {
-    console.log('%c响应:', 'color: red;background-color:yellow', '空字符串')
+    console.log('%c [ response ] ', css, '空字符串')
   }
 }
 
@@ -174,12 +184,19 @@ if (window.fetch !== undefined) {
       return mockCore(request.url, request.method).then((res) => {
         try {
           const { path: rulePath } = res
-          const text = JSON.stringify(res.response)
+          // const text = JSON.stringify(res.response)
           const response = new Response()
-          response.json = () => Promise.resolve(res.response)
-          response.text = () => Promise.resolve(text)
+          // response.json = res.response
+          // response.text = text
           response.isMock = true
           response.rulePath = rulePath
+          if (typeof res.response === 'string') {
+            // 如果 res.response 是字符串，则将其赋值给 response.text
+            response.text = res.response;
+          } else if (typeof res.response === 'object') {
+            // 如果 res.response 是 JSON 对象，则将其赋值给 response.json
+            response.json = () => Promise.resolve(res.response);
+          }
           return response
         } catch (err) {
           console.error(err)
@@ -190,6 +207,7 @@ if (window.fetch !== undefined) {
       response,
       request
     ) {
+
       const payload = {
         request: {
           type: 'fetch',
@@ -215,7 +233,7 @@ if (window.fetch !== undefined) {
             status: response.status,
             url: request.url,
             headers: [],
-            responseTxt: JSON.stringify(res),
+            responseTxt: res,
             isMock: true,
             rulePath: response.rulePath,
           }
@@ -229,7 +247,7 @@ if (window.fetch !== undefined) {
             status: response.status,
             url: request.url,
             headers: [],
-            responseTxt: JSON.stringify(res),
+            responseTxt: res,
             isMock: false,
             rulePath: '',
           }
@@ -239,6 +257,7 @@ if (window.fetch !== undefined) {
       }
     },
     onRequestFailure(response, request) {
+
       const payload = {
         request: {
           type: 'fetch',

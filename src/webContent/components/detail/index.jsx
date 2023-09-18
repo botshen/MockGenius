@@ -195,6 +195,22 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
                 {
                   value: '404',
                   label: '404',
+                },
+                {
+                  value: '500',
+                  label: '500',
+                },
+                {
+                  value: '502',
+                  label: '502',
+                },
+                {
+                  value: '504',
+                  label: '504',
+                },
+                {
+                  value: '301',
+                  label: '301',
                 }
               ]}
             />

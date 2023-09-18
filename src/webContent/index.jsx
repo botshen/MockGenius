@@ -21,32 +21,30 @@ function WebContent() {
         (async () => {
             try {
                 chrome.runtime.onMessage.addListener(async (event) => {
+                    console.log('%c [ event ]-24', 'font-size:13px; background:pink; color:#bf2c9f;', event)
                     let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
                     if (!currentProject) {
                         return
                     }
-                    const domainPath = event.data.request.url
-                    const domainUrl = new Url(domainPath)
-                    if (domainUrl.origin === currentProject) {
-                        if (event.type === "ajaxInterceptor") {
-                            const data = event.data;
-                            const targetUrl = new Url(data.request.url)
-                            const result = {
-                                pathRule: targetUrl.pathname,
-                                status: data.response.status,
-                                mock: isMockText(data.isMock),
-                                type: data.request.type,
-                                method: data.request.method,
-                                Response: data.response.responseTxt,
-                                origin: targetUrl.origin,
-                                switchOn: data.switchOn ?? true,
-                            }
-                            addApiLogList(result);
+                    // const domainPath = event.data.request.url
+                    // const domainUrl = new Url(domainPath)
+                    // if (domainUrl.origin === currentProject) {
+                    if (event.type === "ajaxInterceptor") {
+                        const data = event.data;
+                        const targetUrl = new Url(data.request.url)
+                        const result = {
+                            pathRule: targetUrl.pathname,
+                            status: data.response.status,
+                            mock: isMockText(data.isMock),
+                            type: data.request.type,
+                            method: data.request.method,
+                            Response: data.response.responseTxt,
+                            origin: targetUrl.origin,
+                            switchOn: data.switchOn ?? true,
                         }
+                        addApiLogList(result);
                     }
-
-
-
+                    // }
                 })
             } catch (error) {
             }
