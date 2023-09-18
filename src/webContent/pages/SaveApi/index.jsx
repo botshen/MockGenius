@@ -118,6 +118,10 @@ export const SaveApi = forwardRef((props, ref) => {
           label: item.projectName,
           children: <Table
             columns={columns}
+            style={{
+              padding: '0 20px'
+            }}
+            size='small'
             dataSource={item.rules} />,
         }
       }))
@@ -173,6 +177,10 @@ export const SaveApi = forwardRef((props, ref) => {
           return {
             ...item,
             children: <Table
+            style={{
+              padding: '0 20px'
+            }}
+              size='small'
               columns={columns}
               dataSource={item.children.props.dataSource.filter(item => item.pathRule !== record.pathRule)}
             />,
@@ -221,7 +229,7 @@ export const SaveApi = forwardRef((props, ref) => {
   const handleAddRule = () => {
     setApiDetailMode('add')
     setApiDetailData({
-      Response:{}
+      Response: {}
     })
     setApiDetailVisible(true)
   }
@@ -239,6 +247,10 @@ export const SaveApi = forwardRef((props, ref) => {
             return {
               ...item,
               children: <Table
+              style={{
+                padding: '0 20px'
+              }}
+                size='small'
                 columns={columns}
                 dataSource={[formData, ...item.children.props.dataSource]}
               />,
@@ -269,6 +281,10 @@ export const SaveApi = forwardRef((props, ref) => {
               ...item,
               children: <Table
                 columns={columns}
+                style={{
+                  padding: '0 20px'
+                }}
+                size='small'
                 dataSource={item.children.props.dataSource.map(item => {
                   if (item.pathRule === formData.pathRule) {
                     return formData
@@ -353,6 +369,10 @@ export const SaveApi = forwardRef((props, ref) => {
           key: formData.pathUrl,
           label: formData.name,
           children: <Table
+          style={{
+            padding: '0 20px'
+          }}
+            size='small'
             columns={columns}
             dataSource={[]}
           />,
@@ -386,6 +406,10 @@ export const SaveApi = forwardRef((props, ref) => {
         key: item.pathUrl,
         label: item.projectName,
         children: <Table
+          size='small'
+          style={{
+            padding: '0 20px'
+          }}
           columns={columns}
           dataSource={item.rules} />,
       }

@@ -99,6 +99,10 @@ export const ApiLog = ({ apiLogSubmit }) => {
       <div className='log-wrapper'>
         <div className="mock-page-title">拦截日志：</div>
         <Table
+          style={{
+            padding: '0 20px'
+          }}
+          size='small'
           onRow={(record) => {
             return {
               onClick: () => {

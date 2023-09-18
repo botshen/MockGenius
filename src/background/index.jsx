@@ -3,7 +3,7 @@
 const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
 const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
 const defaultProjectProduct = {
-  projectName: 'mockgenius',
+  projectName: '默认项目',
   pathUrl: 'http://localhost:5173',
   switchOn: true,
   isRealRequest: false,
