@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://cdn.staticaly.com/gh/botshen/picx-images-hosting@master/20230912/mocking.kolniuolyk0.webp" height="150">
+<img src="https://cdn.statically.io/gh/botshen/picx-images-hosting@master/20230918/mocking.2tjhqq7d75k0.webp" height="150">
 </p>
 
 <h1 align="center">
