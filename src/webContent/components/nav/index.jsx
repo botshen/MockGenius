@@ -8,8 +8,8 @@ function Nav(props) {
     const { setDomain, domain } = useDomainStore()
 
     useEffect(() => {
-        chrome.storage.local.get(['ajaxInterceptor_current_project'], (result) => {
-            setDomain(result['ajaxInterceptor_current_project'])
+        chrome.storage.local.get(['mockgenius_current_project'], (result) => {
+            setDomain(result['mockgenius_current_project'])
         })
     })
 

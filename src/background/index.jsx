@@ -1,9 +1,9 @@
 /*global chrome*/
 
-const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
-const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
+const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
+const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
 const defaultProjectProduct = {
-  projectName: 'vite-test',
+  projectName: 'mockgenius',
   pathUrl: 'http://localhost:5173',
   switchOn: true,
   isRealRequest: false,

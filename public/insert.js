@@ -73,9 +73,9 @@ function getCurrentProject() {
   const configStr = inputElem.value
   try {
     const config = JSON.parse(configStr);
-    const { ajaxInterceptor_current_project, ajaxInterceptor_projects } = config
-    return ajaxInterceptor_projects?.find(
-      (item) => item.pathUrl === ajaxInterceptor_current_project
+    const { mockgenius_current_project, mock_genius_projects } = config
+    return mock_genius_projects?.find(
+      (item) => item.pathUrl === mockgenius_current_project
     ) || ({});
   } catch (e) {
     return {};

@@ -1,6 +1,6 @@
 
-const AJAX_INTERCEPTOR_PROJECTS = 'ajaxInterceptor_projects';
-const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'ajaxInterceptor_current_project';
+const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
+const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'mock-genius'
 const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
