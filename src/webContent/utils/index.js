@@ -31,7 +31,6 @@ const AJAXKeys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
 
 export const setGlobalData = async () => {
   const result = await readLocalStorage(AJAXKeys)
-  console.log('result-AJAXKeys',result)
   executeScript(result)
 
 }

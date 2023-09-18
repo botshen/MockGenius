@@ -21,7 +21,7 @@ function MainModal(props) {
                 text,
             },
             success: (res) => {
-                console.log(res)
+                // console.log(res)
             },
             fail: (res) => {
                 alert(res)

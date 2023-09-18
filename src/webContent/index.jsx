@@ -21,7 +21,6 @@ function WebContent() {
         (async () => {
             try {
                 chrome.runtime.onMessage.addListener(async (event) => {
-                    console.log('%c [ event ]-24', 'font-size:13px; background:pink; color:#bf2c9f;', event)
                     let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
                     if (!currentProject) {
                         return

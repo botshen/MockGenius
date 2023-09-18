@@ -50,10 +50,7 @@ export const ProjectDetail = () => {
             }
         })
     }, [])
-    const handleAddRule = (url) => {
-        console.log(url)
-        setDetailVisible(true)
-    }
+ 
     const {
         token: { colorBgContainer },
     } = theme.useToken();
@@ -66,16 +63,8 @@ export const ProjectDetail = () => {
             chrome.action.setIcon({ path: '/images/gray.png' });
         }
     }
-    const onCancelDetail = () => {
-        setDetailVisible(false)
-    }
-    const onSubmit = (form) => {
-        console.log(form)
-        setDetailVisible(false)
-    }
+ 
     const apiLogSubmit = (projectList) => {
-        console.log('projectList')
-        console.log('saveApi',saveApi)
         saveApi.current.setTabData(projectList)
     }
     const clearLog = () => {
@@ -116,16 +105,16 @@ export const ProjectDetail = () => {
                         gap: '20px',
 
                     }}>
-                        <Switch
+                        {/* <Switch
                             checked={defaultChecked}
                             onChange={globalSwitchChange}
                             checkedChildren="开启"
                             unCheckedChildren="关闭"
-                        />
+                        /> */}
 
 
                         <Button onClick={clearLog} danger icon={<ClearOutlined />} >清空日志</Button>
-                        <Dropdown
+                        {/* <Dropdown
                             menu={{
                                 items,
                             }}
@@ -135,7 +124,8 @@ export const ProjectDetail = () => {
                         >
                             <Button icon={<SettingOutlined />} type="primary">设置</Button>
 
-                        </Dropdown></div>
+                        </Dropdown> */}
+                        </div>
 
                 </Header>
                 <Content
