@@ -9,18 +9,31 @@ const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'mock-genius'
 
 async function mockCore(url, method) {
+  console.log('%c [ method ]-12', 'font-size:13px; background:pink; color:#bf2c9f;', method)
+  console.log('%c [ url ]-12', 'font-size:13px; background:pink; color:#bf2c9f;', url)
   const targetUrl = new Url(url)
+  console.log('%c [ targetUrl ]-15', 'font-size:13px; background:pink; color:#bf2c9f;', targetUrl)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
+  console.log('%c [ currentProject ]-17', 'font-size:13px; background:pink; color:#bf2c9f;', currentProject)
   currentProject.switchOn = true
   if (currentProject?.switchOn) {
     const rules = currentProject.rules || []
     const currentRule = rules.find((item) => {
+      console.log('%c [ item ]-23', 'font-size:13px; background:pink; color:#bf2c9f;', item)
       const med = item.method.toUpperCase()
       const pathRule = new Url(item.pathRule)
+      console.log('%c [ targetUrl ]-31', 'font-size:13px; background:pink; color:#bf2c9f;', targetUrl)
+
+      console.log('%c [ pathRule ]-25', 'font-size:13px; background:pink; color:#bf2c9f;', pathRule)
       const pathname = pathRule.pathname
-      return med === method && item?.switchOn && str === pathname
-    })
+      return med === method &&
+        item?.switchOn &&
+        str === pathname &&
+        currentProject.pathUrl === pathRule.origin &&
+        targetUrl.host === pathRule.host    })
+    console.log('%c [ currentRule ]-19', 'font-size:13px; background:pink; color:#bf2c9f;', currentRule)
+
     if (currentRule) {
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
       return {
