@@ -2,6 +2,8 @@ import { proxy } from "ajax-hook";
 import Url from 'url-parse'
 import FetchInterceptor from './fetch'
 import { parse, stringify } from 'flatted';
+import { notification } from 'antd';
+
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'mock-genius'
@@ -128,6 +130,12 @@ proxy({
         //   logTerminalMockMessage(config, result, request)
         // }
         logTerminalMockMessage(config, result, request)
+        notification.open({
+          message: 'Mock成功',
+          placement: 'bottomRight',
+          duration: 1.5,
+          description: config.url,
+        });
         handler.resolve(result)
       } catch (error) {
         handler.next(config)
