@@ -1,7 +1,7 @@
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm, Tabs } from 'antd';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
-
+import Url from "url-parse";
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
@@ -88,6 +88,8 @@ export const SaveApi = forwardRef((props, ref) => {
   const [projectMode, setProjectMode] = useState('add');
   const [apiDetailMode, setApiDetailMode] = useState('add');
   const [projectFormData, setProjectFormData] = useState({})
+  const [previousActiveKey, setPreviousActiveKey] = useState(''); // 用于存储上一个 activeKey 的状态变量
+
 
   useEffect(() => {
     getOrCreateLocalStorageValues({
@@ -126,6 +128,7 @@ export const SaveApi = forwardRef((props, ref) => {
         }
       }))
       setDefaultActiveKey(() => values[AJAX_INTERCEPTOR_CURRENT_PROJECT])
+      setPreviousActiveKey(() => values[AJAX_INTERCEPTOR_CURRENT_PROJECT])
 
     })
   }, [])
@@ -165,10 +168,95 @@ export const SaveApi = forwardRef((props, ref) => {
     setApiLogList([])
     remove(targetKey);
   }
+  const getMatchingTabs = (tabs, url) => {
+    const matchingTabs = [];
+    for (const tab of tabs) {
+      if (tab.url.startsWith(url)) {
+        matchingTabs.push(tab);
+      }
+    }
+    return matchingTabs;
+  }
+
+
+
   const handleChangeProject = (activeKey) => {
+    setPreviousActiveKey(defaultActiveKey);
     setApiLogList([])
     setDefaultActiveKey(activeKey)
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
+    function checkAndInjectScript() {
+      // 检查页面中是否存在<script src="inject.js">
+      const scriptExists = document.querySelector('script[src*="insert.js"]');
+      if (!scriptExists) {
+        const executeScript = (data) => {
+          const code = JSON.stringify(data)
+          const INJECT_ELEMENT_ID = 'mock-genius'
+
+          const inputElem = document.getElementById(
+            INJECT_ELEMENT_ID
+          )
+          if (inputElem !== null) {
+            inputElem.value = code
+          }
+        }
+        const setGlobalData = () => {
+          const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
+          const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
+          const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
+
+          chrome.storage.local.get(keys, (result) => {
+            executeScript(result)
+          })
+        }
+        const script = document.createElement('script')
+        script.setAttribute('type', 'module')
+        script.setAttribute('src', chrome.runtime.getURL('insert.js'))
+        document.documentElement.appendChild(script)
+
+        const input = document.createElement('input')
+        input.setAttribute('id', 'mock-genius')
+        input.setAttribute('style', 'display:none')
+        document.documentElement.appendChild(input)
+        setGlobalData()
+      }
+    }
+    function removeInjectScript() {
+      const script = document.querySelector('script[src*="insert.js"]');
+      if (script) {
+        script.remove();
+      }
+      const input = document.getElementById('mock-genius')
+      if (input) {
+        input.remove();
+      }
+    }
+    // 注入
+    chrome.tabs.query({}, function (tabs) {
+      const targetUrl = new Url(activeKey)
+      // 切换 tab 的时候注入
+      const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
+      if (matchingTabs.length > 0) {
+        const matchingTabId = matchingTabs[0].id;
+        if (matchingTabId) {
+          chrome.scripting.executeScript({
+            target: { tabId: matchingTabId },
+            function: checkAndInjectScript
+          });
+        }
+      }
+      // 旧的 tab 取消注入
+      const previousMatchingTabs = getMatchingTabs(tabs, new Url(previousActiveKey).origin);
+      if (previousMatchingTabs.length > 0) {
+        const previousMatchingTabId = previousMatchingTabs[0].id;
+        if (previousMatchingTabId) {
+          chrome.scripting.executeScript({
+            target: { tabId: previousMatchingTabId },
+            function: removeInjectScript
+          });
+        }
+      }
+    })
   }
   const handleDelete = (record, key) => {
     setItems((prevApiList) => {
@@ -177,9 +265,9 @@ export const SaveApi = forwardRef((props, ref) => {
           return {
             ...item,
             children: <Table
-            style={{
-              padding: '0 20px'
-            }}
+              style={{
+                padding: '0 20px'
+              }}
               size='small'
               columns={columns}
               dataSource={item.children.props.dataSource.filter(item => item.pathRule !== record.pathRule)}
@@ -247,9 +335,9 @@ export const SaveApi = forwardRef((props, ref) => {
             return {
               ...item,
               children: <Table
-              style={{
-                padding: '0 20px'
-              }}
+                style={{
+                  padding: '0 20px'
+                }}
                 size='small'
                 columns={columns}
                 dataSource={[formData, ...item.children.props.dataSource]}
@@ -369,9 +457,9 @@ export const SaveApi = forwardRef((props, ref) => {
           key: formData.pathUrl,
           label: formData.name,
           children: <Table
-          style={{
-            padding: '0 20px'
-          }}
+            style={{
+              padding: '0 20px'
+            }}
             size='small'
             columns={columns}
             dataSource={[]}

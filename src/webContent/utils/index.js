@@ -1,3 +1,5 @@
+import Url from 'url-parse'
+
 export const saveStorage = async (key, value) => {
   return new Promise((resolve) => {
     chrome.storage.local.set({ [key]: value }, (result) => {
@@ -84,3 +86,25 @@ export const setLocal = async (object) => {
     await chrome.storage.local.set({ [key]: newObject });
   }
 };
+
+export function logTerminalMockMessage(config, result, request) {
+  const targetUrl = new Url(request.url)
+  const str = targetUrl.pathname
+  const css = 'font-size:13px; background:pink; color:#bf2c9f;'
+  console.log(
+    `%c [ URL ] %c${str} %c [ METHOD ] %c${request.method}`,
+    css, // 样式1，用于 'URL:'
+    '', // 默认样式，用于 'str'
+    css, // 样式1，用于 'URL:'
+    '', // 默认样式，用于 'str'
+  );
+  if (JSON.parse(config.body)) {
+    console.log('%c [ request-body ] ', css, JSON.parse(config.body))
+  }
+  if (result.response && result.response !== "") {
+    console.log('%c [ response ] ', css, result.response)
+  } else if (result.response === "") {
+    console.log('%c [ response ] ', css, '空字符串')
+  }
+}
+

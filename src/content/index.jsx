@@ -37,7 +37,7 @@ const injectScriptToPage = () => {
       insertScript.setAttribute('type', 'module')
       insertScript.src = window.chrome.runtime.getURL('insert.js')
     }
-    document.body.appendChild(insertScript)
+    document.documentElement.appendChild(insertScript)
     const input = document.createElement('input')
     input.setAttribute('id', INJECT_ELEMENT_ID)
     input.setAttribute('style', 'display:none')
