@@ -10,8 +10,8 @@ const defaultProjectProduct = {
   isTerminalLogOpen: false,
   rules: []
 }
-// manifest.json的Permissions配置需添加declarativeContent权限
-chrome.runtime.onInstalled.addListener(async function () {
+
+chrome.runtime.onInstalled.addListener(function () {
   chrome.storage.local.set({
     [AJAX_INTERCEPTOR_PROJECTS]: [defaultProjectProduct],
     [AJAX_INTERCEPTOR_CURRENT_PROJECT]: defaultProjectProduct.pathUrl,
@@ -20,6 +20,8 @@ chrome.runtime.onInstalled.addListener(async function () {
 
   })
 })
+
+
 
 chrome.action.onClicked.addListener(() => {
   try {
@@ -36,7 +38,6 @@ chrome.action.onClicked.addListener(() => {
   } catch (error) {
 
   }
-
 });
 
 chrome.commands.onCommand.addListener(function (command) {
