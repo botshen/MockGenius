@@ -1,14 +1,31 @@
+// @ts-nocheck
+
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm, Tabs } from 'antd';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
-import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
-import ProjectDetailModal from './detailModal';
-import ApiDrawDetail from '../../components/detail';
+import { Methods, getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
+import { ProjectDetailModal } from './detailModal/index';
+import { Detail } from '../../components/detail';
 import { useDomainStore } from '../../store';
+import { ProjectList } from '../ApiLog';
+type RecordType = {
+  name: string;
+  code: string;
+  switchOn: boolean;
+  delay: string;
+  method: Methods;
+  pathRule: string;
+  Response: any;
+}
 
+type ItemsType = {
+  key: string;
+  label: string;
+  children: any;
+}[]
 export const SaveApi = forwardRef((props, ref) => {
 
   const columns = [
@@ -26,18 +43,18 @@ export const SaveApi = forwardRef((props, ref) => {
       title: 'SwitchOn',
       dataIndex: 'switchOn',
       key: 'switchOn',
-      render: (switchOn) => {
+      render: (switchOn: boolean) => {
         let color = 'green';
         let closeColor = 'red';
         if (switchOn) {
           return (
-            <Tag color={color} key={switchOn}>
+            <Tag color={color} key={'open'}>
               开启
             </Tag>
           )
         } else {
           return (
-            <Tag color={closeColor} key={switchOn}>
+            <Tag color={closeColor} key={'close'}>
               关闭
             </Tag>
           )
@@ -49,7 +66,7 @@ export const SaveApi = forwardRef((props, ref) => {
       title: 'Method',
       key: 'method',
       dataIndex: 'method',
-      render: (method) => {
+      render: (method: Methods) => {
         let color = 'geekblue';
         return (
           <Tag color={color} key={method}>
@@ -61,13 +78,13 @@ export const SaveApi = forwardRef((props, ref) => {
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
+      render: (_: any, record: RecordType) => (
         <Space size="middle">
           <Button type="text" onClick={() => handleEdit(record)} >Edit</Button>
           <Popconfirm
             title="删除警告"
             description="你确定要删除吗?"
-            onConfirm={() => confirm(record, defaultActiveKey)}
+            onConfirm={() => confirm(record)}
             okText="是"
             cancelText="否"
           >
@@ -77,10 +94,10 @@ export const SaveApi = forwardRef((props, ref) => {
       ),
     },
   ];
-  const { setApiLogList } = useDomainStore()
+  const { setApiLogList } = useDomainStore() as any
 
   const [apiDetailData, setApiDetailData] = useState({});
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState<ItemsType>([])
   const [defaultActiveKey, setDefaultActiveKey] = useState('');
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
   const [apiDetailVisible, setApiDetailVisible] = useState(false);
@@ -114,7 +131,7 @@ export const SaveApi = forwardRef((props, ref) => {
       }]
     }, function (values) {
 
-      setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item, index) => {
+      setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item: any) => {
         return {
           key: item.pathUrl,
           label: item.projectName,
@@ -133,15 +150,15 @@ export const SaveApi = forwardRef((props, ref) => {
     })
   }, [])
 
-  const confirm = (record) => {
+  const confirm = (record: RecordType) => {
     readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT).then(value => {
       handleDelete(record, value)
     })
 
   };
 
-  const remove = async (targetKey) => {
-    const projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS)
+  const remove = async (targetKey: string) => {
+    const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     if (projectList.length === 1) return;
     let newActiveKey = defaultActiveKey;
     let lastIndex = -1;
@@ -164,11 +181,11 @@ export const SaveApi = forwardRef((props, ref) => {
     const newProjectList = projectList.filter(item => item.pathUrl !== targetKey)
     saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
   };
-  const onEdit = (targetKey) => {
+  const onEdit = (targetKey: string) => {
     setApiLogList([])
     remove(targetKey);
   }
-  const getMatchingTabs = (tabs, url) => {
+  const getMatchingTabs = (tabs: any, url: string) => {
     const matchingTabs = [];
     for (const tab of tabs) {
       if (tab.url.startsWith(url)) {
@@ -180,16 +197,15 @@ export const SaveApi = forwardRef((props, ref) => {
 
 
 
-  const handleChangeProject = (activeKey) => {
+  const handleChangeProject = (activeKey: string) => {
     setPreviousActiveKey(defaultActiveKey);
     setApiLogList([])
     setDefaultActiveKey(activeKey)
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
     function checkAndInjectScript() {
-      // 检查页面中是否存在<script src="inject.js">
       const scriptExists = document.querySelector('script[src*="insert.js"]');
       if (!scriptExists) {
-        const executeScript = (data) => {
+        const executeScript = (data: any) => {
           const code = JSON.stringify(data)
           const INJECT_ELEMENT_ID = 'mock-genius'
 
@@ -197,7 +213,7 @@ export const SaveApi = forwardRef((props, ref) => {
             INJECT_ELEMENT_ID
           )
           if (inputElem !== null) {
-            inputElem.value = code
+            (inputElem as HTMLInputElement).value = code;
           }
         }
         const setGlobalData = () => {
@@ -252,7 +268,7 @@ export const SaveApi = forwardRef((props, ref) => {
         if (previousMatchingTabId) {
           chrome.scripting.executeScript({
             target: { tabId: previousMatchingTabId },
-            function: removeInjectScript
+            function: removeInjectScript  
           });
         }
       }
@@ -521,7 +537,7 @@ export const SaveApi = forwardRef((props, ref) => {
       }
       {
         apiDetailVisible &&
-        <ApiDrawDetail
+        <Detail
           onSubmit={onApiDrawDetailSubmit}
           onCancel={onCancelDetail}
           data={apiDetailData}

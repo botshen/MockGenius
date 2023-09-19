@@ -1,14 +1,21 @@
 import { JSONEditor } from "vanilla-jsoneditor";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "./json.scss";
 
-export default function SvelteJSONEditor(props) {
-  const refContainer = useRef(null);
-  const refEditor = useRef(null);
+interface SvelteJSONEditorProps {
+  readOnly?: boolean;
+  onChange?: (value: any) => void;
+  mode: any;
+  content: any; // Define the type of 'content' appropriately
+}
+
+export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
+  const refContainer = useRef<HTMLDivElement | null>(null);
+  const refEditor = useRef<JSONEditor | null>(null);
 
   useEffect(() => {
     refEditor.current = new JSONEditor({
-      target: refContainer.current,
+      target: refContainer.current!,
       props: {}
     });
 

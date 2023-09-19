@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom'
-import { globalRouters } from '@/webContent/router'
-import Url from "url-parse";
+ import Url from "url-parse";
 import { useDomainStore } from './store';
 import { readLocalStorage } from './utils';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT } from './const';
+import { globalRouters } from './router';
 
 
-function WebContent() {
-    const { addApiLogList } = useDomainStore()
-    const isMockText = (isMock) => {
+export const WebContent: React.FC = () => {
+    const { addApiLogList } = useDomainStore() as any
+    const isMockText = (isMock: boolean) => {
         if (isMock) {
             return 'Mock'
         } else {
@@ -53,4 +53,3 @@ function WebContent() {
     return <RouterProvider router={globalRouters} />
 }
 
-export default WebContent

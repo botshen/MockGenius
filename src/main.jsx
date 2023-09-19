@@ -1,15 +1,19 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { ConfigProvider } from 'antd'
-// 引入Ant Design中文语言包
-import zhCN from 'antd/locale/zh_CN'
-// 全局样式
-import '@/common/styles/frame.styl'
-import WebContent from './webContent'
-// 在popup页面调试content script，仅用于开发环境，build前记得要注释掉。
-// import '@/content'
-ReactDOM.createRoot(document.getElementById('root')).render(
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import '@/common/styles/frame.styl';
+import { WebContent } from './webContent/index';
+
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+  ReactDOM.render(
     <ConfigProvider locale={zhCN}>
-        <WebContent />
-    </ConfigProvider>
-)
+      <WebContent />
+    </ConfigProvider>,
+    rootElement
+  );
+} else {
+  console.error("Element with ID 'root' not found in the HTML.");
+}

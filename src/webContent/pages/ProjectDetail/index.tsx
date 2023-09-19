@@ -1,4 +1,4 @@
-import { ApiLog } from "../ApiLog"
+import { ApiLog, ProjectList } from "../ApiLog"
 import { Switch, Divider, Layout, Dropdown, theme, Button } from 'antd';
 import { ClearOutlined } from '@ant-design/icons';
 import { SettingOutlined, SmileOutlined } from '@ant-design/icons';
@@ -33,7 +33,7 @@ export const ProjectDetail = () => {
 
     ];
     const saveApi = useRef();
-    const { setApiLogList } = useDomainStore()
+    const { setApiLogList } = useDomainStore() as any;
 
     const [defaultChecked, setDefaultChecked] = useState(true)
     const [detailVisible, setDetailVisible] = useState(false)
@@ -50,11 +50,11 @@ export const ProjectDetail = () => {
             }
         })
     }, [])
- 
+
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const globalSwitchChange = async (checked) => {
+    const globalSwitchChange = async (checked: boolean) => {
         setDefaultChecked(checked => !checked)
         await saveStorage('mockPluginSwitchOn', checked)
         if (checked) {
@@ -63,9 +63,10 @@ export const ProjectDetail = () => {
             chrome.action.setIcon({ path: '/images/gray.png' });
         }
     }
- 
-    const apiLogSubmit = (projectList) => {
-        saveApi.current.setTabData(projectList)
+
+    const apiLogSubmit = (projectList: ProjectList) => {
+        // @ts-ignore
+        saveApi.current?.setTabData(projectList)
     }
     const clearLog = () => {
         setApiLogList([])
@@ -125,7 +126,7 @@ export const ProjectDetail = () => {
                             <Button icon={<SettingOutlined />} type="primary">设置</Button>
 
                         </Dropdown> */}
-                        </div>
+                    </div>
 
                 </Header>
                 <Content

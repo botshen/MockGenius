@@ -1,11 +1,14 @@
 import { useNavigate } from 'react-router-dom'
-import { Button, Tabs } from 'antd'
+import { Button } from 'antd'
 import './nav.scss'
 import { useDomainStore } from '../../store'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
+type Props = {
+    location: any;
 
-function Nav(props) {
-    const { setDomain, domain } = useDomainStore()
+}
+export const Nav: React.FC<Props> = (props) => {
+    const { setDomain, domain } = useDomainStore() as any
 
     useEffect(() => {
         chrome.storage.local.get(['mockgenius_current_project'], (result) => {
@@ -31,10 +34,6 @@ function Nav(props) {
         },
     ]
 
-    // Tab组件控制路由跳转
-    const onTabChange = (key) => {
-        navigate(key)
-    }
 
     const onExit = () => {
         navigate('/projectList')
@@ -43,7 +42,7 @@ function Nav(props) {
     return (
         <div className="M-nav">
             <span className='domain'>{domain}</span>
-            
+
             <Button className="btn-exit" type="primary" onClick={onExit}>
                 Exit
             </Button>
@@ -51,4 +50,4 @@ function Nav(props) {
     )
 }
 
-export default Nav
+

@@ -1,17 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Modal, Form, Input } from 'antd';
 
-
-const DetailModal = ({ onClose, saveProject, formData, mode }) => {
+type Props = {
+  onClose: () => void;
+  saveProject: (formValues: any) => void;
+  formData: any;
+  mode: string;
+}
+export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, formData, mode }) => {
   const [form] = Form.useForm();
   const originReg = /^(?=^.{3,255}$)(http(s)?:\/\/)(www\.)?[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62}){0,}(:\d+)*$/
   const originPlaceholder = 'protocol://hostname[:port]'
   const handleCancel = () => {
     onClose()
-  };
-  const onFinish = (values) => {
-  };
-  const onFinishFailed = (errorInfo) => {
   };
 
   return (
@@ -45,8 +46,8 @@ const DetailModal = ({ onClose, saveProject, formData, mode }) => {
           // }}
           // initialValues={{ ...formData, pathUrl: 'http://localhost:3000' }}
           initialValues={{ ...formData }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
+          // onFinish={onFinish}
+          // onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item
@@ -83,4 +84,4 @@ const DetailModal = ({ onClose, saveProject, formData, mode }) => {
   );
 };
 
-export default DetailModal;
+ 

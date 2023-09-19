@@ -1,29 +1,23 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Form, Switch, InputNumber, Select, Drawer, Space } from 'antd';
 import SvelteJSONEditor from '../json/index'
 
-export default function Detail({ onCancel, onSubmit, data, mode }) {
-  const [readOnly, setReadOnly] = useState(false);
+type Props = {
+  onCancel: () => void;
+  onSubmit: (formValues: any, mode: string) => void;
+  data: any;
+  mode: string;
+}
+
+export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const [content, setContent] = useState({
-    json: {
-      // greeting: "Hello World",
-      // color: "#ff3e00",
-      // ok: true,
-      // values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-    },
+    json: {},
     text: undefined
   });
-  const [open, setOpen] = useState(true);
-  const [placement, setPlacement] = useState('right');
   const [form] = Form.useForm(); // 创建一个表单实例
-
-  const onChange = (e) => {
-    setPlacement(e.target.value);
-  };
   const onClose = () => {
     onCancel();
   };
-
   useEffect(() => {
     if (data) {
       if (data.Response === '') {
@@ -39,7 +33,6 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
       }
 
     }
-
   }, [])
   const onFinish = () => {
     form
@@ -57,17 +50,17 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
       });
 
   };
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed = (errorInfo: any) => {
   };
-  const handleChange = (value) => {
+  const handleChange = (value: any) => {
   };
   return (
     <Drawer
       title={mode === 'add' ? '新增规则' : '编辑规则'}
-      placement={placement}
+      placement={'right'}
       width={800}
       onClose={onClose}
-      open={open}
+      open={true}
       maskClosable={false}
       extra={
         <Space>
@@ -140,7 +133,7 @@ export default function Detail({ onCancel, onSubmit, data, mode }) {
           >
             <SvelteJSONEditor
               content={content}
-              readOnly={readOnly}
+              readOnly={false}
               onChange={setContent}
               mode="text"
             />
