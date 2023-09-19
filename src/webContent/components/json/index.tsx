@@ -6,7 +6,7 @@ interface SvelteJSONEditorProps {
   readOnly?: boolean;
   onChange?: (value: any) => void;
   mode: any;
-  content: any; // Define the type of 'content' appropriately
+  content: any;
 }
 
 export default function SvelteJSONEditor(props: SvelteJSONEditorProps) {
