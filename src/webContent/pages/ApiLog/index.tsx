@@ -129,6 +129,7 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          marginBottom: '5px',
         }}>
           <div className="mock-page-title">拦截日志：</div>
 
