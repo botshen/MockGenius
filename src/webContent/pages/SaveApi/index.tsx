@@ -549,6 +549,7 @@ export const SaveApi = forwardRef((props, ref) => {
           <span style={{
             fontSize: '20px',
             fontWeight: 'bold',
+            color:'#e3e3e3'
           }}>
             {defaultActiveKey}
           </span>

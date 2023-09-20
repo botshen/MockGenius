@@ -136,11 +136,10 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
               readOnly={false}
               onChange={setContent}
               mode="text"
+              mainMenuBar={false}
+              statusBar={false}
             />
           </Form.Item>
-
-
-
           <Form.Item
             label="Method"
             name="method"
