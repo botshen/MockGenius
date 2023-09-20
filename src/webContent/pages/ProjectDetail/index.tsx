@@ -31,35 +31,12 @@ export const ProjectDetail = () => {
 
     ];
     const saveApi = useRef();
-
-    const [defaultChecked, setDefaultChecked] = useState(true)
-    const [detailVisible, setDetailVisible] = useState(false)
-    useEffect(() => {
-        getOrCreateLocalStorageValues({
-            mockPluginSwitchOn: true,
-        }, function (values) {
-            const checked = values.mockPluginSwitchOn
-            setDefaultChecked(checked)
-            if (checked) {
-                chrome.action.setIcon({ path: '/images/app.png' });
-            } else {
-                chrome.action.setIcon({ path: '/images/gray.png' });
-            }
-        })
-    }, [])
+ 
 
     const {
         token: { colorBgContainer },
     } = theme.useToken();
-    const globalSwitchChange = async (checked: boolean) => {
-        setDefaultChecked(checked => !checked)
-        await saveStorage('mockPluginSwitchOn', checked)
-        if (checked) {
-            chrome.action.setIcon({ path: '/images/app.png' });
-        } else {
-            chrome.action.setIcon({ path: '/images/gray.png' });
-        }
-    }
+  
 
     const apiLogSubmit = (projectList: ProjectList) => {
         // @ts-ignore
@@ -98,14 +75,6 @@ export const ProjectDetail = () => {
                         gap: '20px',
 
                     }}>
-                        <Switch
-                            checked={defaultChecked}
-                            onChange={globalSwitchChange}
-                            checkedChildren="开启"
-                            unCheckedChildren="关闭"
-                        />
-
-
                         <Dropdown
                             menu={{
                                 items,
@@ -114,7 +83,7 @@ export const ProjectDetail = () => {
                             trigger={['click']}
 
                         >
-                            <Button icon={<SettingOutlined />} type="primary">设置</Button>
+                            <Button icon={<SettingOutlined />} >设置</Button>
 
                         </Dropdown>
                     </div>

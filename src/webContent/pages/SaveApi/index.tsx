@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
-import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip } from 'antd';
+import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch } from 'antd';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
@@ -103,6 +103,7 @@ export const SaveApi = forwardRef((props, ref) => {
     },
   ];
   const { setApiLogList } = useDomainStore() as any
+  const [defaultChecked, setDefaultChecked] = useState(true)
 
   const [apiDetailData, setApiDetailData] = useState({});
   const [items, setItems] = useState<ItemsType>([])
@@ -136,9 +137,16 @@ export const SaveApi = forwardRef((props, ref) => {
         }],
         projectName: '默认项目',
         switchOn: true
-      }]
+      }],
+      mockPluginSwitchOn: true,
     }, function (values) {
-
+      const checked = values.mockPluginSwitchOn
+      setDefaultChecked(checked)
+      if (checked) {
+        chrome.action.setIcon({ path: '/images/app.png' });
+      } else {
+        chrome.action.setIcon({ path: '/images/gray.png' });
+      }
       setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item: any) => {
         return {
           key: item.pathUrl,
@@ -154,7 +162,15 @@ export const SaveApi = forwardRef((props, ref) => {
 
     })
   }, [])
-
+  const globalSwitchChange = async (checked: boolean) => {
+    setDefaultChecked(checked => !checked)
+    await saveStorage('mockPluginSwitchOn', checked)
+    if (checked) {
+      chrome.action.setIcon({ path: '/images/app.png' });
+    } else {
+      chrome.action.setIcon({ path: '/images/gray.png' });
+    }
+  }
   const confirm = (record: RecordType) => {
     readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT).then(value => {
       handleDelete(record, value)
@@ -551,16 +567,23 @@ export const SaveApi = forwardRef((props, ref) => {
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'center',
             gap: '20px',
           }}
           >
-            <Button onClick={handleAddProject} type="primary" icon={<PlusOutlined />}  >
+            <Switch
+              checked={defaultChecked}
+              onChange={globalSwitchChange}
+              checkedChildren="开启"
+              unCheckedChildren="关闭"
+            />
+            <Button onClick={handleAddProject} icon={<PlusOutlined />}  >
               添加地址
             </Button>
-            <Button onClick={handleEditProject} type="primary" icon={<EditOutlined />}  >
+            <Button onClick={handleEditProject} icon={<EditOutlined />}  >
               编辑地址
             </Button>
-            <Button onClick={handleAddRule} type="primary" icon={<PlusOutlined />}>
+            <Button onClick={handleAddRule} icon={<PlusOutlined />}>
               添加规则
             </Button>
           </div>
