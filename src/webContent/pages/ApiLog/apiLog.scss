@@ -1,5 +1,4 @@
 .account-wrapper {
-    // padding: 20px;
     background: linear-gradient(#f48c8d, #f4c58d)
 }
 
@@ -12,21 +11,17 @@
 .even-row {
     background-color: #b4d7e1;
 }
-// .anticon{
-//     color:#3875f6
-// }
-.log-wrapper{
-    width: 50vw;
-    // padding: 10px;
-    // border: 1px solid #ccc;
-    height: 100%;
 
-    
+.log-wrapper {
+    max-width: calc(50vw - 17px);
+    width: 100%;
+    padding-left: 10px;
+    height: 100%;
 }
-.mock-page-title{
+
+.mock-page-title {
     font-size: 20px;
     font-weight: bold;
-    padding: 10px;
-    margin-bottom: 63px;
+    padding: 10px 10px 10px 0px;
     color: #e3e3e3;
-  }
+}

@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
-import { Button, message, Table, Tag, Space, Popconfirm, Tabs } from 'antd';
+import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip } from 'antd';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
@@ -33,6 +33,14 @@ export const SaveApi = forwardRef((props, ref) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (name) => (
+        <Tooltip placement="topLeft" title={name}>
+          {name}
+        </Tooltip>
+      ),
     },
     {
       title: 'Status',
@@ -137,9 +145,6 @@ export const SaveApi = forwardRef((props, ref) => {
           label: item.projectName,
           children: <Table
             columns={columns}
-            style={{
-              padding: '0 20px'
-            }}
             size='small'
             dataSource={item.rules} />,
         }
@@ -268,7 +273,7 @@ export const SaveApi = forwardRef((props, ref) => {
         if (previousMatchingTabId) {
           chrome.scripting.executeScript({
             target: { tabId: previousMatchingTabId },
-            function: removeInjectScript  
+            function: removeInjectScript
           });
         }
       }
@@ -281,9 +286,7 @@ export const SaveApi = forwardRef((props, ref) => {
           return {
             ...item,
             children: <Table
-              style={{
-                padding: '0 20px'
-              }}
+
               size='small'
               columns={columns}
               dataSource={item.children.props.dataSource.filter(item => item.pathRule !== record.pathRule)}
@@ -351,9 +354,7 @@ export const SaveApi = forwardRef((props, ref) => {
             return {
               ...item,
               children: <Table
-                style={{
-                  padding: '0 20px'
-                }}
+
                 size='small'
                 columns={columns}
                 dataSource={[formData, ...item.children.props.dataSource]}
@@ -385,9 +386,7 @@ export const SaveApi = forwardRef((props, ref) => {
               ...item,
               children: <Table
                 columns={columns}
-                style={{
-                  padding: '0 20px'
-                }}
+
                 size='small'
                 dataSource={item.children.props.dataSource.map(item => {
                   if (item.pathRule === formData.pathRule) {
@@ -473,9 +472,7 @@ export const SaveApi = forwardRef((props, ref) => {
           key: formData.pathUrl,
           label: formData.name,
           children: <Table
-            style={{
-              padding: '0 20px'
-            }}
+
             size='small'
             columns={columns}
             dataSource={[]}
@@ -511,9 +508,7 @@ export const SaveApi = forwardRef((props, ref) => {
         label: item.projectName,
         children: <Table
           size='small'
-          style={{
-            padding: '0 20px'
-          }}
+
           columns={columns}
           dataSource={item.rules} />,
       }
@@ -549,7 +544,7 @@ export const SaveApi = forwardRef((props, ref) => {
           <span style={{
             fontSize: '20px',
             fontWeight: 'bold',
-            color:'#e3e3e3'
+            color: '#e3e3e3'
           }}>
             {defaultActiveKey}
           </span>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Detail } from '../../components/detail';
-import { Table, Tag, message } from 'antd';
+import { Button, Table, Tag, Tooltip, message } from 'antd';
+import { ClearOutlined } from '@ant-design/icons';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { useDomainStore } from '../../store';
 import { readLocalStorage } from "../../utils";
@@ -27,6 +28,15 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
       title: 'Path',
       dataIndex: 'pathRule',
       key: 'pathRule',
+      width: '30%',
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (pathRule: string) => (
+        <Tooltip placement="topLeft" title={pathRule}>
+          {pathRule}
+        </Tooltip>
+      ),
     },
     {
       title: 'Status',
@@ -66,7 +76,11 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
   const setDetailFalse = () => {
     setDetailVisible(false);
   };
+  const { setApiLogList } = useDomainStore() as any;
 
+  const clearLog = () => {
+    setApiLogList([])
+  }
   const handleDetailSubmit = async (formData: ApiLogItem) => {
     let projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     let currentProjectUrl = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
@@ -111,11 +125,17 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
     <>
       {contextHolder}
       <div className='log-wrapper'>
-        <div className="mock-page-title">拦截日志：</div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <div className="mock-page-title">拦截日志：</div>
+
+          <Button onClick={clearLog} danger icon={<ClearOutlined />} >清空日志</Button>
+
+        </div>
         <Table
-          style={{
-            padding: '0 20px',
-          }}
           size='small'
           onRow={(record: ApiLogItem) => {
             return {
@@ -127,6 +147,8 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
           }}
           columns={columns}
           dataSource={apiLogList}
+          pagination={false}
+          scroll={{ y: 600 }}
         />
       </div>
       {detailVisible && (

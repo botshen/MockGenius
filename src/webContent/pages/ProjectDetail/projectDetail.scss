@@ -11,7 +11,7 @@
 
 .ant-layout-content {
   max-height: calc(100vh - 64px);
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .mock-page-header {
@@ -68,6 +68,6 @@
   filter: drop-shadow(0 0 2em rgba(255, 255, 0, 1));
 }
 
-.ant-layout-header{
+.ant-layout-header {
   background-color: #242424;
 }

@@ -1,12 +1,10 @@
 import { ApiLog, ProjectList } from "../ApiLog"
 import { Switch, Divider, Layout, Dropdown, theme, Button } from 'antd';
-import { ClearOutlined } from '@ant-design/icons';
 import { SettingOutlined, SmileOutlined } from '@ant-design/icons';
 import { SaveApi } from "../SaveApi"
 import './projectDetail.scss'
 import React, { useEffect, useRef, useState } from "react";
-import { getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from "../../utils";
-import { useDomainStore } from "../../store";
+import { getOrCreateLocalStorageValues, saveStorage } from "../../utils";
 
 const { Header, Content } = Layout;
 
@@ -33,7 +31,6 @@ export const ProjectDetail = () => {
 
     ];
     const saveApi = useRef();
-    const { setApiLogList } = useDomainStore() as any;
 
     const [defaultChecked, setDefaultChecked] = useState(true)
     const [detailVisible, setDetailVisible] = useState(false)
@@ -68,14 +65,9 @@ export const ProjectDetail = () => {
         // @ts-ignore
         saveApi.current?.setTabData(projectList)
     }
-    const clearLog = () => {
-        setApiLogList([])
-    }
+
     return (
         <>
-            {/* {
-                detailVisible && <Detail onSubmit={onSubmit} onCancel={onCancelDetail}></Detail>
-            } */}
             <Layout className="layout">
                 <Header
                     style={{
@@ -106,16 +98,15 @@ export const ProjectDetail = () => {
                         gap: '20px',
 
                     }}>
-                        {/* <Switch
+                        <Switch
                             checked={defaultChecked}
                             onChange={globalSwitchChange}
                             checkedChildren="开启"
                             unCheckedChildren="关闭"
-                        /> */}
+                        />
 
 
-                        <Button onClick={clearLog} danger icon={<ClearOutlined />} >清空日志</Button>
-                        {/* <Dropdown
+                        <Dropdown
                             menu={{
                                 items,
                             }}
@@ -125,7 +116,7 @@ export const ProjectDetail = () => {
                         >
                             <Button icon={<SettingOutlined />} type="primary">设置</Button>
 
-                        </Dropdown> */}
+                        </Dropdown>
                     </div>
 
                 </Header>
@@ -139,9 +130,9 @@ export const ProjectDetail = () => {
                     >
                         <div className="ProjectDetail-wrapper">
                             <div className="mock-page-content">
-                                <SaveApi ref={saveApi} ></SaveApi>
-                                <Divider type="vertical" className="divier" />
                                 <ApiLog apiLogSubmit={apiLogSubmit}></ApiLog>
+                                <Divider type="vertical" className="divier" />
+                                <SaveApi ref={saveApi} ></SaveApi>
                             </div>
                         </div>
                     </div>

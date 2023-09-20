@@ -14,6 +14,15 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
   const handleCancel = () => {
     onClose()
   };
+  const initialValues = () => {
+    if (mode === 'edit') {
+      return { ...formData }
+    }
+    return {
+      name: '',
+      pathUrl: 'http://localhost:'
+    }
+  }
 
   return (
     <>
@@ -45,7 +54,7 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
           //   maxWidth: 600,
           // }}
           // initialValues={{ ...formData, pathUrl: 'http://localhost:3000' }}
-          initialValues={{ ...formData }}
+          initialValues={initialValues()}
           // onFinish={onFinish}
           // onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -84,4 +93,3 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
   );
 };
 
- 
