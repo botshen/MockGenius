@@ -86,7 +86,7 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
             code: data?.code ?? '200',
             switchOn: data?.switchOn ?? true,
             delay: data?.delay ?? '0',
-            method: data?.method ?? 'get',
+            method: data?.method ?? 'POST',
             pathRule: data?.pathRule ?? '',
             name: data?.name ?? data?.pathRule,
           }}

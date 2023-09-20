@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch } from 'antd';
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import Url from "url-parse";
@@ -87,8 +87,8 @@ export const SaveApi = forwardRef((props, ref) => {
       title: 'Action',
       key: 'action',
       render: (_: any, record: RecordType) => (
-        <Space size="middle">
-          <Button type="text" onClick={() => handleEdit(record)} >Edit</Button>
+        <Space size="small">
+          <Button type="text" size='small' onClick={() => handleEdit(record)} >Edit</Button>
           <Popconfirm
             title="删除警告"
             description="你确定要删除吗?"
@@ -96,7 +96,7 @@ export const SaveApi = forwardRef((props, ref) => {
             okText="是"
             cancelText="否"
           >
-            <Button type="text" danger >Delete</Button>
+            <Button size='small' type="text" danger >Delete</Button>
           </Popconfirm>
         </Space>
       ),
@@ -127,7 +127,7 @@ export const SaveApi = forwardRef((props, ref) => {
           code: '200',
           switchOn: true,
           delay: '0',
-          method: 'get',
+          method: 'POST',
           pathRule: '/api/test',
           Response: {
             code: 200,
