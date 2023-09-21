@@ -19,17 +19,14 @@ async function mockCore(url, method) {
     const currentRule = rules.find((item) => {
       const med = item.method.toUpperCase()
       const pathRule = new Url(item.pathRule)
-
       const pathname = pathRule.pathname
       return med === method &&
         item?.switchOn &&
         str === pathname &&
-        currentProject.pathUrl === pathRule.origin &&
-        targetUrl.host === pathRule.host
+        currentProject.pathUrl === pathRule.origin
     })
 
     if (currentRule) {
-      console.log('%c [ currentRule ]-32', 'font-size:13px; background:pink; color:#bf2c9f;', currentRule)
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
       return {
         response: currentRule.Response,
@@ -54,7 +51,6 @@ const sendMsg = (msg, isMock = false) => {
 }
 
 function handMockResult({ res, request, config }) {
-  console.log('%c [ res ]-55', 'font-size:13px; background:pink; color:#bf2c9f;', res)
   const { response, path: rulePath, status, headers } = res
   const result = {
     config,
@@ -62,7 +58,6 @@ function handMockResult({ res, request, config }) {
     headers: headers ?? [],
     response: response,
   }
-  console.log('%c [ result ]-57', 'font-size:13px; background:pink; color:#bf2c9f;', result)
 
   const payload = {
     request,
@@ -101,7 +96,6 @@ function getCurrentProject() {
 
 proxy({
   onRequest: async (config, handler) => {
-    console.log('%c [ config ]-99', 'font-size:13px; background:pink; color:#bf2c9f;', config)
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.next(config)
       return;
@@ -134,7 +128,6 @@ proxy({
     }
   },
   onResponse: async (response, handler) => {
-    console.log('%c [ response ]-135', 'font-size:13px; background:pink; color:#bf2c9f;', response)
     const { statusText, status, config, headers, response: res } = response
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.resolve(response)

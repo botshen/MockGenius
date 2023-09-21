@@ -142,7 +142,6 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
             return {
               onClick: () => {
                 setDetailData(record);
-                console.log('%c [ record ]-145', 'font-size:13px; background:pink; color:#bf2c9f;', record)
                 setDetailVisible(true);
               },
             };

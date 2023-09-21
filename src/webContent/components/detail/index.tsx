@@ -14,22 +14,24 @@ const { TextArea } = Input;
 
 export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const [content, setContent] = useState({
-    json: {},
+    json: Object.prototype.toString.call(data.Response) === '[object Object]' ? data.Response : JSON.parse(data.Response),
     text: undefined
   });
-  const [form] = Form.useForm(); // 创建一个表单实例
+  const [form] = Form.useForm();
   const [headersList, setHeadersList] = useState<[string, string][]>(data.responseHeaders && Object.entries(data.responseHeaders));
 
   const updateHeadersList = (headers: [string, string][]) => {
     setHeadersList(headers);
   }
-
+  const updateResponseContent = (content: any) => {
+    setContent(content);
+  }
   const [items, setItems] = useState<TabsProps['items']>([
     {
       label: 'Response Body',
       key: 'body',
       children:
-        <Response />
+        <Response jsonData={content} updateResponseContent={updateResponseContent} />
     },
     {
       label: 'Response Headers',
@@ -45,27 +47,29 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const onClose = () => {
     onCancel();
   };
-  useEffect(() => {
-    if (data) {
-      console.log('%c [ data ]-43', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+  // useEffect(() => {
+  //   if (data) {
 
-      if (data.Response === '') {
-        setContent({
-          json: "",
-          text: undefined
-        })
-      } else {
-        setContent({
-          json: data.Response,
-          text: undefined
-        })
-      }
+  //     if (data.Response === '') {
+  //       setContent(() => {
+  //         return {
+  //           json: "",
+  //           text: undefined
+  //         }
+  //       })
+  //     } else {
+  //       setContent(() => {
+  //         return {
+  //           json: data.Response,
+  //           text: undefined
+  //         }
+  //       })
+  //     }
 
 
-    }
-  }, [])
+  //   }
+  // }, [])
   const onFinish = () => {
-    console.log('[ items ] >', items)
     form
       .validateFields()
       .then(() => {
@@ -74,7 +78,6 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
           Response: content.text ? JSON.parse(content.text) : content.json,
           responseHeaders: Object.fromEntries(headersList)
         };
-        console.log('%c [ formValues ]-73', 'font-size:13px; background:pink; color:#bf2c9f;', formValues)
 
         onSubmit(formValues, mode);
       })
@@ -89,7 +92,6 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const handleChange = (value: any) => {
   };
   const onChange = (key: string) => {
-    console.log(key);
   };
   return (
     <Drawer

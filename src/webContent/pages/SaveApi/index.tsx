@@ -333,7 +333,6 @@ export const SaveApi = forwardRef((props, ref) => {
     setApiDetailData(() => record)
     setApiDetailMode('edit')
     setApiDetailVisible(true)
-
   }
 
   const handleAddProject = () => {

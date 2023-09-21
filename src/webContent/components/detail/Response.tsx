@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { RadioChangeEvent } from 'antd';
 import { Radio, Input } from 'antd';
 import SvelteJSONEditor from '../json';
 type Props = {
-
+  jsonData: any
+  updateResponseContent: (content: any) => void;
 }
 const { TextArea } = Input;
 
-export const Response: React.FC<Props> = () => {
-  const [content, setContent] = useState({
-    json: {},
-    text: undefined
-  });
+export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) => {
+  const [content, setContent] = useState(jsonData);
   const [type, setType] = useState('JSON');
+
+  useEffect(() => {
+    updateResponseContent(content)
+  }, [content])
 
   const plainOptions = ['JSON', 'Text'];
   const onTypeChange = ({ target: { value } }: RadioChangeEvent) => {
-    console.log('radio1 checked', value);
     setType(value);
   };
   return (
