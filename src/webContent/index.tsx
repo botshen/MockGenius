@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom'
- import Url from "url-parse";
+import Url from "url-parse";
 import { useDomainStore } from './store';
 import { readLocalStorage } from './utils';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT } from './const';
 import { globalRouters } from './router';
-
 
 export const WebContent: React.FC = () => {
     const { addApiLogList } = useDomainStore() as any
@@ -25,11 +24,9 @@ export const WebContent: React.FC = () => {
                     if (!currentProject) {
                         return
                     }
-                    // const domainPath = event.data.request.url
-                    // const domainUrl = new Url(domainPath)
-                    // if (domainUrl.origin === currentProject) {
                     if (event.type === "ajaxInterceptor") {
                         const data = event.data;
+                        console.log('%c [ data ]-33', 'font-size:13px; background:pink; color:#bf2c9f;', data)
                         const targetUrl = new Url(data.request.url)
                         const result = {
                             pathRule: targetUrl.pathname,
@@ -40,10 +37,11 @@ export const WebContent: React.FC = () => {
                             Response: data.response.responseTxt,
                             origin: targetUrl.origin,
                             switchOn: data.switchOn ?? true,
+                            requestHeaders: data.request.headers,
+                            responseHeaders: data.response.headers,
                         }
                         addApiLogList(result);
                     }
-                    // }
                 })
             } catch (error) {
             }

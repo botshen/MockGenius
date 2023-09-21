@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Form, Switch, InputNumber, Select, Drawer, Space } from 'antd';
-import SvelteJSONEditor from '../json/index'
+import { Button, Input, Form, Switch, InputNumber, Select, Drawer, Space, Tabs } from 'antd';
+import type { TabsProps } from 'antd';
+import { Response } from "./Response";
+import { Headers } from "./Headers";
 
 type Props = {
   onCancel: () => void;
@@ -8,6 +10,7 @@ type Props = {
   data: any;
   mode: string;
 }
+const { TextArea } = Input;
 
 export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const [content, setContent] = useState({
@@ -15,11 +18,30 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     text: undefined
   });
   const [form] = Form.useForm(); // 创建一个表单实例
+  const [items, setItems] = useState<TabsProps['items']>([
+    {
+      label: 'Response Body',
+      key: 'body',
+      children:
+        <Response />
+    },
+    {
+      label: 'Response Headers',
+      key: 'headers',
+      children: <Headers headersList={data.responseHeaders && Object.entries(data.responseHeaders)} />,
+    }, {
+      label: 'Comments',
+      key: 'Comments',
+      children: <TextArea rows={4} />,
+    }
+  ]);
   const onClose = () => {
     onCancel();
   };
   useEffect(() => {
     if (data) {
+      console.log('%c [ data ]-43', 'font-size:13px; background:pink; color:#bf2c9f;', data)
+
       if (data.Response === '') {
         setContent({
           json: "",
@@ -31,6 +53,7 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
           text: undefined
         })
       }
+
 
     }
   }, [])
@@ -53,6 +76,9 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const onFinishFailed = (errorInfo: any) => {
   };
   const handleChange = (value: any) => {
+  };
+  const onChange = (key: string) => {
+    console.log(key);
   };
   return (
     <Drawer
@@ -128,19 +154,6 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
             <Input disabled={mode === 'edit'} />
           </Form.Item>
           <Form.Item
-            label="Response"
-            name="Response"
-          >
-            <SvelteJSONEditor
-              content={content}
-              readOnly={false}
-              onChange={setContent}
-              mode="text"
-              mainMenuBar={false}
-              statusBar={false}
-            />
-          </Form.Item>
-          <Form.Item
             label="Method"
             name="method"
           >
@@ -207,6 +220,13 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
               ]}
             />
           </Form.Item>
+          <Tabs
+            onChange={onChange}
+            size="small"
+            items={items}
+          />
+
+
         </Form>
       </div>
     </Drawer>

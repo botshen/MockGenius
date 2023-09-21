@@ -1,0 +1,10 @@
+.closeIcon {
+  display: 'flex';
+  align-items: 'center';
+  color: '#f7cbca';
+
+  &::hover {
+    background-color: reds;
+  }
+
+}

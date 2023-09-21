@@ -96,6 +96,7 @@ function getCurrentProject() {
 
 proxy({
   onRequest: async (config, handler) => {
+    console.log('%c [ config ]-99', 'font-size:13px; background:pink; color:#bf2c9f;', config)
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.next(config)
       return;
@@ -131,6 +132,7 @@ proxy({
     }
   },
   onResponse: async (response, handler) => {
+    console.log('%c [ response ]-135', 'font-size:13px; background:pink; color:#bf2c9f;', response)
     const { statusText, status, config, headers, response: res } = response
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.resolve(response)
@@ -148,9 +150,6 @@ proxy({
       const { payload, result } = handMockResult({ res, request, config })
 
       sendMsg(payload, true)
-      // if (getCurrentProject().isTerminalLogOpen) {
-      //   logTerminalMockMessage(config, result, request)
-      // }
       logTerminalMockMessage(config, result, request)
       handler.resolve(result)
     } catch (error) {
