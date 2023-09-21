@@ -33,7 +33,7 @@ export const Response: React.FC<Props> = () => {
         />
       }
       {
-        type === 'Text' && <TextArea rows={4} />
+        type === 'Text' && <TextArea rows={4} value={content.text} />
       }
     </>
   );

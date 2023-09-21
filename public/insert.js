@@ -29,11 +29,13 @@ async function mockCore(url, method) {
     })
 
     if (currentRule) {
+      console.log('%c [ currentRule ]-32', 'font-size:13px; background:pink; color:#bf2c9f;', currentRule)
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
       return {
         response: currentRule.Response,
         path: currentRule.pathRule,
         status: currentRule.code,
+        headers: currentRule.responseHeaders,
       };
     }
   }
@@ -52,13 +54,16 @@ const sendMsg = (msg, isMock = false) => {
 }
 
 function handMockResult({ res, request, config }) {
-  const { response, path: rulePath, status } = res
+  console.log('%c [ res ]-55', 'font-size:13px; background:pink; color:#bf2c9f;', res)
+  const { response, path: rulePath, status, headers } = res
   const result = {
     config,
     status,
-    headers: [],
+    headers: headers ?? [],
     response: response,
   }
+  console.log('%c [ result ]-57', 'font-size:13px; background:pink; color:#bf2c9f;', result)
+
   const payload = {
     request,
     response: {
@@ -115,12 +120,9 @@ proxy({
         const res = await mockCore(url.href, config.method);
         const { payload, result } = handMockResult({ res, request, config })
         sendMsg(payload, true)
-        // if (getCurrentProject().isTerminalLogOpen) {
-        //   logTerminalMockMessage(config, result, request)
-        // }
         logTerminalMockMessage(config, result, request)
         notification.open({
-          message: 'Mock成功',
+          message: 'Mock Success',
           placement: 'bottomRight',
           duration: 1.5,
           description: config.url,

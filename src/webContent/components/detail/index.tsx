@@ -18,6 +18,12 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     text: undefined
   });
   const [form] = Form.useForm(); // 创建一个表单实例
+  const [headersList, setHeadersList] = useState<[string, string][]>(data.responseHeaders && Object.entries(data.responseHeaders));
+
+  const updateHeadersList = (headers: [string, string][]) => {
+    setHeadersList(headers);
+  }
+
   const [items, setItems] = useState<TabsProps['items']>([
     {
       label: 'Response Body',
@@ -28,13 +34,14 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     {
       label: 'Response Headers',
       key: 'headers',
-      children: <Headers headersList={data.responseHeaders && Object.entries(data.responseHeaders)} />,
+      children: <Headers updateHeadersList={updateHeadersList} headersList={headersList} />,
     }, {
       label: 'Comments',
       key: 'Comments',
       children: <TextArea rows={4} />,
     }
   ]);
+
   const onClose = () => {
     onCancel();
   };
@@ -58,13 +65,17 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     }
   }, [])
   const onFinish = () => {
+    console.log('[ items ] >', items)
     form
       .validateFields()
       .then(() => {
         const formValues = {
           ...form.getFieldsValue(),
-          Response: content.text ? JSON.parse(content.text) : content.json
+          Response: content.text ? JSON.parse(content.text) : content.json,
+          responseHeaders: Object.fromEntries(headersList)
         };
+        console.log('%c [ formValues ]-73', 'font-size:13px; background:pink; color:#bf2c9f;', formValues)
+
         onSubmit(formValues, mode);
       })
       .catch((errorInfo) => {
