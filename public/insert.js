@@ -96,7 +96,6 @@ function getCurrentProject() {
 
 proxy({
   onRequest: async (config, handler) => {
-    console.log('%c [ config ]-99', 'font-size:13px; background:pink; color:#bf2c9f;', config)
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.next(config)
       return;

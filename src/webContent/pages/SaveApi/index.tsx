@@ -5,6 +5,7 @@ import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch }
 import { PlusOutlined, EditOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
+
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { Methods, getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
@@ -27,19 +28,31 @@ type ItemsType = {
   children: any;
 }[]
 export const SaveApi = forwardRef((props, ref) => {
-
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: 'Url',
+      dataIndex: 'pathUrl',
+      key: 'pathUrl',
       ellipsis: {
         showTitle: false,
       },
-      render: (name) => (
-        <Tooltip placement="topLeft" title={name}>
-          {name}
+      render: (pathUrl, record) => (
+
+        <Tooltip placement="topLeft"
+          title={
+            record.comments ? (
+              <>
+                pathRule: {record.pathRule} <br /><br />
+                comments: {record.comments}
+              </>
+            ) : (
+              `pathRule: ${record.pathRule}`
+            )
+          }
+        >
+          {record.pathRule}
         </Tooltip>
+
       ),
     },
     {

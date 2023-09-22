@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Button, Input, Form, Switch, InputNumber, Select, Drawer, Space, Tabs } from 'antd';
 import type { TabsProps } from 'antd';
 import { Response } from "./Response";
@@ -14,6 +14,7 @@ const { TextArea } = Input;
 
 export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   const [content, setContent] = useState(data.Response)
+  const [comments, setComments] = useState(data.comments)
   const [form] = Form.useForm();
   const [headersList, setHeadersList] = useState<[string, string][]>(data.responseHeaders && Object.entries(data.responseHeaders));
 
@@ -21,10 +22,13 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     setHeadersList(headers);
   }
   const updateResponseContent = (content: any) => {
-    console.log('%c [ content ]-24', 'font-size:13px; background:pink; color:#bf2c9f;', content)
     setContent(content);
   }
-  const [items, setItems] = useState<TabsProps['items']>([
+  const handleCommentsChange = (e: any) => {
+    console.log('%c [ e.target.value ]-30', 'font-size:13px; background:pink; color:#bf2c9f;', e.target.value)
+    setComments(() => e.target.value)
+  }
+  const [items] = useState<TabsProps['items']>([
     {
       label: 'Response Body',
       key: 'body',
@@ -34,54 +38,36 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     {
       label: 'Response Headers',
       key: 'headers',
-      children: <Headers updateHeadersList={updateHeadersList} headersList={headersList} />,
-    }, {
+      children:
+        <Headers updateHeadersList={updateHeadersList} headersList={headersList} />,
+    },
+    {
       label: 'Comments',
       key: 'Comments',
-      children: <TextArea rows={4} />,
+      children:
+        <TextArea rows={4} defaultValue={comments} onChange={(e) => handleCommentsChange(e)} />,
     }
   ]);
 
   const onClose = () => {
     onCancel();
   };
-  // useEffect(() => {
-  //   if (data) {
 
-  //     if (data.Response === '') {
-  //       setContent(() => {
-  //         return {
-  //           json: "",
-  //           text: undefined
-  //         }
-  //       })
-  //     } else {
-  //       setContent(() => {
-  //         return {
-  //           json: data.Response,
-  //           text: undefined
-  //         }
-  //       })
-  //     }
-
-
-  //   }
-  // }, [])
   const onFinish = () => {
     form
       .validateFields()
       .then(() => {
         const formValues = {
           ...form.getFieldsValue(),
+          comments,
           Response: content.text ? JSON.parse(content.text) : content.json,
-          responseHeaders: Object.fromEntries(headersList)
+          responseHeaders: Object.fromEntries(headersList),
         };
-
+        console.log('%c [ formValues ]-64', 'font-size:13px; background:pink; color:#bf2c9f;', formValues)
         onSubmit(formValues, mode);
       })
       .catch((errorInfo) => {
-        // 表单校验失败
-        // console.error('Validation failed:', errorInfo);
+        console.log('Validate Failed:', errorInfo);
       });
 
   };
@@ -125,25 +111,11 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
             delay: data?.delay ?? '0',
             method: data?.method ?? 'POST',
             pathRule: data?.pathRule ?? '',
-            name: data?.name ?? data?.pathRule,
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
-
-          <Form.Item
-            label="name"
-            name="name"
-            rules={[
-              {
-                required: true,
-                message: 'Please input your username!',
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
           <Form.Item
             label="switchOn"
             name="switchOn"
