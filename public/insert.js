@@ -128,7 +128,6 @@ proxy({
     }
   },
   onResponse: async (response, handler) => {
-    console.log('%c [ response ]-132', 'font-size:13px; background:pink; color:#bf2c9f;', response)
     const { statusText, status, config, headers, response: res } = response
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.resolve(response)

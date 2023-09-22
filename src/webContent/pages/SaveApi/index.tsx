@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch } from 'antd';
-import { PlusOutlined, EditOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
 
@@ -30,40 +30,10 @@ type ItemsType = {
 export const SaveApi = forwardRef((props, ref) => {
   const columns = [
     {
-      title: 'Url',
-      dataIndex: 'pathUrl',
-      key: 'pathUrl',
-      ellipsis: {
-        showTitle: false,
-      },
-      render: (pathUrl, record) => (
-
-        <Tooltip placement="topLeft"
-          title={
-            record.comments ? (
-              <>
-                pathRule: {record.pathRule} <br /><br />
-                comments: {record.comments}
-              </>
-            ) : (
-              `pathRule: ${record.pathRule}`
-            )
-          }
-        >
-          {record.pathRule}
-        </Tooltip>
-
-      ),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'code',
-      key: 'code',
-    },
-    {
       title: 'SwitchOn',
       dataIndex: 'switchOn',
       key: 'switchOn',
+      width: 90,
       render: (switchOn: boolean) => {
         let color = 'green';
         let closeColor = 'red';
@@ -87,6 +57,7 @@ export const SaveApi = forwardRef((props, ref) => {
       title: 'Method',
       key: 'method',
       dataIndex: 'method',
+      width: 80,
       render: (method: Methods) => {
         let color = 'geekblue';
         return (
@@ -97,11 +68,44 @@ export const SaveApi = forwardRef((props, ref) => {
       },
     },
     {
+      title: 'URL',
+      dataIndex: 'pathUrl',
+      key: 'pathUrl',
+      ellipsis: {
+        showTitle: false,
+      },
+      render: (pathUrl, record) => (
+        <Tooltip placement="topLeft"
+          title={
+            record.comments ? (
+              <>
+                pathRule: {record.pathRule} <br /><br />
+                comments: {record.comments}
+              </>
+            ) : (
+              `pathRule: ${record.pathRule}`
+            )
+          }
+        >
+          {record.pathRule}
+        </Tooltip>
+
+      ),
+    },
+    {
+      title: 'Code',
+      dataIndex: 'code',
+      key: 'code',
+      width: 60,
+    },
+    {
       title: 'Action',
       key: 'action',
+      width: 100,
       render: (_: any, record: RecordType) => (
         <Space size="small">
-          <Button type="text" size='small' onClick={() => handleEdit(record)} >Edit</Button>
+          <EditOutlined style={{ color: '#b0d7fb' }} onClick={() => handleEdit(record)} />
+          <CopyOutlined style={{ color: '#abe7f0' }} />
           <Popconfirm
             title="删除警告"
             description="你确定要删除吗?"
@@ -109,7 +113,7 @@ export const SaveApi = forwardRef((props, ref) => {
             okText="是"
             cancelText="否"
           >
-            <Button size='small' type="text" danger >Delete</Button>
+            <DeleteOutlined style={{ color: '#f7cbca' }} />
           </Popconfirm>
         </Space>
       ),
