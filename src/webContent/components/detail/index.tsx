@@ -13,10 +13,7 @@ type Props = {
 const { TextArea } = Input;
 
 export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
-  const [content, setContent] = useState({
-    json: Object.prototype.toString.call(data.Response) === '[object Object]' ? data.Response : JSON.parse(data.Response),
-    text: undefined
-  });
+  const [content, setContent] = useState(data.Response)
   const [form] = Form.useForm();
   const [headersList, setHeadersList] = useState<[string, string][]>(data.responseHeaders && Object.entries(data.responseHeaders));
 
@@ -24,6 +21,7 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     setHeadersList(headers);
   }
   const updateResponseContent = (content: any) => {
+    console.log('%c [ content ]-24', 'font-size:13px; background:pink; color:#bf2c9f;', content)
     setContent(content);
   }
   const [items, setItems] = useState<TabsProps['items']>([

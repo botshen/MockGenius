@@ -9,13 +9,45 @@ type Props = {
 const { TextArea } = Input;
 
 export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) => {
-  const [content, setContent] = useState(jsonData);
+  const [content, setContent] = useState(() => {
+    console.log('%c [ jsonData ]-14', 'font-size:13px; background:pink; color:#bf2c9f;', jsonData)
+    if (!jsonData) {
+      return {
+        json: undefined,
+        text: ''
+      }
+    }
+    if (typeof jsonData === 'object') {
+      return {
+        json: jsonData,
+        text: undefined
+      }
+    } else {
+      try {
+        const parse = JSON.parse(jsonData)
+        return {
+          json: parse,
+          text: undefined
+        }
+      } catch (error) {
+        return {
+          json: undefined,
+          text: jsonData
+        }
+      }
+    }
+  });
   const [type, setType] = useState('JSON');
 
   useEffect(() => {
     updateResponseContent(content)
   }, [content])
-
+  const handleTextChange = (value: string) => {
+    setContent({
+      text: value,
+      json: undefined
+    })
+  }
   const plainOptions = ['JSON', 'Text'];
   const onTypeChange = ({ target: { value } }: RadioChangeEvent) => {
     setType(value);
@@ -34,7 +66,11 @@ export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) =
         />
       }
       {
-        type === 'Text' && <TextArea rows={4} value={content.text} />
+        type === 'Text' &&
+        <TextArea
+          rows={4}
+          value={content.text}
+          onChange={(e) => handleTextChange(e.target.value)} />
       }
     </>
   );
