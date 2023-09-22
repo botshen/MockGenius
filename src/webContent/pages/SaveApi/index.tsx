@@ -87,28 +87,12 @@ export const SaveApi = forwardRef((props, ref) => {
         return (
           <Switch
             checked={switchOn}
+            size='small'
             onChange={() => ruleSwitchChange(record)}
-            checkedChildren="开启"
-            unCheckedChildren="关闭"
+            checkedChildren="ON"
+            unCheckedChildren="OFF"
           />
         )
-
-        // let color = 'green';
-        // let closeColor = 'red';
-        // if (switchOn) {
-        //   return (
-        //     <Tag color={color} key={'open'}>
-        //       开启
-        //     </Tag>
-        //   )
-        // } else {
-        //   return (
-        //     <Tag color={closeColor} key={'close'}>
-        //       关闭
-        //     </Tag>
-        //   )
-        // }
-
       },
     },
     {
@@ -647,8 +631,8 @@ export const SaveApi = forwardRef((props, ref) => {
             <Switch
               checked={defaultChecked}
               onChange={globalSwitchChange}
-              checkedChildren="开启"
-              unCheckedChildren="关闭"
+              checkedChildren="ON"
+              unCheckedChildren="OFF"
             />
             <Button onClick={handleAddProject} icon={<PlusOutlined />}  >
               添加地址

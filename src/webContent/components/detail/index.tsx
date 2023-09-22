@@ -122,7 +122,7 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
             valuePropName="checked"
 
           >
-            <Switch checkedChildren="开启" unCheckedChildren="关闭" defaultChecked />
+            <Switch checkedChildren="ON" unCheckedChildren="OFF" defaultChecked />
           </Form.Item>
           <Form.Item
             label="pathRule"

@@ -1,18 +1,29 @@
-.home-wrapper{
+.home-wrapper {
   max-width: 50vw;
   width: 100%;
   height: 100%;
 }
 
 
-.logo{
+.logo {
   margin: 0 auto 20px;
   width: 30px;
- }
- .saved-api{
+}
+
+.saved-api {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 10px;
+}
+
+.ant-switch {
+  background-color: #25262b !important;
+
+  &.ant-switch-checked {
+    >.ant-switch-inner {
+      background-color: #366fbc;
+    }
   }
+}
