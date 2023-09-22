@@ -83,10 +83,15 @@ function getCurrentProject() {
   const configStr = inputElem.value
   try {
     const config = JSON.parse(configStr);
-    const { mockgenius_current_project, mock_genius_projects } = config
-    return mock_genius_projects?.find(
+    const { mockgenius_current_project, mock_genius_projects, mockPluginSwitchOn } = config
+    const curProject = mock_genius_projects?.find(
       (item) => item.pathUrl === mockgenius_current_project
     ) || ({});
+
+    return {
+      ...curProject,
+      switchOn: mockPluginSwitchOn
+    }
   } catch (e) {
     return {};
   }
@@ -96,6 +101,10 @@ function getCurrentProject() {
 
 proxy({
   onRequest: async (config, handler) => {
+    if (!getCurrentProject().switchOn) {
+      handler.next(config)
+      return;
+    }
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.next(config)
       return;
@@ -128,11 +137,15 @@ proxy({
     }
   },
   onResponse: async (response, handler) => {
-    const { statusText, status, config, headers, response: res } = response
+    if (!getCurrentProject().switchOn) {
+      handler.resolve(response)
+      return;
+    }
     if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
       handler.resolve(response)
       return;
     }
+    const { statusText, status, config, headers, response: res } = response
     const url = new Url(config.url)
     try {
       const res = await mockCore(url.href, config.method);
