@@ -28,28 +28,86 @@ type ItemsType = {
   children: any;
 }[]
 export const SaveApi = forwardRef((props, ref) => {
+
+  const ruleSwitchChange = async (record) => {
+    record = {
+      ...record,
+      switchOn: !record.switchOn
+    }
+    setItems((prevApiList) => {
+      const newlist = prevApiList.map(item => {
+        return {
+          ...item,
+          children: <Table
+            columns={columns}
+            size='small'
+            dataSource={item.children.props.dataSource.map(item => {
+              if (item.pathRule === record.pathRule) {
+                return {
+                  ...item,
+                  switchOn: !item.switchOn
+                }
+              } else {
+                return item
+              }
+            })}
+          />,
+        }
+      })
+      return newlist
+    })
+    let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+    const defaultActiveKey = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+    saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
+      if (item.pathUrl === defaultActiveKey) {
+        return {
+          ...item,
+          rules: item.rules.map(item => {
+            if (item.pathRule === record.pathRule) {
+
+              return record
+            } else {
+              return item
+            }
+          })
+        }
+      } else {
+        return item
+      }
+    })
+    )
+  }
   const columns = [
     {
       title: 'SwitchOn',
       dataIndex: 'switchOn',
       key: 'switchOn',
       width: 90,
-      render: (switchOn: boolean) => {
-        let color = 'green';
-        let closeColor = 'red';
-        if (switchOn) {
-          return (
-            <Tag color={color} key={'open'}>
-              开启
-            </Tag>
-          )
-        } else {
-          return (
-            <Tag color={closeColor} key={'close'}>
-              关闭
-            </Tag>
-          )
-        }
+      render: (switchOn: boolean, record) => {
+        return (
+          <Switch
+            checked={switchOn}
+            onChange={() => ruleSwitchChange(record)}
+            checkedChildren="开启"
+            unCheckedChildren="关闭"
+          />
+        )
+
+        // let color = 'green';
+        // let closeColor = 'red';
+        // if (switchOn) {
+        //   return (
+        //     <Tag color={color} key={'open'}>
+        //       开启
+        //     </Tag>
+        //   )
+        // } else {
+        //   return (
+        //     <Tag color={closeColor} key={'close'}>
+        //       关闭
+        //     </Tag>
+        //   )
+        // }
 
       },
     },
@@ -132,7 +190,6 @@ export const SaveApi = forwardRef((props, ref) => {
   const [apiDetailMode, setApiDetailMode] = useState('add');
   const [projectFormData, setProjectFormData] = useState({})
   const [previousActiveKey, setPreviousActiveKey] = useState(''); // 用于存储上一个 activeKey 的状态变量
-
 
   useEffect(() => {
     getOrCreateLocalStorageValues({
