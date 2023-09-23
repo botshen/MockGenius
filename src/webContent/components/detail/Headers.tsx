@@ -12,7 +12,7 @@ export const Headers: React.FC<Props> = ({ headersList, updateHeadersList }) => 
   useEffect(() => {
     updateHeadersList(editedHeaders)
   }, [editedHeaders])
-  
+
   const handleInputChange = (key: string, value: string, index: number) => {
     setEditedHeaders((prevHeaders: any) => {
       const updatedHeaders = [...prevHeaders];
@@ -22,9 +22,13 @@ export const Headers: React.FC<Props> = ({ headersList, updateHeadersList }) => 
   }
   const handleAddHeader = () => {
     setEditedHeaders((prevHeaders: any) => {
-      const updatedHeaders = [...prevHeaders];
-      updatedHeaders.push(['', '']);
-      return updatedHeaders;
+      if (!prevHeaders) {
+        return [['', '']];
+      } else {
+        const updatedHeaders = [...prevHeaders];
+        updatedHeaders.push(['', '']);
+        return updatedHeaders;
+      }
     });
   }
   const handleDeleteHeader = (index: number) => {
