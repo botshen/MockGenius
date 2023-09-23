@@ -88,3 +88,24 @@ export function logTerminalMockMessage(
   }
 }
 
+export function logTerminalMockMessageFetch(request: any, body: any, response: any) {
+  const targetUrl = new Url(request.url)
+  const str = targetUrl.pathname
+  const css = 'font-size:13px; background:pink; color:#bf2c9f;'
+  console.log(
+    `%c [ URL ] %c${str} %c [ METHOD ] %c${request.method}`,
+    css, // 样式1，用于 'URL:'
+    '', // 默认样式，用于 'str'
+    css, // 样式1，用于 'URL:'
+    '', // 默认样式，用于 'str'
+  );
+  if (request.body) {
+    console.log('%c [ request-body ] ', css, body)
+  }
+  if (response) {
+    console.log('%c [ response ] ', css, response)
+  } else if (response === "") {
+    console.log('%c [ response ] ', css, '空字符串')
+  }
+}
+

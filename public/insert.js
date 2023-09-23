@@ -3,7 +3,7 @@ import Url from 'url-parse'
 import FetchInterceptor from './fetch'
 import { parse, stringify } from 'flatted';
 import { notification } from 'antd';
-import { logTerminalMockMessage } from "../src/webContent/utils";
+import { logTerminalMockMessage, logTerminalMockMessageFetch } from "../src/webContent/utils";
 
 
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
@@ -39,6 +39,37 @@ async function mockCore(url, method) {
   throw new Error("没有匹配的规则"); // 没有匹配的规则时，抛出错误
 }
 
+function parseReadableStream(readableStream) {
+  const textDecoder = new TextDecoder('utf-8');
+
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+
+    const reader = readableStream.getReader();
+
+    function readChunk() {
+      reader
+        .read()
+        .then(({ done, value }) => {
+          if (done) {
+            resolve(chunks.join(''));
+            return;
+          }
+
+          // 解码并存储数据块
+          const decodedText = textDecoder.decode(value);
+          chunks.push(decodedText);
+
+          // 继续读取下一个数据块
+          readChunk();
+        })
+        .catch(reject);
+    }
+
+    // 开始读取数据
+    readChunk();
+  });
+}
 
 const sendMsg = (msg, isMock = false) => {
   const result = {
@@ -215,7 +246,6 @@ if (window.fetch !== undefined) {
       response,
       request
     ) {
-
       const payload = {
         request: {
           type: 'fetch',
@@ -247,6 +277,34 @@ if (window.fetch !== undefined) {
           }
           payload.response = result
           sendMsg(payload, true)
+          parseReadableStream(request.body).then((res) => {
+            const targetUrl = new Url(request.url)
+            const str = targetUrl.pathname
+            const css = 'font-size:13px; background:pink; color:#bf2c9f;'
+            console.log(
+              `%c [ URL ] %c${str} %c [ METHOD ] %c${request.method}`,
+              css, // 样式1，用于 'URL:'
+              '', // 默认样式，用于 'str'
+              css, // 样式1，用于 'URL:'
+              '', // 默认样式，用于 'str'
+            );
+            if (JSON.parse(res)) {
+              console.log('%c [ request-body ] ', css, JSON.parse(res))
+            }
+            if (response) {
+              response.json().then(data => {
+                console.log('%c [ response ] ', css, data)
+
+              })
+            }
+          })
+          notification.open({
+            message: 'Mock Success',
+            placement: 'bottomRight',
+            duration: 1.5,
+            description: response.rulePath,
+          });
+
         })
       } else {
         const cloneRes = response.clone()

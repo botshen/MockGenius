@@ -61,7 +61,7 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
           ...form.getFieldsValue(),
           comments,
           Response: content.text ? JSON.parse(content.text) : content.json,
-          responseHeaders: Object.fromEntries(headersList),
+          responseHeaders: headersList && headersList.length && Object.fromEntries(headersList),
         };
         console.log('%c [ formValues ]-64', 'font-size:13px; background:pink; color:#bf2c9f;', formValues)
         onSubmit(formValues, mode);
