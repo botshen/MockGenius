@@ -19,8 +19,8 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
       return { ...formData }
     }
     return {
-      name: '',
-      pathUrl: 'http://localhost:'
+      name: 'http://localhost:5175',
+      pathUrl: 'http://localhost:5175'
     }
   }
 

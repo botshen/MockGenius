@@ -96,6 +96,8 @@ function getCurrentProject() {
 
 proxy({
   onRequest: async (config, handler) => {
+    console.log('%c [ getCurrentProject() ]-100', 'font-size:13px; background:#e84b8d; color:#ff8fd1;', getCurrentProject())
+
     if (!getCurrentProject().switchOn) {
       handler.next(config)
       return;
@@ -136,6 +138,7 @@ proxy({
     handler.next(err)
 },
   onResponse: async (response, handler) => {
+    console.log('[ onResponse ] >', response)
     if (!getCurrentProject().switchOn) {
       handler.resolve(response)
       return;
