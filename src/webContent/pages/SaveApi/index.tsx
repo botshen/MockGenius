@@ -147,7 +147,7 @@ export const SaveApi = forwardRef((props, ref) => {
       render: (_: any, record: RecordType) => (
         <Space size="small">
           <EditOutlined style={{ color: '#b0d7fb' }} onClick={() => handleEdit(record)} />
-          <CopyOutlined style={{ color: '#abe7f0' }} />
+          <CopyOutlined style={{ color: '#abe7f0' }} onClick={() => handleCopy(record)} />
           <Popconfirm
             title="删除警告"
             description="你确定要删除吗?"
@@ -228,6 +228,9 @@ export const SaveApi = forwardRef((props, ref) => {
 
     })
   }, [])
+  useEffect(() => {
+    setApiLogList([])
+  }, defaultActiveKey)
   const globalSwitchChange = async (checked: boolean) => {
     setDefaultChecked(checked => !checked)
     let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
@@ -369,6 +372,11 @@ export const SaveApi = forwardRef((props, ref) => {
   const handleEdit = (record) => {
     setApiDetailData(() => record)
     setApiDetailMode('edit')
+    setApiDetailVisible(true)
+  }
+  const handleCopy = (record) => {
+    setApiDetailData(() => record)
+    setApiDetailMode('add')
     setApiDetailVisible(true)
   }
 
