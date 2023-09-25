@@ -1,13 +1,13 @@
 // @ts-nocheck
 
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch } from 'antd';
+import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch, notification } from 'antd';
 import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
 
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
-import { Methods, getOrCreateLocalStorageValues, readLocalStorage, saveStorage } from '../../utils';
+import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
 import { Detail } from '../../components/detail';
 import { useDomainStore } from '../../store';
@@ -170,11 +170,19 @@ export const SaveApi = forwardRef((props, ref) => {
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
   const [apiDetailVisible, setApiDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [api, contextHolderNo] = notification.useNotification();
+
   const [projectMode, setProjectMode] = useState('add');
   const [apiDetailMode, setApiDetailMode] = useState('add');
   const [projectFormData, setProjectFormData] = useState({})
   const [previousActiveKey, setPreviousActiveKey] = useState(''); // 用于存储上一个 activeKey 的状态变量
-
+  const openNotificationWithIcon = (type: NotificationType, currentHost) => {
+    api[type]({
+      message: 'Switching Successful',
+      description:
+        `current intercept address is: ${currentHost}`,
+    });
+  };
   useEffect(() => {
     getOrCreateLocalStorageValues({
       [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'http://localhost:5173',
@@ -196,9 +204,9 @@ export const SaveApi = forwardRef((props, ref) => {
         projectName: '默认项目',
         switchOn: true
       }],
-      mockPluginSwitchOn: true,
+      // mockPluginSwitchOn: true,
     }, function (values) {
-      const checked = values.mockPluginSwitchOn
+      const checked = values[AJAX_INTERCEPTOR_PROJECTS].find(item => item.pathUrl === values[AJAX_INTERCEPTOR_CURRENT_PROJECT])?.switchOn
       setDefaultChecked(checked)
       if (checked) {
         chrome.action.setIcon({ path: '/images/app.png' });
@@ -222,7 +230,19 @@ export const SaveApi = forwardRef((props, ref) => {
   }, [])
   const globalSwitchChange = async (checked: boolean) => {
     setDefaultChecked(checked => !checked)
-    await saveStorage('mockPluginSwitchOn', checked)
+    let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
+    await saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
+      if (item.pathUrl === defaultActiveKey) {
+
+        return {
+          ...item,
+          switchOn: checked
+        }
+      } else {
+        return item
+      }
+    })
+    )
     if (checked) {
       chrome.action.setIcon({ path: '/images/app.png' });
     } else {
@@ -277,55 +297,9 @@ export const SaveApi = forwardRef((props, ref) => {
 
 
   const handleChangeProject = (activeKey: string) => {
-    setPreviousActiveKey(defaultActiveKey);
     setApiLogList([])
     setDefaultActiveKey(activeKey)
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
-    function checkAndInjectScript() {
-      const scriptExists = document.querySelector('script[src*="insert.js"]');
-      if (!scriptExists) {
-        const executeScript = (data: any) => {
-          const code = JSON.stringify(data)
-          const INJECT_ELEMENT_ID = 'mock-genius'
-
-          const inputElem = document.getElementById(
-            INJECT_ELEMENT_ID
-          )
-          if (inputElem !== null) {
-            (inputElem as HTMLInputElement).value = code;
-          }
-        }
-        const setGlobalData = () => {
-          const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
-          const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
-          const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
-
-          chrome.storage.local.get(keys, (result) => {
-            executeScript(result)
-          })
-        }
-        const script = document.createElement('script')
-        script.setAttribute('type', 'module')
-        script.setAttribute('src', chrome.runtime.getURL('insert.js'))
-        document.documentElement.appendChild(script)
-
-        const input = document.createElement('input')
-        input.setAttribute('id', 'mock-genius')
-        input.setAttribute('style', 'display:none')
-        document.documentElement.appendChild(input)
-        setGlobalData()
-      }
-    }
-    function removeInjectScript() {
-      const script = document.querySelector('script[src*="insert.js"]');
-      if (script) {
-        script.remove();
-      }
-      const input = document.getElementById('mock-genius')
-      if (input) {
-        input.remove();
-      }
-    }
     // 注入
     chrome.tabs.query({}, function (tabs) {
       const targetUrl = new Url(activeKey)
@@ -352,6 +326,9 @@ export const SaveApi = forwardRef((props, ref) => {
         }
       }
     })
+    setPreviousActiveKey(activeKey);
+    openNotificationWithIcon('success', activeKey)
+
   }
   const handleDelete = (record, key) => {
     setItems((prevApiList) => {
@@ -528,7 +505,8 @@ export const SaveApi = forwardRef((props, ref) => {
             return {
               pathUrl: formData.pathUrl,
               rules: item.rules,
-              projectName: formData.name
+              projectName: formData.name,
+              switchOn: item.switchOn
             }
           } else {
             return item
@@ -563,7 +541,8 @@ export const SaveApi = forwardRef((props, ref) => {
         saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...projectList, {
           pathUrl: formData.pathUrl,
           rules: [],
-          projectName: formData.name
+          projectName: formData.name,
+          switchOn: true
         }])
       }
 
@@ -594,6 +573,7 @@ export const SaveApi = forwardRef((props, ref) => {
   return (
     <>
       {contextHolder}
+      {contextHolderNo}
       {
         projectDetailVisible &&
         <ProjectDetailModal

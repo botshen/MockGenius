@@ -9,11 +9,10 @@ import { logFetch, logTerminalMockMessage, logTerminalMockMessageFetch } from ".
 const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 const INJECT_ELEMENT_ID = 'mock-genius'
 
-async function mockCore(url, method) {
+async function mockCore(url, method, flag) {
   const targetUrl = new Url(url)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
-  currentProject.switchOn = true
   if (currentProject?.switchOn) {
     const rules = currentProject.rules || []
     const currentRule = rules.find((item) => {
@@ -26,6 +25,7 @@ async function mockCore(url, method) {
         currentProject.pathUrl === pathRule.origin
     })
 
+
     if (currentRule) {
       await new Promise((resolve) => setTimeout(resolve, currentRule.delay || 0));
       return {
@@ -36,8 +36,8 @@ async function mockCore(url, method) {
       };
     }
   }
-  throw new Error("没有匹配的规则"); // 没有匹配的规则时，抛出错误
-}
+  throw new Error("没有匹配的规则");
+ }
 const sendMsg = (msg, isMock = false) => {
   const result = {
     ...msg,
@@ -81,15 +81,12 @@ function getCurrentProject() {
   const configStr = inputElem.value
   try {
     const config = JSON.parse(configStr);
-    const { mockgenius_current_project, mock_genius_projects, mockPluginSwitchOn } = config
+    const { mockgenius_current_project, mock_genius_projects } = config
     const curProject = mock_genius_projects?.find(
       (item) => item.pathUrl === mockgenius_current_project
     ) || ({});
 
-    return {
-      ...curProject,
-      switchOn: mockPluginSwitchOn
-    }
+    return curProject
   } catch (e) {
     return {};
   }
@@ -118,7 +115,7 @@ proxy({
         type: 'xhr',
       }
       try {
-        const res = await mockCore(url.href, config.method);
+        const res = await mockCore(url.href, config.method, 'request');
         const { payload, result } = handMockResult({ res, request, config })
         sendMsg(payload, true)
         logTerminalMockMessage(config, result, request)
@@ -134,6 +131,10 @@ proxy({
       }
     }
   },
+  //请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
+  onError: (err, handler) => {
+    handler.next(err)
+},
   onResponse: async (response, handler) => {
     if (!getCurrentProject().switchOn) {
       handler.resolve(response)
@@ -146,7 +147,7 @@ proxy({
     const { statusText, status, config, headers, response: res } = response
     const url = new Url(config.url)
     try {
-      const res = await mockCore(url.href, config.method);
+      const res = await mockCore(url.href, config.method, 'onResponse');
       const request = {
         url: url.href,
         method: config.method,
@@ -187,7 +188,7 @@ proxy({
 if (window.fetch !== undefined) {
   FetchInterceptor.register({
     onBeforeRequest(request) {
-      return mockCore(request.url, request.method).then((res) => {
+      return mockCore(request.url, request.method, 'fetch').then((res) => {
         try {
           const { path: rulePath } = res
           // const text = JSON.stringify(res.response)
