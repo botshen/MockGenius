@@ -279,6 +279,7 @@ export const SaveApi = forwardRef((props, ref) => {
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, newActiveKey)
     const newProjectList = projectList.filter(item => item.pathUrl !== targetKey)
     saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
+    setDefaultChecked(newProjectList.find(item => item.pathUrl === newActiveKey)?.switchOn)
   };
   const onEdit = (targetKey: string) => {
     setApiLogList([])
@@ -296,11 +297,10 @@ export const SaveApi = forwardRef((props, ref) => {
 
 
 
-  const handleChangeProject = (activeKey: string) => {
+  const handleChangeProject = async (activeKey: string) => {
     setApiLogList([])
     setDefaultActiveKey(activeKey)
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
-    // 注入
     chrome.tabs.query({}, function (tabs) {
       const targetUrl = new Url(activeKey)
       // 切换 tab 的时候注入
@@ -327,8 +327,10 @@ export const SaveApi = forwardRef((props, ref) => {
       }
     })
     setPreviousActiveKey(activeKey);
+    const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
+    const switchOn = projectList.find(item => item.pathUrl === activeKey)?.switchOn
+    setDefaultChecked(switchOn)
     openNotificationWithIcon('success', activeKey)
-
   }
   const handleDelete = (record, key) => {
     setItems((prevApiList) => {
