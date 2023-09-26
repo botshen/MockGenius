@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Detail } from '../../components/detail';
 import { Button, Table, Tag, Tooltip, message } from 'antd';
 import { ClearOutlined } from '@ant-design/icons';
-import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
 import { useDomainStore } from '../../store';
 import { readLocalStorage } from "../../utils";
 import './apiLog.scss';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';
 
 type ApiLogItem = {
   pathRule: string;

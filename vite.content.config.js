@@ -10,7 +10,7 @@ export default defineConfig({
         outDir: CRX_CONTENT_OUTDIR,
         lib: {
             entry: [
-                path.resolve(__dirname, 'src/content/index.jsx'),
+                path.resolve(__dirname, 'src/content/index.tsx'),
             ],
             // content script不支持ES6，因此不用使用es模式，需要改为cjs模式
             formats: ['cjs'],

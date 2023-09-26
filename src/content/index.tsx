@@ -1,9 +1,5 @@
+import { AJAX_KEYS, AJAX_INTERCEPTOR_CURRENT_PROJECT, INJECT_ELEMENT_ID, CUSTOM_EVENT_NAME, SCRIPT_INJECT } from "../const"
 
-const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
-const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
-const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
-const INJECT_ELEMENT_ID = 'mock-genius'
-const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
 const executeScript = (data) => {
   const code = JSON.stringify(data)
   const inputElem = document.getElementById(
@@ -14,13 +10,13 @@ const executeScript = (data) => {
   }
 }
 const setGlobalData = () => {
-  chrome.storage.local.get(keys, (result) => {
+  chrome.storage.local.get(AJAX_KEYS, (result) => {
     executeScript(result)
   })
 }
 const injectScriptToPage = () => {
   try {
-    const oldInsertScript = document.querySelector('script[src*="insert.js"]');
+    const oldInsertScript = document.querySelector(SCRIPT_INJECT);
     const oldInput = document.getElementById(INJECT_ELEMENT_ID);
     if (oldInsertScript) {
       oldInsertScript.parentNode.removeChild(oldInsertScript);
@@ -44,7 +40,7 @@ const injectScriptToPage = () => {
 }
 
 
-chrome.storage.local.get(keys, (result) => {
+chrome.storage.local.get(AJAX_KEYS, (result) => {
   const currentName = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
   const { origin } = location;
   if (origin === currentName) {
@@ -96,7 +92,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
     // 移除之前的插入的 script 和 input
     if (oldValue === origin) {
-      const oldInsertScript = document.querySelector('script[src*="insert.js"]');
+      const oldInsertScript = document.querySelector(SCRIPT_INJECT);
       const oldInput = document.getElementById(INJECT_ELEMENT_ID);
       if (oldInsertScript) {
         oldInsertScript.parentNode.removeChild(oldInsertScript);

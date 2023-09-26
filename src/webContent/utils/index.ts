@@ -1,7 +1,6 @@
-// @ts-nocheck
-
 import { XhrRequestConfig } from 'ajax-hook';
 import Url from 'url-parse'
+import { AJAX_KEYS, INJECT_ELEMENT_ID, SCRIPT_INJECT } from '../../const';
 
 type KeyValueMap = {
   [key: string]: string | string[] | boolean | any;
@@ -90,26 +89,7 @@ export function logTerminalMockMessage(
   }
 }
 
-export function logTerminalMockMessageFetch(request: any, body: any, response: any) {
-  const targetUrl = new Url(request.url)
-  const str = targetUrl.pathname
-  const css = 'font-size:13px; background:pink; color:#bf2c9f;'
-  console.log(
-    `%c [ URL ] %c${str} %c [ METHOD ] %c${request.method}`,
-    css, // 样式1，用于 'URL:'
-    '', // 默认样式，用于 'str'
-    css, // 样式1，用于 'URL:'
-    '', // 默认样式，用于 'str'
-  );
-  if (request.body) {
-    console.log('%c [ request-body ] ', css, body)
-  }
-  if (response) {
-    console.log('%c [ response ] ', css, response)
-  } else if (response === "") {
-    console.log('%c [ response ] ', css, '空字符串')
-  }
-}
+
 function parseReadableStream(readableStream: any) {
   const textDecoder = new TextDecoder('utf-8');
 
@@ -171,7 +151,6 @@ export function logFetch(request: any, response: any) {
 export function checkAndInjectScript() {
   const executeScript = (data: any) => {
     const code = JSON.stringify(data)
-    const INJECT_ELEMENT_ID = 'mock-genius'
 
     const inputElem = document.getElementById(
       INJECT_ELEMENT_ID
@@ -181,32 +160,28 @@ export function checkAndInjectScript() {
     }
   }
   const setGlobalData = () => {
-    const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
-    const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
-    const keys = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
-
-    chrome.storage.local.get(keys, (result) => {
+    chrome.storage.local.get(AJAX_KEYS, (result) => {
       executeScript(result)
     })
   }
-  const scriptExists = document.querySelector('script[src*="insert.js"]');
+  const scriptExists = document.querySelector(SCRIPT_INJECT);
   if (!scriptExists) {
     const script = document.createElement('script')
     script.setAttribute('type', 'module')
     script.setAttribute('src', chrome.runtime.getURL('insert.js'))
     document.documentElement.appendChild(script)
   }
-  const existingInput = document.getElementById('mock-genius');
+  const existingInput = document.getElementById(INJECT_ELEMENT_ID);
   if (existingInput) {
     // 如果已存在具有指定ID的元素，替换它
     const newInput = document.createElement('input');
-    newInput.setAttribute('id', 'mock-genius');
+    newInput.setAttribute('id', INJECT_ELEMENT_ID);
     newInput.setAttribute('style', 'display:none');
     existingInput.parentNode.replaceChild(newInput, existingInput);
   } else {
     // 如果不存在具有指定ID的元素，添加新元素
     const input = document.createElement('input');
-    input.setAttribute('id', 'mock-genius');
+    input.setAttribute('id', INJECT_ELEMENT_ID);
     input.setAttribute('style', 'display:none');
     document.documentElement.appendChild(input);
   }
@@ -214,11 +189,11 @@ export function checkAndInjectScript() {
 
 }
 export function removeInjectScript() {
-  const script = document.querySelector('script[src*="insert.js"]');
+  const script = document.querySelector(SCRIPT_INJECT);
   if (script) {
     script.remove();
   }
-  const input = document.getElementById('mock-genius')
+  const input = document.getElementById(INJECT_ELEMENT_ID)
   if (input) {
     input.remove();
   }

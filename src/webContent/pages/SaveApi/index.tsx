@@ -6,12 +6,12 @@ import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-d
 import Url from "url-parse";
 import './saveApi.scss'
 
-import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../const';
-import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
+ import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
 import { Detail } from '../../components/detail';
 import { useDomainStore } from '../../store';
 import { ProjectList } from '../ApiLog';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';
 type RecordType = {
   name: string;
   code: string;

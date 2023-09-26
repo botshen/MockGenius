@@ -3,8 +3,8 @@ import { RouterProvider } from 'react-router-dom'
 import Url from "url-parse";
 import { useDomainStore } from './store';
 import { readLocalStorage } from './utils';
-import { AJAX_INTERCEPTOR_CURRENT_PROJECT } from './const';
-import { globalRouters } from './router';
+ import { globalRouters } from './router';
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT } from '../const';
 
 export const WebContent: React.FC = () => {
     const { addApiLogList } = useDomainStore() as any

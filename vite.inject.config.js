@@ -10,7 +10,7 @@ export default defineConfig({
         outDir: CRX_INJECT_OUTDIR,
         lib: {
             entry: [
-                path.resolve(__dirname, 'public/insert.js'),
+                path.resolve(__dirname, 'public/insert.ts'),
             ],
             // content script不支持ES6，因此不用使用es模式，需要改为cjs模式
             formats: ['es'],

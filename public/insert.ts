@@ -3,13 +3,11 @@ import Url from 'url-parse'
 import FetchInterceptor from './fetch'
 import { parse, stringify } from 'flatted';
 import { notification } from 'antd';
-import { logFetch, logTerminalMockMessage, logTerminalMockMessageFetch } from "../src/webContent/utils";
+import { logFetch, logTerminalMockMessage } from "../src/webContent/utils";
+import { CUSTOM_EVENT_NAME, INJECT_ELEMENT_ID } from "../src/const";
 
 
-const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
-const INJECT_ELEMENT_ID = 'mock-genius'
-
-async function mockCore(url, method, flag) {
+async function mockCore(url, method) {
   const targetUrl = new Url(url)
   const str = targetUrl.pathname
   const currentProject = getCurrentProject()
@@ -116,7 +114,7 @@ proxy({
         type: 'xhr',
       }
       try {
-        const res = await mockCore(url.href, config.method, 'request');
+        const res = await mockCore(url.href, config.method);
         const { payload, result } = handMockResult({ res, request, config })
         sendMsg(payload, true)
         logTerminalMockMessage(config, result, request)
@@ -163,7 +161,7 @@ proxy({
     const { statusText, status, config, headers, response: res } = response
     const url = new Url(config.url)
     try {
-      const res = await mockCore(url.href, config.method, 'onResponse');
+      const res = await mockCore(url.href, config.method);
       const request = {
         url: url.href,
         method: config.method,

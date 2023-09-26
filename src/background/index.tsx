@@ -1,25 +1,14 @@
 /*global chrome*/
 
-const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
-const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
-const defaultProjectProduct = {
-  projectName: '默认项目',
-  pathUrl: 'http://localhost:5173',
-  switchOn: true,
-  isRealRequest: false,
-  isTerminalLogOpen: false,
-  rules: []
-}
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS, defaultProjectProduct } from "../const";
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.storage.local.set({
     [AJAX_INTERCEPTOR_PROJECTS]: [defaultProjectProduct],
     [AJAX_INTERCEPTOR_CURRENT_PROJECT]: defaultProjectProduct.pathUrl,
-   }, function () {
+  }, function () {
   })
 })
-
-
 
 chrome.action.onClicked.addListener(() => {
   try {
