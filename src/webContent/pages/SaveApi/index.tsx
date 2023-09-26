@@ -146,17 +146,11 @@ export const SaveApi = forwardRef((props, ref) => {
       width: 100,
       render: (_: any, record: RecordType) => (
         <Space size="small">
-          <EditOutlined style={{ color: '#b0d7fb' }} onClick={() => handleEdit(record)} />
+          <Tooltip placement="bottom" title={'Double click to delete'}>
+            <DeleteOutlined style={{ color: '#f7cbca' }} onClick={(e) => handleDelete(e, record)} />
+          </Tooltip>
           <CopyOutlined style={{ color: '#abe7f0' }} onClick={() => handleCopy(record)} />
-          <Popconfirm
-            title="删除警告"
-            description="你确定要删除吗?"
-            onConfirm={() => confirm(record)}
-            okText="是"
-            cancelText="否"
-          >
-            <DeleteOutlined style={{ color: '#f7cbca' }} />
-          </Popconfirm>
+          <EditOutlined style={{ color: '#b0d7fb' }} onClick={() => handleEdit(record)} />
         </Space>
       ),
     },
@@ -252,13 +246,15 @@ export const SaveApi = forwardRef((props, ref) => {
       chrome.action.setIcon({ path: '/images/gray.png' });
     }
   }
-  const confirm = (record: RecordType) => {
+  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, record: RecordType) => {
+    if (e.detail < 2) {
+      return;
+    }
     readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT).then(value => {
-      handleDelete(record, value)
+      _handleDelete(record, value)
     })
 
   };
-
   const remove = async (targetKey: string) => {
     const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     if (projectList.length === 1) return;
@@ -335,7 +331,7 @@ export const SaveApi = forwardRef((props, ref) => {
     setDefaultChecked(switchOn)
     openNotificationWithIcon('success', activeKey)
   }
-  const handleDelete = (record, key) => {
+  const _handleDelete = (record, key) => {
     setItems((prevApiList) => {
       const newlist = prevApiList.map(item => {
         if (item.key === key) {
@@ -379,7 +375,6 @@ export const SaveApi = forwardRef((props, ref) => {
     setApiDetailMode('add')
     setApiDetailVisible(true)
   }
-
   const handleAddProject = () => {
     setProjectMode('add')
     setProjectDetailVisible(true)

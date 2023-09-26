@@ -29,7 +29,7 @@ export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) =
         return {
           json: parse,
           text: undefined,
-          textAreaValue: parse
+          textAreaValue: jsonData
         }
       } catch (error) {
         return {
