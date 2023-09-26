@@ -10,29 +10,32 @@ const { TextArea } = Input;
 
 export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) => {
   const [content, setContent] = useState(() => {
-    console.log('%c [ jsonData ]-14', 'font-size:13px; background:pink; color:#bf2c9f;', jsonData)
     if (!jsonData) {
       return {
         json: undefined,
-        text: ''
+        text: '',
+        textAreaValue: ''
       }
     }
     if (typeof jsonData === 'object') {
       return {
         json: jsonData,
-        text: undefined
+        text: undefined,
+        textAreaValue: JSON.stringify(jsonData)
       }
     } else {
       try {
         const parse = JSON.parse(jsonData)
         return {
           json: parse,
-          text: undefined
+          text: undefined,
+          textAreaValue: parse
         }
       } catch (error) {
         return {
           json: undefined,
-          text: jsonData
+          text: jsonData,
+          textAreaValue: jsonData
         }
       }
     }
@@ -45,7 +48,8 @@ export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) =
   const handleTextChange = (value: string) => {
     setContent({
       text: value,
-      json: undefined
+      json: undefined,
+      textAreaValue: value
     })
   }
   const plainOptions = ['JSON', 'Text'];
@@ -69,7 +73,7 @@ export const Response: React.FC<Props> = ({ jsonData, updateResponseContent }) =
         type === 'Text' &&
         <TextArea
           rows={4}
-          value={content.text}
+          value={content.textAreaValue}
           onChange={(e) => handleTextChange(e.target.value)} />
       }
     </>
