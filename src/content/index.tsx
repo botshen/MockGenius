@@ -1,29 +1,57 @@
 import { AJAX_KEYS, AJAX_INTERCEPTOR_CURRENT_PROJECT, INJECT_ELEMENT_ID, CUSTOM_EVENT_NAME, SCRIPT_INJECT } from "../const"
+interface ResponseHeaders {
+  [key: string]: string;
+}
+interface Rule {
+  Response: {
+    [key: string]: object | string | number;
+  };
+  code: string;
+  comments: string;
+  delay: string;
+  method: string;
+  pathRule: string;
+  responseHeaders: ResponseHeaders;
+  switchOn: boolean;
+}
+interface MockGeniusProject {
+  isRealRequest: boolean;
+  isTerminalLogOpen: boolean;
+  pathUrl: string;
+  projectName: string;
+  rules: Rule[];
+  switchOn: boolean;
+}
 
-const executeScript = (data) => {
+interface MockGeniusConfig {
+  mock_genius_projects: MockGeniusProject[];
+  mockgenius_current_project: string;
+}
+const executeScript = (data: MockGeniusConfig) => {
   const code = JSON.stringify(data)
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
   )
-  if (inputElem !== null) {
-    inputElem.value = code
+  if (inputElem instanceof HTMLInputElement) { // 使用类型守卫检查元素类型
+    inputElem.value = code;
   }
 }
 const setGlobalData = () => {
-  chrome.storage.local.get(AJAX_KEYS, (result) => {
+  chrome.storage.local.get(AJAX_KEYS, (result: any) => {
     executeScript(result)
   })
 }
+
 const injectScriptToPage = () => {
   try {
     const oldInsertScript = document.querySelector(SCRIPT_INJECT);
     const oldInput = document.getElementById(INJECT_ELEMENT_ID);
     if (oldInsertScript) {
-      oldInsertScript.parentNode.removeChild(oldInsertScript);
+      oldInsertScript.parentNode?.removeChild(oldInsertScript);
     }
 
     if (oldInput) {
-      oldInput.parentNode.removeChild(oldInput);
+      oldInput.parentNode?.removeChild(oldInput);
     }
     let insertScript = document.createElement('script')
     insertScript.setAttribute('type', 'module')
@@ -55,14 +83,18 @@ window.addEventListener(
   async (event) => {
     if (chrome.runtime?.id) {
       try {
-        await chrome.runtime.sendMessage({
-          type: "ajaxInterceptor",
-          message: "content_to_background",
-          data: event.detail,
-        })
-      } catch (error) {
-      }
+        const customEvent = event as CustomEvent
+        if (customEvent.detail) {
+          await chrome.runtime.sendMessage({
+            type: "ajaxInterceptor",
+            message: "content_to_background",
+            data: customEvent.detail,
+          })
+        }
 
+      } catch (error) {
+        console.error('error', error)
+      }
     }
   },
   false
@@ -95,11 +127,10 @@ chrome.storage.onChanged.addListener((changes) => {
       const oldInsertScript = document.querySelector(SCRIPT_INJECT);
       const oldInput = document.getElementById(INJECT_ELEMENT_ID);
       if (oldInsertScript) {
-        oldInsertScript.parentNode.removeChild(oldInsertScript);
+        oldInsertScript.parentNode?.removeChild(oldInsertScript);
       }
-
       if (oldInput) {
-        oldInput.parentNode.removeChild(oldInput);
+        oldInput.parentNode?.removeChild(oldInput);
       }
     } else {
       // 检查新的值，如果需要插入新的脚本和输入元素，可以在这里执行操作
@@ -111,8 +142,5 @@ chrome.storage.onChanged.addListener((changes) => {
         setGlobalData();
       }
     }
-
-
-
   }
 });
