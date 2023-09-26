@@ -37,7 +37,7 @@ async function mockCore(url, method, flag) {
     }
   }
   throw new Error("没有匹配的规则");
- }
+}
 const sendMsg = (msg, isMock = false) => {
   const result = {
     ...msg,
@@ -96,7 +96,6 @@ function getCurrentProject() {
 
 proxy({
   onRequest: async (config, handler) => {
-    console.log('%c [ getCurrentProject() ]-100', 'font-size:13px; background:#e84b8d; color:#ff8fd1;', getCurrentProject())
 
     if (!getCurrentProject().switchOn) {
       handler.next(config)
@@ -134,11 +133,25 @@ proxy({
     }
   },
   //请求发生错误时进入，比如超时；注意，不包括http状态码错误，如404仍然会认为请求成功
-  onError: (err, handler) => {
+  onError: async (err, handler) => {
+    if (!getCurrentProject().switchOn) {
+      handler.next(err)
+      return;
+    }
+    if (Object.getOwnPropertyNames(getCurrentProject()).length === 0) {
+      handler.next(err)
+      return;
+    }
+    const { method, url, headers } = err.config
+    const payload =
+    {
+      request: { method, url, headers, type: 'xhr' },
+      response: { url, isMock: false, },
+    }
+    sendMsg(payload)
     handler.next(err)
-},
+  },
   onResponse: async (response, handler) => {
-    console.log('[ onResponse ] >', response)
     if (!getCurrentProject().switchOn) {
       handler.resolve(response)
       return;
