@@ -170,7 +170,6 @@ export function logFetch(request: any, response: any) {
 
 export function checkAndInjectScript() {
   const executeScript = (data: any) => {
-    console.log('%c [ data ]-175', 'font-size:13px; background:#eee6b1; color:#fffff5;', data)
     const code = JSON.stringify(data)
     const INJECT_ELEMENT_ID = 'mock-genius'
 
@@ -216,12 +215,10 @@ export function checkAndInjectScript() {
 }
 export function removeInjectScript() {
   const script = document.querySelector('script[src*="insert.js"]');
-  console.log('%c [ script ]-208', 'font-size:13px; background:#5238c7; color:#967cff;', script)
   if (script) {
     script.remove();
   }
   const input = document.getElementById('mock-genius')
-  console.log('%c [ input ]-213', 'font-size:13px; background:#4789bf; color:#8bcdff;', input)
   if (input) {
     input.remove();
   }

@@ -26,7 +26,6 @@ export const WebContent: React.FC = () => {
                     }
                     if (event.type === "ajaxInterceptor") {
                         const data = event.data;
-                        console.log('%c [ data ]-33', 'font-size:13px; background:pink; color:#bf2c9f;', data)
                         const targetUrl = new Url(data.request.url)
                         const result = {
                             pathRule: targetUrl.pathname,
