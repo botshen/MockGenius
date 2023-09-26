@@ -48,18 +48,16 @@ Run：
 yarn build
 ```
 TODO: 
-- [ ] mock返回的config的mock
+- [x] mock返回的config的mock
 - [ ] 增加动态前缀
-- [ ] 根据字段含义能生成mock数据
-- [ ] 支持对请求fetch类进行拦截
+- [x] 支持对请求fetch类进行拦截
 - [ ] 根据 swagger2.0 文档自动生成 Mock 数据
 - [ ] 支持 GraphQL 请求的 Mock。
 - [ ] 允许对匹配的接口进行 Redirect 操作。
 - [ ] 提供 contains、equals 和 regexp 三种匹配模式，以满足不同的接口匹配需求
 - [ ] 支持中英文两种语言。根据浏览器语言环境，自动显示对应的语言。
 - [ ] 支持一键重置。
-- [ ] 支持对 Mock 的配置进行 Clone。
-- [ ] 支持 Mock 列表分组。
+- [x] 支持对 Mock 的配置进行 Clone。
 - [ ] 根据入参不同返回mock不同的返回值
 - [ ] 支持期望来重复循环上百条数据
 - [ ] 提取json数据结构
