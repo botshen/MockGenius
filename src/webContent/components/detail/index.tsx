@@ -25,7 +25,6 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
     setContent(content);
   }
   const handleCommentsChange = (e: any) => {
-    console.log('%c [ e.target.value ]-30', 'font-size:13px; background:pink; color:#bf2c9f;', e.target.value)
     setComments(() => e.target.value)
   }
   const [items] = useState<TabsProps['items']>([
@@ -63,11 +62,9 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
           Response: content.text ? JSON.parse(content.text) : content.json,
           responseHeaders: headersList && headersList.length && Object.fromEntries(headersList),
         };
-        console.log('%c [ formValues ]-64', 'font-size:13px; background:pink; color:#bf2c9f;', formValues)
         onSubmit(formValues, mode);
       })
       .catch((errorInfo) => {
-        console.log('Validate Failed:', errorInfo);
       });
 
   };
