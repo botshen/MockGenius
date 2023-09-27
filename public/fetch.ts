@@ -1,15 +1,16 @@
- 
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 /**
  * FIXME: 类型设计
  * 使用开源库进行改造
  * https://github.com/itsfadnis/fetch-interceptor/blob/master/src/index.js
  */
 export default class FetchInterceptor {
-  env
-  fetch
-  isRealRequest // 是否真的发送请求给后端
+  env: any
+  fetch: any
+  isRealRequest: boolean // 是否真的发送请求给后端
   // _instance: typeof FetchInterceptor
-  static _instance
+  private static _instance: FetchInterceptor
   /**
    * Recognize global environment and attach fetch
    */
@@ -46,7 +47,7 @@ export default class FetchInterceptor {
    * @param {object} hooks - The intercept hooks
    * @return {FetchInterceptor} An interceptor object
    */
-  static register(hooks = {}, isRealRequest = false) {
+  static register(hooks: any = {}, isRealRequest = false) {
     if (this._instance) {
       return this._instance
     }
@@ -83,26 +84,26 @@ export default class FetchInterceptor {
       let request
       if (a[0] instanceof Request) {
         const object = {}
-          ;[
-            'cache',
-            'context',
-            'credentials',
-            'destination',
-            'headers',
-            'integrity',
-            'method',
-            'mode',
-            'redirect',
-            'referrer',
-            'referrerPolicy',
-            'url',
-            'body',
-            'bodyUsed',
-          ].forEach(prop => {
-            if (prop in a[0]) {
-              object[prop] = a[0][prop]
-            }
-          })
+        ;[
+          'cache',
+          'context',
+          'credentials',
+          'destination',
+          'headers',
+          'integrity',
+          'method',
+          'mode',
+          'redirect',
+          'referrer',
+          'referrerPolicy',
+          'url',
+          'body',
+          'bodyUsed',
+        ].forEach(prop => {
+          if (prop in a[0]) {
+            object[prop] = a[0][prop]
+          }
+        })
         object.signal = signal
         const { url, ...options } = object
         request = new Request(url, options)
@@ -125,10 +126,10 @@ export default class FetchInterceptor {
       const promise = this.isRealRequest
         ? this.fetch.call(this.env, request)
         : beforeReqPromise
-          .then(res => res)
-          .catch(() => {
-            return this.fetch.call(this.env, request)
-          })
+            .then(res => res)
+            .catch(() => {
+              return this.fetch.call(this.env, request)
+            })
       if (typeof this.onAfterRequest === 'function') {
         this.onAfterRequest(request, controller)
       }

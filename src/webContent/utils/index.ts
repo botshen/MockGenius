@@ -68,7 +68,7 @@ export function getOrCreateLocalStorageValues(keyValueMap: KeyValueMap, callback
 export function logTerminalMockMessage(
   config: XhrRequestConfig,
   result: { response: string; },
-  request: { url: string; method: Methods; }) {
+  request: any) {
   const targetUrl = new Url(request.url)
   const str = targetUrl.pathname
   const css = 'font-size:13px; background:pink; color:#bf2c9f;'
@@ -90,11 +90,42 @@ export function logTerminalMockMessage(
 }
 
 
-function parseReadableStream(readableStream: any) {
+// function parseReadableStream(readableStream: any) {
+//   const textDecoder = new TextDecoder('utf-8');
+
+//   return new Promise((resolve, reject) => {
+//     const chunks: string[] = [];
+
+//     const reader = readableStream.getReader();
+
+//     function readChunk() {
+//       reader
+//         .read()
+//         .then(({ done, value }) => {
+//           if (done) {
+//             resolve(chunks.join(''));
+//             return;
+//           }
+
+//           // 解码并存储数据块
+//           const decodedText = textDecoder.decode(value);
+//           chunks.push(decodedText);
+
+//           // 继续读取下一个数据块
+//           readChunk();
+//         })
+//         .catch(reject);
+//     }
+
+//     // 开始读取数据
+//     readChunk();
+//   });
+// }
+function parseReadableStream(readableStream: ReadableStream<Uint8Array>): Promise<string> {
   const textDecoder = new TextDecoder('utf-8');
 
-  return new Promise((resolve, reject) => {
-    const chunks = [];
+  return new Promise((resolve: (value: string) => void, reject: (reason?: any) => void) => {
+    const chunks: string[] = [];
 
     const reader = readableStream.getReader();
 
@@ -121,6 +152,7 @@ function parseReadableStream(readableStream: any) {
     readChunk();
   });
 }
+
 export function logFetch(request: any, response: any) {
   parseReadableStream(request.body).then((res) => {
     const targetUrl = new Url(request.url)
@@ -137,7 +169,7 @@ export function logFetch(request: any, response: any) {
       console.log('%c [ request-body ] ', css, JSON.parse(res))
     }
     if (response) {
-      response.json().then(data => {
+      response.json().then((data: any) => {
         if (data === '') {
           console.log('%c [ response ] ', css, '空字符串')
         } else {
@@ -177,7 +209,7 @@ export function checkAndInjectScript() {
     const newInput = document.createElement('input');
     newInput.setAttribute('id', INJECT_ELEMENT_ID);
     newInput.setAttribute('style', 'display:none');
-    existingInput.parentNode.replaceChild(newInput, existingInput);
+    existingInput.parentNode?.replaceChild(newInput, existingInput);
   } else {
     // 如果不存在具有指定ID的元素，添加新元素
     const input = document.createElement('input');

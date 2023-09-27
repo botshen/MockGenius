@@ -5,7 +5,7 @@ import { parse, stringify } from 'flatted';
 import { notification } from 'antd';
 import { logFetch, logTerminalMockMessage } from "../src/webContent/utils";
 import { CUSTOM_EVENT_NAME, INJECT_ELEMENT_ID } from "../src/const";
-
+ 
 
 async function mockCore(url, method) {
   const targetUrl = new Url(url)
@@ -72,7 +72,7 @@ function handMockResult({ res, request, config }) {
 function getCurrentProject() {
   const inputElem = document.getElementById(
     INJECT_ELEMENT_ID
-  )
+  ) as HTMLInputElement
   if (!inputElem) {
     return {};
   }
@@ -81,7 +81,7 @@ function getCurrentProject() {
     const config = JSON.parse(configStr);
     const { mockgenius_current_project, mock_genius_projects } = config
     const curProject = mock_genius_projects?.find(
-      (item) => item.pathUrl === mockgenius_current_project
+      (item: { pathUrl: string; }) => item.pathUrl === mockgenius_current_project
     ) || ({});
 
     return curProject
@@ -201,28 +201,23 @@ proxy({
 
 if (window.fetch !== undefined) {
   FetchInterceptor.register({
-    onBeforeRequest(request) {
-      return mockCore(request.url, request.method, 'fetch').then((res) => {
-        try {
-          const { path: rulePath } = res
-          // const text = JSON.stringify(res.response)
-          const response = new Response()
-          // response.json = res.response
-          // response.text = text
-          response.isMock = true
-          response.rulePath = rulePath
-          if (typeof res.response === 'string') {
-            // 如果 res.response 是字符串，则将其赋值给 response.text
-            response.text = res.response;
-          } else if (typeof res.response === 'object') {
-            // 如果 res.response 是 JSON 对象，则将其赋值给 response.json
-            response.json = () => Promise.resolve(res.response);
-          }
-          return response
-        } catch (err) {
-          console.error(err)
+    async onBeforeRequest(request: { url: string; method: string; }) {
+      const res = await mockCore(request.url, request.method);
+      try {
+        const { path: rulePath } = res;
+        // @ts-ignore
+        const response: CustomResponse = new Response();
+        response.isMock = true;
+        response.rulePath = rulePath;
+        if (typeof res.response === 'string') {
+          response.text = res.response;
+        } else if (typeof res.response === 'object') {
+          response.json = () => Promise.resolve(res.response);
         }
-      })
+        return response;
+      } catch (err) {
+        console.error(err);
+      }
     },
     onRequestSuccess(
       response,
@@ -248,7 +243,7 @@ if (window.fetch !== undefined) {
 
       // TODO: 数据格式化，流是不能直接转成字符串的, 如何获取到 response 中的字符串返回
       if (response.isMock) {
-        response.json().then((res) => {
+        response.json().then((res: any) => {
           const result = {
             status: response.status,
             url: request.url,
@@ -256,6 +251,7 @@ if (window.fetch !== undefined) {
             responseTxt: res,
             isMock: true,
             rulePath: response.rulePath,
+            statusText: ''
           }
           payload.response = result
           sendMsg(payload, true)
@@ -270,7 +266,7 @@ if (window.fetch !== undefined) {
         })
       } else {
         const cloneRes = response.clone()
-        cloneRes.json().then((res) => {
+        cloneRes.json().then((res: any) => {
           const result = {
             status: response.status,
             url: request.url,
@@ -278,6 +274,7 @@ if (window.fetch !== undefined) {
             responseTxt: res,
             isMock: false,
             rulePath: '',
+            statusText: ''
           }
           payload.response = result
           sendMsg(payload)
