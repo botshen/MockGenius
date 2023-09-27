@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Detail } from '../../components/detail';
 import { Button, Table, Tag, Tooltip, message } from 'antd';
 import { ClearOutlined } from '@ant-design/icons';
-import { useDomainStore } from '../../store';
+import { useDomainStore } from '../../store/useDomainStore';
 import { readLocalStorage } from "../../utils";
 import './apiLog.scss';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';

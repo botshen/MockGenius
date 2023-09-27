@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom'
 import Url from "url-parse";
-import { useDomainStore } from './store';
+import { useDomainStore } from './store/useDomainStore';
 import { readLocalStorage } from './utils';
- import { globalRouters } from './router';
+import { globalRouters } from './router';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT } from '../const';
+import { useLocalStore } from './store/useLocalStore';
 
 export const WebContent: React.FC = () => {
     const { addApiLogList } = useDomainStore() as any
+    const { currentProject } = useLocalStore() as any
     const isMockText = (isMock: boolean) => {
         if (isMock) {
             return 'Mock'
@@ -20,7 +22,9 @@ export const WebContent: React.FC = () => {
         (async () => {
             try {
                 chrome.runtime.onMessage.addListener(async (event) => {
-                    let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+                    // let currentProject = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
+                    console.log('%c [ currentProject ]-28', 'font-size:13px; background:pink; color:#bf2c9f;', currentProject)
+
                     if (!currentProject) {
                         return
                     }

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { Button } from 'antd'
 import './nav.scss'
-import { useDomainStore } from '../../store'
+import { useDomainStore } from '../../store/useDomainStore'
 import React, { useEffect } from 'react'
 type Props = {
     location: any;

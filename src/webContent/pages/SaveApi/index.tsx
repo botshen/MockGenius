@@ -9,7 +9,7 @@ import './saveApi.scss'
 import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
 import { Detail } from '../../components/detail';
-import { useDomainStore } from '../../store';
+import { useDomainStore } from '../../store/useDomainStore';
 import { ProjectList } from '../ApiLog';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';
 type RecordType = {
