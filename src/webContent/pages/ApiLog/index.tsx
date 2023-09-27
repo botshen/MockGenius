@@ -76,10 +76,10 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
   const setDetailFalse = () => {
     setDetailVisible(false);
   };
-  const { setApiLogList } = useDomainStore() as any;
+  const { clearLogList } = useDomainStore() as any;
 
   const clearLog = () => {
-    setApiLogList([])
+    clearLogList()
   }
   const handleDetailSubmit = async (formData: ApiLogItem) => {
     let projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;

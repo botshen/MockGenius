@@ -155,7 +155,7 @@ export const SaveApi = forwardRef((props, ref) => {
       ),
     },
   ];
-  const { setApiLogList } = useDomainStore() as any
+  const { clearLogList } = useDomainStore()
   const [defaultChecked, setDefaultChecked] = useState(true)
 
   const [apiDetailData, setApiDetailData] = useState({});
@@ -223,7 +223,7 @@ export const SaveApi = forwardRef((props, ref) => {
     })
   }, [])
   useEffect(() => {
-    setApiLogList([])
+    clearLogList()
   }, defaultActiveKey)
   const globalSwitchChange = async (checked: boolean) => {
     setDefaultChecked(checked => !checked)
@@ -281,7 +281,7 @@ export const SaveApi = forwardRef((props, ref) => {
     setDefaultChecked(newProjectList.find(item => item.pathUrl === newActiveKey)?.switchOn)
   };
   const onEdit = (targetKey: string) => {
-    setApiLogList([])
+    clearLogList()
     remove(targetKey);
   }
   const getMatchingTabs = (tabs: any, url: string) => {
@@ -297,7 +297,7 @@ export const SaveApi = forwardRef((props, ref) => {
 
 
   const handleChangeProject = async (activeKey: string) => {
-    setApiLogList([])
+    clearLogList()
     setDefaultActiveKey(activeKey)
     saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
     chrome.tabs.query({}, function (tabs) {
