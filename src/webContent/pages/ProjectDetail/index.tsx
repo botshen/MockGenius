@@ -68,7 +68,7 @@ export const ProjectDetail = () => {
                         MockGenius
                     </div>
 
-                    <div style={{
+                    {/* <div style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -86,7 +86,7 @@ export const ProjectDetail = () => {
                             <Button icon={<SettingOutlined />} >设置</Button>
 
                         </Dropdown>
-                    </div>
+                    </div> */}
 
                 </Header>
                 <Content

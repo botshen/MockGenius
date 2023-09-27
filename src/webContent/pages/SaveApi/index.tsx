@@ -6,7 +6,7 @@ import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-d
 import Url from "url-parse";
 import './saveApi.scss'
 
- import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
+import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
 import { Detail } from '../../components/detail';
 import { useDomainStore } from '../../store';
@@ -195,7 +195,7 @@ export const SaveApi = forwardRef((props, ref) => {
             message: 'success'
           },
         }],
-        projectName: '默认项目',
+        projectName: 'Default Project',
         switchOn: true
       }],
       // mockPluginSwitchOn: true,
@@ -620,13 +620,13 @@ export const SaveApi = forwardRef((props, ref) => {
               unCheckedChildren="OFF"
             />
             <Button onClick={handleAddProject} icon={<PlusOutlined />}  >
-              添加地址
+              Add Address
             </Button>
             <Button onClick={handleEditProject} icon={<EditOutlined />}  >
-              编辑地址
+              Edit Address
             </Button>
             <Button onClick={handleAddRule} icon={<PlusOutlined />}>
-              添加规则
+              Add Rule
             </Button>
           </div>
 

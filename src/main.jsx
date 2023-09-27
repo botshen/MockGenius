@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ConfigProvider, theme } from 'antd';
-import zhCN from 'antd/locale/zh_CN';
+// import zhCN from 'antd/locale/zh_CN';
+// import enUS from 'antd/locale/en_US';
+
 import '@/common/styles/frame.styl';
 import { WebContent } from './webContent/index';
 

@@ -131,9 +131,11 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
           alignItems: 'center',
           marginBottom: '5px',
         }}>
-          <div className="mock-page-title">拦截日志：</div>
+          {/* <div className="mock-page-title">拦截日志：</div> */}
+          <div className="mock-page-title">Intercept Log:</div>
+          {/* <Button onClick={clearLog} danger icon={<ClearOutlined />} >清空日志</Button> */}
 
-          <Button onClick={clearLog} danger icon={<ClearOutlined />} >清空日志</Button>
+          <Button onClick={clearLog} danger icon={<ClearOutlined />} >Empty log</Button>
 
         </div>
         <Table

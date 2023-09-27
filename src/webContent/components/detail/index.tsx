@@ -76,7 +76,7 @@ export const Detail: React.FC<Props> = ({ onCancel, onSubmit, data, mode }) => {
   };
   return (
     <Drawer
-      title={mode === 'add' ? '新增规则' : '编辑规则'}
+      title={mode === 'add' ? 'Add Rule' : 'Edit Rule'}
       placement={'right'}
       width={800}
       onClose={onClose}
