@@ -1,19 +1,10 @@
 {
   "name": "MockGenius",
-  "version": "0.1.0",
-  "description": "MockGenius is a powerful and intuitive Chrome extension that empowers developers to seamlessly mock backend data. Whether you're a frontend engineer, web developer, or testing professional, MockGenius makes it effortless to create, manage, and apply simulated data, saving time and enhancing efficiency throughout your development process.",
+  "version": "0.0.0.1",
+  "description": "A very useful mock plugin",
   "manifest_version": 3,
   "background": {
     "service_worker": "background.js"
-  },
-  "commands": {
-    "toggle-extension": {
-      "suggested_key": {
-        "default": "Ctrl+E",
-        "mac": "Command+E"
-      },
-      "description": "Switch to the mock management page"
-    }
   },
   "content_scripts": [
     {
@@ -28,8 +19,6 @@
   ],
   "permissions": [
     "storage",
-    "declarativeContent",
-    "system.display",
     "scripting",
     "activeTab",
     "tabs"

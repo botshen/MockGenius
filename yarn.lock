@@ -972,11 +972,6 @@ chalk@^2.4.2:
     escape-string-regexp "^1.0.5"
     supports-color "^5.3.0"
 
-chalk@^5.3.0:
-  version "5.3.0"
-  resolved "https://registry.npmmirror.com/chalk/-/chalk-5.3.0.tgz#67c20a7ebef70e7f3970a01f90fa210cb6860385"
-  integrity sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==
-
 chance@1.1.9:
   version "1.1.9"
   resolved "https://registry.npmmirror.com/chance/-/chance-1.1.9.tgz#fbf409726a956415b4bde0e8db010f60b60fc01b"
@@ -992,7 +987,7 @@ charenc@0.0.2:
   resolved "https://registry.npmmirror.com/charenc/-/charenc-0.0.2.tgz#c0a1d2f3a7092e03774bfa83f14c0fc5790a8667"
   integrity sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==
 
-"chokidar@>=3.0.0 <4.0.0", chokidar@^3.5.3:
+"chokidar@>=3.0.0 <4.0.0":
   version "3.5.3"
   resolved "https://registry.npmmirror.com/chokidar/-/chokidar-3.5.3.tgz"
   integrity sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==
@@ -2152,11 +2147,6 @@ path-to-regexp@^6.2.0:
   version "6.2.1"
   resolved "https://registry.npmmirror.com/path-to-regexp/-/path-to-regexp-6.2.1.tgz#d54934d6798eb9e5ef14e7af7962c945906918e5"
   integrity sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==
-
-perf_hooks@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.npmmirror.com/perf_hooks/-/perf_hooks-0.0.1.tgz#253e7e18b71fcc0390fd3afb2cd7cf1685df040c"
-  integrity sha512-qG/D9iA4KDme+KF4vCObJy6Bouu3BlQnmJ8jPydVPm32NJBD9ZK1ZNgXSYaZKHkVC1sKSqUiLgFvAZPUiIEnBw==
 
 picocolors@^1.0.0:
   version "1.0.0"
