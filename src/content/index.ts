@@ -73,13 +73,12 @@ const injectScriptToPage = () => {
 }
 
 
-chrome.storage.local.get(AJAX_KEYS, (result) => {
+chrome.storage.local.get([AJAX_INTERCEPTOR_CURRENT_PROJECT], (result) => {
   const currentName = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
   const { origin } = location;
   if (origin === currentName) {
     injectScriptToPage()
     setGlobalData()
-
   }
 })
 
