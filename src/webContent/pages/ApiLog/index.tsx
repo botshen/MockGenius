@@ -12,10 +12,12 @@ type ApiLogItem = {
   mock: string;
   type: string;
   method: string;
+  switchOn: boolean;
 };
 export type ProjectList = {
   pathUrl: string;
   rules: ApiLogItem[];
+  switchOn: boolean;
 }[]
 type Props = {
   apiLogSubmit: (project: any) => void;

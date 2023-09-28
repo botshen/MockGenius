@@ -1,4 +1,4 @@
-
+// @ts-nocheck
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Tabs, Tooltip, Switch, notification } from 'antd';
 import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -19,6 +19,7 @@ type RecordType = {
   method: Methods;
   pathRule: string;
   Response: any;
+  comments: string;
 }
 
 type ItemsType = {
@@ -27,9 +28,18 @@ type ItemsType = {
   children: any;
 }[]
 
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
+type TableRecord = {
+  switchOn: boolean;
+  method: Methods;
+  pathUrl: string;
+  code: string;
+  action: any;
+  pathRule: string;
+}
 export const SaveApi = forwardRef((props, ref) => {
   const { currentProject, setCurrentProject, projectList, setProjectList } = useLocalStore()
-  const ruleSwitchChange = async (record) => {
+  const ruleSwitchChange = async (record: TableRecord) => {
     record = {
       ...record,
       switchOn: !record.switchOn
@@ -80,7 +90,7 @@ export const SaveApi = forwardRef((props, ref) => {
       dataIndex: 'switchOn',
       key: 'switchOn',
       width: 90,
-      render: (switchOn: boolean, record) => {
+      render: (switchOn: boolean, record: TableRecord) => {
         return (
           <Switch
             checked={switchOn}
@@ -113,7 +123,7 @@ export const SaveApi = forwardRef((props, ref) => {
       ellipsis: {
         showTitle: false,
       },
-      render: (pathUrl, record) => (
+      render: (pathUrl, record: RecordType) => (
         <Tooltip placement="topLeft"
           title={
             record.comments ? (
@@ -173,7 +183,7 @@ export const SaveApi = forwardRef((props, ref) => {
   const [apiDetailMode, setApiDetailMode] = useState('add');
   const [projectFormData, setProjectFormData] = useState({})
   const [previousActiveKey, setPreviousActiveKey] = useState(currentProject);
-  const openNotificationWithIcon = (type: NotificationType, currentHost) => {
+  const openNotificationWithIcon = (type: NotificationType, currentHost: string) => {
     api[type]({
       message: 'Switching Successful',
       description:
@@ -210,15 +220,12 @@ export const SaveApi = forwardRef((props, ref) => {
     if (e.detail < 2) {
       return;
     }
-    readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT).then(value => {
-      _handleDelete(record, value)
-    })
+    _handleDelete(record, currentProject as string)
 
   };
   const remove = async (targetKey: string) => {
     const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     if (projectList.length === 1) return;
-    let newActiveKey = currentProject;
     let lastIndex = -1;
     items.forEach((item, i) => {
       if (item.key === targetKey) {
@@ -226,18 +233,17 @@ export const SaveApi = forwardRef((props, ref) => {
       }
     });
     const newPanes = items.filter((item) => item.key !== targetKey);
-    if (newPanes.length && newActiveKey === targetKey) {
+    if (newPanes.length && currentProject === targetKey) {
       if (lastIndex >= 0) {
-        newActiveKey = newPanes[lastIndex].key;
+        setCurrentProject(newPanes[lastIndex].key)
       } else {
-        newActiveKey = newPanes[0].key;
+        setCurrentProject(newPanes[0].key)
       }
     }
     setItems(newPanes);
-    setCurrentProject(newActiveKey);
     const newProjectList = projectList.filter(item => item.pathUrl !== targetKey)
     setProjectList(newProjectList)
-    setDefaultChecked(newProjectList.find(item => item.pathUrl === newActiveKey)?.switchOn)
+    setDefaultChecked(newProjectList.find(item => item.pathUrl === currentProject)?.switchOn)
   };
   const onEdit = (targetKey: string) => {
     clearLogList()
@@ -258,38 +264,38 @@ export const SaveApi = forwardRef((props, ref) => {
   const handleChangeProject = async (activeKey: string) => {
     clearLogList()
     setCurrentProject(activeKey)
-    chrome.tabs.query({}, function (tabs) {
-      const targetUrl = new Url(activeKey)
-      // 切换 tab 的时候注入
-      const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
-      if (matchingTabs.length > 0) {
-        const matchingTabId = matchingTabs[0].id;
-        if (matchingTabId) {
-          chrome.scripting.executeScript({
-            target: { tabId: matchingTabId },
-            function: checkAndInjectScript
-          });
-        }
-      }
-      // 旧的 tab 取消注入
-      const previousMatchingTabs = getMatchingTabs(tabs, new Url(previousActiveKey).origin);
-      if (previousMatchingTabs.length > 0) {
-        const previousMatchingTabId = previousMatchingTabs[0].id;
-        if (previousMatchingTabId) {
-          chrome.scripting.executeScript({
-            target: { tabId: previousMatchingTabId },
-            function: removeInjectScript
-          });
-        }
-      }
-    })
+    // chrome.tabs.query({}, function (tabs) {
+    //   const targetUrl = new Url(activeKey)
+    //   // 切换 tab 的时候注入
+    //   const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
+    //   if (matchingTabs.length > 0) {
+    //     const matchingTabId = matchingTabs[0].id;
+    //     if (matchingTabId) {
+    //       chrome.scripting.executeScript({
+    //         target: { tabId: matchingTabId },
+    //         function: checkAndInjectScript
+    //       });
+    //     }
+    //   }
+    //   // 旧的 tab 取消注入
+    //   const previousMatchingTabs = getMatchingTabs(tabs, new Url(previousActiveKey).origin);
+    //   if (previousMatchingTabs.length > 0) {
+    //     const previousMatchingTabId = previousMatchingTabs[0].id;
+    //     if (previousMatchingTabId) {
+    //       chrome.scripting.executeScript({
+    //         target: { tabId: previousMatchingTabId },
+    //         function: removeInjectScript
+    //       });
+    //     }
+    //   }
+    // })
     setPreviousActiveKey(activeKey);
     const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     const switchOn = projectList.find(item => item.pathUrl === activeKey)?.switchOn
     setDefaultChecked(switchOn)
     openNotificationWithIcon('success', activeKey)
   }
-  const _handleDelete = (record, key) => {
+  const _handleDelete = (record: RecordType, key: string) => {
     setItems((prevApiList) => {
       const newlist = prevApiList.map(item => {
         if (item.key === key) {
@@ -338,8 +344,8 @@ export const SaveApi = forwardRef((props, ref) => {
     setProjectMode('edit')
     const editProject = items.find(item => item.key === currentProject)
     setProjectFormData({
-      name: editProject.label,
-      pathUrl: editProject.key
+      name: editProject?.label,
+      pathUrl: editProject?.key
     })
     setProjectDetailVisible(true)
   }
@@ -350,7 +356,7 @@ export const SaveApi = forwardRef((props, ref) => {
     })
     setApiDetailVisible(true)
   }
-  const onApiDrawDetailSubmit = async (formData, mode) => {
+  const onApiDrawDetailSubmit = async (formData: any, mode: string) => {
     if (mode === 'add') {
       const pathRule = formData.pathRule
       // 如果存在相同的pathRule，提示错误

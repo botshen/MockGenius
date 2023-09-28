@@ -3,7 +3,7 @@ export const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
 export const AJAX_KEYS = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
 export const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 export const INJECT_ELEMENT_ID = 'mock-genius'
-export const SCRIPT_INJECT = 'script[src*="insert.js"]'
+export const  SCRIPT_JS = 'script[src*="insert.js"]'
 export const defaultProjectProduct = {
   pathUrl: 'http://localhost:5173',
   rules: [{

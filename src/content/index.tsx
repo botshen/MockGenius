@@ -1,4 +1,5 @@
-import { AJAX_KEYS, AJAX_INTERCEPTOR_CURRENT_PROJECT, INJECT_ELEMENT_ID, CUSTOM_EVENT_NAME, SCRIPT_INJECT } from "../const"
+import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_KEYS, CUSTOM_EVENT_NAME, INJECT_ELEMENT_ID, SCRIPT_JS } from "../const";
+
 interface ResponseHeaders {
   [key: string]: string;
 }
@@ -30,6 +31,7 @@ interface MockGeniusConfig {
   mock_genius_projects: MockGeniusProject[];
   mockgenius_current_project: string;
 }
+
 const executeScript = (data: MockGeniusConfig) => {
   const code = JSON.stringify(data)
   const inputElem = document.getElementById(
@@ -47,7 +49,7 @@ const setGlobalData = () => {
 
 const injectScriptToPage = () => {
   try {
-    const oldInsertScript = document.querySelector(SCRIPT_INJECT);
+    const oldInsertScript = document.querySelector(SCRIPT_JS);
     const oldInput = document.getElementById(INJECT_ELEMENT_ID);
     if (oldInsertScript) {
       oldInsertScript.parentNode?.removeChild(oldInsertScript);
@@ -127,7 +129,7 @@ chrome.storage.onChanged.addListener((changes) => {
 
     // 移除之前的插入的 script 和 input
     if (oldValue === origin) {
-      const oldInsertScript = document.querySelector(SCRIPT_INJECT);
+      const oldInsertScript = document.querySelector(SCRIPT_JS);
       const oldInput = document.getElementById(INJECT_ELEMENT_ID);
       if (oldInsertScript) {
         oldInsertScript.parentNode?.removeChild(oldInsertScript);

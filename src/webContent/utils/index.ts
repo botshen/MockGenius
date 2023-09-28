@@ -1,11 +1,14 @@
 import { XhrRequestConfig } from 'ajax-hook';
 import Url from 'url-parse'
-import { AJAX_KEYS, INJECT_ELEMENT_ID, SCRIPT_INJECT } from '../../const';
+import { AJAX_KEYS, INJECT_ELEMENT_ID, SCRIPT_JS } from '../../const';
 
 type KeyValueMap = {
   [key: string]: string | string[] | boolean | any;
 }
-type CallbackType = (updatedValues: KeyValueMap) => void;
+// const AJAX_INTERCEPTOR_PROJECTS = 'mock_genius_projects';
+// const AJAX_INTERCEPTOR_CURRENT_PROJECT = 'mockgenius_current_project';
+// const AJAX_KEYS = [AJAX_INTERCEPTOR_PROJECTS, AJAX_INTERCEPTOR_CURRENT_PROJECT]
+
 export type Methods = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT';
 
 export const readLocalStorage = async (key: string) => {
@@ -19,41 +22,7 @@ export const readLocalStorage = async (key: string) => {
     });
   });
 };
-// // 如果找不到就创建一个
-// export function getOrCreateLocalStorageValues(keyValueMap: KeyValueMap, callback: CallbackType) {
-//   // 尝试从chrome.storage.local中获取指定键的值
-//   chrome.storage.local.get(Object.keys(keyValueMap), function (result) {
-//     if (chrome.runtime.lastError) {
-//       // 发生错误
-//       console.error(chrome.runtime.lastError);
-//       callback(keyValueMap); // 返回初始值映射对象
-//     } else {
-//       const updatedValues: KeyValueMap = {};
 
-//       // 遍历键值映射对象，检查每个键的值是否存在
-//       for (var key in keyValueMap) {
-//         if (key in result) {
-//           // 如果存在，将其添加到更新后的值映射对象中
-//           updatedValues[key] = result[key];
-//         } else {
-//           // 如果不存在，将初始值设置到chrome.storage.local中
-//           updatedValues[key] = keyValueMap[key];
-//           const data: KeyValueMap = {};
-//           data[key] = keyValueMap[key];
-//           chrome.storage.local.set(data, function () {
-//             if (chrome.runtime.lastError) {
-//               // 发生错误
-//               console.error(chrome.runtime.lastError);
-//             }
-//           });
-//         }
-//       }
-
-//       // 返回所有键的最新值映射对象
-//       callback(updatedValues);
-//     }
-//   });
-// }
 export function getOrCreateLocalStorageValues(keyValueMap: KeyValueMap): Promise<KeyValueMap> {
   return new Promise((resolve, reject) => {
     // 尝试从chrome.storage.local中获取指定键的值
@@ -209,7 +178,7 @@ export function checkAndInjectScript() {
       executeScript(result)
     })
   }
-  const scriptExists = document.querySelector(SCRIPT_INJECT);
+  const scriptExists = document.querySelector(SCRIPT_JS);
   if (!scriptExists) {
     const script = document.createElement('script')
     script.setAttribute('type', 'module')
@@ -234,7 +203,7 @@ export function checkAndInjectScript() {
 
 }
 export function removeInjectScript() {
-  const script = document.querySelector(SCRIPT_INJECT);
+  const script = document.querySelector(SCRIPT_JS);
   if (script) {
     script.remove();
   }
