@@ -27,7 +27,7 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
   return (
     <>
       <Modal
-        title={mode === 'edit' ? '编辑项目' : '新增项目'}
+        title={mode === 'edit' ? 'Edit Project' : 'Add Project'}
         open={true}
         onOk={() => {
           form
@@ -60,12 +60,12 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
           autoComplete="off"
         >
           <Form.Item
-            label="项目名称"
+            label="Project Name"
             name="name"
             rules={[
               {
                 required: true,
-                message: '请输入项目名称!',
+                message: 'Please input your Project Name',
               },
             ]}
           >
@@ -73,15 +73,15 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
           </Form.Item>
 
           <Form.Item
-            label="项目域名"
+            label="Project Domain"
             name="pathUrl"
             rules={[
               {
                 required: true,
-                message: '请输入项目域名!',
+                message: 'Please input your Project Domain',
               },
               {
-                pattern: originReg, message: `请输入符合规格的域名，${originPlaceholder}`
+                pattern: originReg, message: `Please enter a domain name that meets the specifications,${originPlaceholder}`
               }
             ]}
           >
