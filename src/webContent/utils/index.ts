@@ -88,46 +88,44 @@ export function logFetch(request: any, response: any) {
     }
   })
 }
+const executeScript = (data: any) => {
+  const code = JSON.stringify(data)
 
-export function checkAndInjectScript() {
-  const executeScript = (data: any) => {
-    const code = JSON.stringify(data)
-
-    const inputElem = document.getElementById(
-      INJECT_ELEMENT_ID
-    )
-    if (inputElem !== null) {
-      (inputElem as HTMLInputElement).value = code;
+  const inputElem = document.getElementById(
+    INJECT_ELEMENT_ID
+  )
+  if (inputElem !== null) {
+    (inputElem as HTMLInputElement).value = code;
+  }
+}
+export const setGlobalData = () => {
+  chrome.storage.local.get(AJAX_KEYS, (result) => {
+    executeScript(result)
+  })
+}
+export const injectScriptToPage = () => {
+  try {
+    const oldInsertScript = document.querySelector(SCRIPT_JS);
+    const oldInput = document.getElementById(INJECT_ELEMENT_ID);
+    if (oldInsertScript) {
+      oldInsertScript.parentNode?.removeChild(oldInsertScript);
     }
-  }
-  const setGlobalData = () => {
-    chrome.storage.local.get(AJAX_KEYS, (result) => {
-      executeScript(result)
-    })
-  }
-  const scriptExists = document.querySelector(SCRIPT_JS);
-  if (!scriptExists) {
-    const script = document.createElement('script')
-    script.setAttribute('type', 'module')
-    script.setAttribute('src', chrome.runtime.getURL('insert.js'))
-    document.documentElement.appendChild(script)
-  }
-  const existingInput = document.getElementById(INJECT_ELEMENT_ID);
-  if (existingInput) {
-    // 如果已存在具有指定ID的元素，替换它
-    const newInput = document.createElement('input');
-    newInput.setAttribute('id', INJECT_ELEMENT_ID);
-    newInput.setAttribute('style', 'display:none');
-    existingInput.parentNode?.replaceChild(newInput, existingInput);
-  } else {
-    // 如果不存在具有指定ID的元素，添加新元素
-    const input = document.createElement('input');
-    input.setAttribute('id', INJECT_ELEMENT_ID);
-    input.setAttribute('style', 'display:none');
-    document.documentElement.appendChild(input);
-  }
-  setGlobalData()
 
+    if (oldInput) {
+      oldInput.parentNode?.removeChild(oldInput);
+    }
+    let insertScript = document.createElement('script')
+    insertScript.setAttribute('type', 'module')
+    insertScript.src = window.chrome.runtime.getURL('insert.js')
+
+    document.documentElement.appendChild(insertScript)
+    const input = document.createElement('input')
+    input.setAttribute('id', INJECT_ELEMENT_ID)
+    input.setAttribute('style', 'display:none')
+    document.documentElement.appendChild(input)
+  } catch (err) {
+    console.error('err', err)
+  }
 }
 export function removeInjectScript() {
   const script = document.querySelector(SCRIPT_JS);

@@ -252,31 +252,6 @@ export const SaveApi = forwardRef((props, ref) => {
   const handleChangeProject = async (activeKey: string) => {
     clearLogList()
     setCurrentProject(activeKey)
-    // chrome.tabs.query({}, function (tabs) {
-    //   const targetUrl = new Url(activeKey)
-    //   // 切换 tab 的时候注入
-    //   const matchingTabs = getMatchingTabs(tabs, targetUrl.origin);
-    //   if (matchingTabs.length > 0) {
-    //     const matchingTabId = matchingTabs[0].id;
-    //     if (matchingTabId) {
-    //       chrome.scripting.executeScript({
-    //         target: { tabId: matchingTabId },
-    //         function: checkAndInjectScript
-    //       });
-    //     }
-    //   }
-    //   // 旧的 tab 取消注入
-    //   const previousMatchingTabs = getMatchingTabs(tabs, new Url(previousActiveKey).origin);
-    //   if (previousMatchingTabs.length > 0) {
-    //     const previousMatchingTabId = previousMatchingTabs[0].id;
-    //     if (previousMatchingTabId) {
-    //       chrome.scripting.executeScript({
-    //         target: { tabId: previousMatchingTabId },
-    //         function: removeInjectScript
-    //       });
-    //     }
-    //   }
-    // })
     setPreviousActiveKey(activeKey);
     const switchOn = projectList.find(item => item.pathUrl === activeKey)?.switchOn
     setDefaultChecked(switchOn)

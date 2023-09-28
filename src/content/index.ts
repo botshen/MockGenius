@@ -1,4 +1,5 @@
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_KEYS, CUSTOM_EVENT_NAME, INJECT_ELEMENT_ID, SCRIPT_JS } from "../const";
+import { injectScriptToPage, setGlobalData } from "../webContent/utils";
 
 interface ResponseHeaders {
   [key: string]: string;
@@ -26,52 +27,6 @@ export interface MockGeniusProject {
   rules: Rule[];
   switchOn: boolean;
 }
-
-interface MockGeniusConfig {
-  mock_genius_projects: MockGeniusProject[];
-  mockgenius_current_project: string;
-}
-
-const executeScript = (data: MockGeniusConfig) => {
-  const code = JSON.stringify(data)
-  const inputElem = document.getElementById(
-    INJECT_ELEMENT_ID
-  )
-  if (inputElem instanceof HTMLInputElement) { // 使用类型守卫检查元素类型
-    inputElem.value = code;
-  }
-}
-const setGlobalData = () => {
-  chrome.storage.local.get(AJAX_KEYS, (result: any) => {
-    executeScript(result)
-  })
-}
-
-const injectScriptToPage = () => {
-  try {
-    const oldInsertScript = document.querySelector(SCRIPT_JS);
-    const oldInput = document.getElementById(INJECT_ELEMENT_ID);
-    if (oldInsertScript) {
-      oldInsertScript.parentNode?.removeChild(oldInsertScript);
-    }
-
-    if (oldInput) {
-      oldInput.parentNode?.removeChild(oldInput);
-    }
-    let insertScript = document.createElement('script')
-    insertScript.setAttribute('type', 'module')
-    insertScript.src = window.chrome.runtime.getURL('insert.js')
-
-    document.documentElement.appendChild(insertScript)
-    const input = document.createElement('input')
-    input.setAttribute('id', INJECT_ELEMENT_ID)
-    input.setAttribute('style', 'display:none')
-    document.documentElement.appendChild(input)
-  } catch (err) {
-    console.error('err', err)
-  }
-}
-
 
 chrome.storage.local.get([AJAX_INTERCEPTOR_CURRENT_PROJECT], (result) => {
   const currentName = result[AJAX_INTERCEPTOR_CURRENT_PROJECT]
