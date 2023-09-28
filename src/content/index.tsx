@@ -13,8 +13,11 @@ interface Rule {
   pathRule: string;
   responseHeaders: ResponseHeaders;
   switchOn: boolean;
+  status: string;
+  mock: string;
+  type: string
 }
-interface MockGeniusProject {
+export interface MockGeniusProject {
   isRealRequest: boolean;
   isTerminalLogOpen: boolean;
   pathUrl: string;

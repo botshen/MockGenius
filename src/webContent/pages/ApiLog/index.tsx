@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Detail } from '../../components/detail';
 import { Button, Table, Tag, Tooltip, message } from 'antd';
 import { ClearOutlined } from '@ant-design/icons';
-import { useDomainStore } from '../../store/useDomainStore';
-import { readLocalStorage } from "../../utils";
+import { useLocalStore } from '../../store/useLocalStore';
+import { useLogStore } from '../../store/useLogStore';
 import './apiLog.scss';
-import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';
 
 type ApiLogItem = {
   pathRule: string;
@@ -68,7 +67,8 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
     },
   ];
 
-  const { apiLogList } = useDomainStore() as { apiLogList: ApiLogItem[] };
+  const { apiLogList, clearLogList } = useLogStore();
+  const { currentProject, projectList, setProjectList } = useLocalStore()
   const [messageApi, contextHolder] = message.useMessage();
   const [detailVisible, setDetailVisible] = useState(false);
   const [detailData, setDetailData] = useState<ApiLogItem | {}>({});
@@ -76,24 +76,21 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
   const setDetailFalse = () => {
     setDetailVisible(false);
   };
-  const { clearLogList } = useDomainStore() as any;
 
   const clearLog = () => {
     clearLogList()
   }
   const handleDetailSubmit = async (formData: ApiLogItem) => {
-    let projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
-    let currentProjectUrl = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-    const currentProject = projectList.find((item) => item.pathUrl === currentProjectUrl);
-    if (!currentProject) {
+    const _currentProject = projectList.find((item) => item.pathUrl === currentProject);
+    if (!_currentProject) {
       return messageApi.error('当前项目不存在');
     }
     let currentResult: ApiLogItem[] = [];
 
-    if (!currentProject.rules.find((item) => item.pathRule === formData.pathRule)) {
-      currentResult = [formData, ...currentProject.rules];
+    if (!_currentProject.rules.find((item) => item.pathRule === formData.pathRule)) {
+      currentResult = [formData, ..._currentProject.rules];
     } else {
-      currentResult = currentProject.rules.map((item) => {
+      currentResult = _currentProject.rules.map((item) => {
         if (item.pathRule === formData.pathRule) {
           return {
             ...item,
@@ -106,7 +103,7 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
     }
 
     const newProjectList = projectList.map((item) => {
-      if (item.pathUrl === currentProjectUrl) {
+      if (item.pathUrl === currentProject) {
         return {
           ...item,
           rules: currentResult,
@@ -116,7 +113,7 @@ export const ApiLog: React.FC<Props> = ({ apiLogSubmit }) => {
       }
     });
 
-    await chrome.storage.local.set({ [AJAX_INTERCEPTOR_PROJECTS]: newProjectList });
+    setProjectList(newProjectList)
     apiLogSubmit(newProjectList);
     setDetailVisible(false);
   };

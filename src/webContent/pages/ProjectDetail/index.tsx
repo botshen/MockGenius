@@ -1,10 +1,9 @@
 import { ApiLog, ProjectList } from "../ApiLog"
-import { Switch, Divider, Layout, Dropdown, theme, Button } from 'antd';
-import { SettingOutlined, SmileOutlined } from '@ant-design/icons';
+import { Divider, Layout, theme } from 'antd';
+import { SmileOutlined } from '@ant-design/icons';
 import { SaveApi } from "../SaveApi"
 import './projectDetail.scss'
-import React, { useEffect, useRef, useState } from "react";
-import { getOrCreateLocalStorageValues, saveStorage } from "../../utils";
+import { useRef } from "react";
 
 const { Header, Content } = Layout;
 

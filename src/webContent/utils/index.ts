@@ -8,14 +8,6 @@ type KeyValueMap = {
 type CallbackType = (updatedValues: KeyValueMap) => void;
 export type Methods = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT';
 
-export const saveStorage = async <T>(key: string, value: T): Promise<void> => {
-  return new Promise<void>((resolve) => {
-    const dataToStore = { [key]: value };
-    chrome.storage.local.set(dataToStore, () => {
-      resolve();
-    });
-  });
-}
 export const readLocalStorage = async (key: string) => {
   return new Promise((resolve, reject) => {
     chrome.storage.local.get([key], function (result) {
@@ -27,41 +19,94 @@ export const readLocalStorage = async (key: string) => {
     });
   });
 };
-// 如果找不到就创建一个
-export function getOrCreateLocalStorageValues(keyValueMap: KeyValueMap, callback: CallbackType) {
-  // 尝试从chrome.storage.local中获取指定键的值
-  chrome.storage.local.get(Object.keys(keyValueMap), function (result) {
-    if (chrome.runtime.lastError) {
-      // 发生错误
-      console.error(chrome.runtime.lastError);
-      callback(keyValueMap); // 返回初始值映射对象
-    } else {
-      const updatedValues: KeyValueMap = {};
+// // 如果找不到就创建一个
+// export function getOrCreateLocalStorageValues(keyValueMap: KeyValueMap, callback: CallbackType) {
+//   // 尝试从chrome.storage.local中获取指定键的值
+//   chrome.storage.local.get(Object.keys(keyValueMap), function (result) {
+//     if (chrome.runtime.lastError) {
+//       // 发生错误
+//       console.error(chrome.runtime.lastError);
+//       callback(keyValueMap); // 返回初始值映射对象
+//     } else {
+//       const updatedValues: KeyValueMap = {};
 
-      // 遍历键值映射对象，检查每个键的值是否存在
-      for (var key in keyValueMap) {
-        if (key in result) {
-          // 如果存在，将其添加到更新后的值映射对象中
-          updatedValues[key] = result[key];
-        } else {
-          // 如果不存在，将初始值设置到chrome.storage.local中
-          updatedValues[key] = keyValueMap[key];
-          const data: KeyValueMap = {};
-          data[key] = keyValueMap[key];
-          chrome.storage.local.set(data, function () {
-            if (chrome.runtime.lastError) {
-              // 发生错误
-              console.error(chrome.runtime.lastError);
-            }
-          });
+//       // 遍历键值映射对象，检查每个键的值是否存在
+//       for (var key in keyValueMap) {
+//         if (key in result) {
+//           // 如果存在，将其添加到更新后的值映射对象中
+//           updatedValues[key] = result[key];
+//         } else {
+//           // 如果不存在，将初始值设置到chrome.storage.local中
+//           updatedValues[key] = keyValueMap[key];
+//           const data: KeyValueMap = {};
+//           data[key] = keyValueMap[key];
+//           chrome.storage.local.set(data, function () {
+//             if (chrome.runtime.lastError) {
+//               // 发生错误
+//               console.error(chrome.runtime.lastError);
+//             }
+//           });
+//         }
+//       }
+
+//       // 返回所有键的最新值映射对象
+//       callback(updatedValues);
+//     }
+//   });
+// }
+export function getOrCreateLocalStorageValues(keyValueMap: KeyValueMap): Promise<KeyValueMap> {
+  return new Promise((resolve, reject) => {
+    // 尝试从chrome.storage.local中获取指定键的值
+    chrome.storage.local.get(Object.keys(keyValueMap), function (result) {
+      if (chrome.runtime.lastError) {
+        // 发生错误
+        console.error(chrome.runtime.lastError);
+        reject(chrome.runtime.lastError);
+      } else {
+        const updatedValues: KeyValueMap = {};
+
+        // 创建一个 Promise 数组，用于保存所有的 chrome.storage.local.set 操作
+        const setPromises = [];
+
+        // 遍历键值映射对象，检查每个键的值是否存在
+        for (var key in keyValueMap) {
+          if (key in result) {
+            // 如果存在，将其添加到更新后的值映射对象中
+            updatedValues[key] = result[key];
+          } else {
+            // 如果不存在，将初始值设置到chrome.storage.local中，并创建一个 Promise
+            updatedValues[key] = keyValueMap[key];
+            const data: KeyValueMap = {};
+            data[key] = keyValueMap[key];
+            const setPromise = new Promise<void>((resolve, reject) => {
+              chrome.storage.local.set(data, function () {
+                if (chrome.runtime.lastError) {
+                  // 发生错误
+                  console.error(chrome.runtime.lastError);
+                  reject(chrome.runtime.lastError);
+                } else {
+                  resolve();
+                }
+              });
+            });
+            setPromises.push(setPromise);
+          }
         }
-      }
 
-      // 返回所有键的最新值映射对象
-      callback(updatedValues);
-    }
+        // 使用 Promise.all 来等待所有的 chrome.storage.local.set 操作完成
+        Promise.all(setPromises)
+          .then(() => {
+            // 所有设置操作都成功完成，返回最新的值映射对象
+            resolve(updatedValues);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      }
+    });
   });
 }
+
 
 
 
@@ -89,38 +134,6 @@ export function logTerminalMockMessage(
   }
 }
 
-
-// function parseReadableStream(readableStream: any) {
-//   const textDecoder = new TextDecoder('utf-8');
-
-//   return new Promise((resolve, reject) => {
-//     const chunks: string[] = [];
-
-//     const reader = readableStream.getReader();
-
-//     function readChunk() {
-//       reader
-//         .read()
-//         .then(({ done, value }) => {
-//           if (done) {
-//             resolve(chunks.join(''));
-//             return;
-//           }
-
-//           // 解码并存储数据块
-//           const decodedText = textDecoder.decode(value);
-//           chunks.push(decodedText);
-
-//           // 继续读取下一个数据块
-//           readChunk();
-//         })
-//         .catch(reject);
-//     }
-
-//     // 开始读取数据
-//     readChunk();
-//   });
-// }
 function parseReadableStream(readableStream: ReadableStream<Uint8Array>): Promise<string> {
   const textDecoder = new TextDecoder('utf-8');
 

@@ -1,17 +1,16 @@
-// @ts-nocheck
 
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { Button, message, Table, Tag, Space, Popconfirm, Tabs, Tooltip, Switch, notification } from 'antd';
+import { Button, message, Table, Tag, Space, Tabs, Tooltip, Switch, notification } from 'antd';
 import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
 import Url from "url-parse";
 import './saveApi.scss'
-
-import { Methods, checkAndInjectScript, getOrCreateLocalStorageValues, readLocalStorage, removeInjectScript, saveStorage } from '../../utils';
+import { Methods, checkAndInjectScript, readLocalStorage, removeInjectScript } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
 import { Detail } from '../../components/detail';
-import { useDomainStore } from '../../store/useDomainStore';
 import { ProjectList } from '../ApiLog';
 import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';
+import { useLocalStore } from '../../store/useLocalStore';
+import { useLogStore } from '../../store/useLogStore';
 type RecordType = {
   name: string;
   code: string;
@@ -27,8 +26,9 @@ type ItemsType = {
   label: string;
   children: any;
 }[]
-export const SaveApi = forwardRef((props, ref) => {
 
+export const SaveApi = forwardRef((props, ref) => {
+  const { currentProject, setCurrentProject, projectList, setProjectList } = useLocalStore()
   const ruleSwitchChange = async (record) => {
     record = {
       ...record,
@@ -56,10 +56,8 @@ export const SaveApi = forwardRef((props, ref) => {
       })
       return newlist
     })
-    let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-    const defaultActiveKey = await readLocalStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT);
-    saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
-      if (item.pathUrl === defaultActiveKey) {
+    setProjectList(projectList.map(item => {
+      if (item.pathUrl === currentProject) {
         return {
           ...item,
           rules: item.rules.map(item => {
@@ -74,8 +72,7 @@ export const SaveApi = forwardRef((props, ref) => {
       } else {
         return item
       }
-    })
-    )
+    }))
   }
   const columns = [
     {
@@ -155,21 +152,27 @@ export const SaveApi = forwardRef((props, ref) => {
       ),
     },
   ];
-  const { clearLogList } = useDomainStore()
-  const [defaultChecked, setDefaultChecked] = useState(true)
-
+  const { clearLogList } = useLogStore()
+  const [defaultChecked, setDefaultChecked] = useState(projectList?.find(item => item.pathUrl === currentProject)?.switchOn)
   const [apiDetailData, setApiDetailData] = useState({});
-  const [items, setItems] = useState<ItemsType>([])
-  const [defaultActiveKey, setDefaultActiveKey] = useState('');
+  const [items, setItems] = useState<ItemsType>(projectList?.map((item: any) => {
+    return {
+      key: item.pathUrl,
+      label: item.projectName,
+      children: <Table
+        columns={columns}
+        size='small'
+        dataSource={item.rules} />,
+    }
+  }))
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
   const [apiDetailVisible, setApiDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [api, contextHolderNo] = notification.useNotification();
-
   const [projectMode, setProjectMode] = useState('add');
   const [apiDetailMode, setApiDetailMode] = useState('add');
   const [projectFormData, setProjectFormData] = useState({})
-  const [previousActiveKey, setPreviousActiveKey] = useState(''); // 用于存储上一个 activeKey 的状态变量
+  const [previousActiveKey, setPreviousActiveKey] = useState(currentProject);
   const openNotificationWithIcon = (type: NotificationType, currentHost) => {
     api[type]({
       message: 'Switching Successful',
@@ -177,60 +180,17 @@ export const SaveApi = forwardRef((props, ref) => {
         `current intercept address is: ${currentHost}`,
     });
   };
-  useEffect(() => {
-    getOrCreateLocalStorageValues({
-      [AJAX_INTERCEPTOR_CURRENT_PROJECT]: 'http://localhost:5173',
-      [AJAX_INTERCEPTOR_PROJECTS]: [{
-        pathUrl: 'http://localhost:5173',
-        rules: [{
-          name: 'test',
-          code: '200',
-          switchOn: true,
-          delay: '0',
-          method: 'POST',
-          pathRule: '/api/test',
-          Response: {
-            code: 200,
-            data: {},
-            message: 'success'
-          },
-        }],
-        projectName: 'Default Project',
-        switchOn: true
-      }],
-      // mockPluginSwitchOn: true,
-    }, function (values) {
-      const checked = values[AJAX_INTERCEPTOR_PROJECTS].find(item => item.pathUrl === values[AJAX_INTERCEPTOR_CURRENT_PROJECT])?.switchOn
-      setDefaultChecked(checked)
-      if (checked) {
-        chrome.action.setIcon({ path: '/images/app.png' });
-      } else {
-        chrome.action.setIcon({ path: '/images/gray.png' });
-      }
-      setItems(values[AJAX_INTERCEPTOR_PROJECTS].map((item: any) => {
-        return {
-          key: item.pathUrl,
-          label: item.projectName,
-          children: <Table
-            columns={columns}
-            size='small'
-            dataSource={item.rules} />,
-        }
-      }))
-      setDefaultActiveKey(() => values[AJAX_INTERCEPTOR_CURRENT_PROJECT])
-      setPreviousActiveKey(() => values[AJAX_INTERCEPTOR_CURRENT_PROJECT])
 
-    })
-  }, [])
+
   useEffect(() => {
     clearLogList()
-  }, defaultActiveKey)
+  }, currentProject)
+
   const globalSwitchChange = async (checked: boolean) => {
     setDefaultChecked(checked => !checked)
-    let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-    await saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
-      if (item.pathUrl === defaultActiveKey) {
 
+    setProjectList(projectList.map(item => {
+      if (item.pathUrl === currentProject) {
         return {
           ...item,
           switchOn: checked
@@ -258,7 +218,7 @@ export const SaveApi = forwardRef((props, ref) => {
   const remove = async (targetKey: string) => {
     const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     if (projectList.length === 1) return;
-    let newActiveKey = defaultActiveKey;
+    let newActiveKey = currentProject;
     let lastIndex = -1;
     items.forEach((item, i) => {
       if (item.key === targetKey) {
@@ -274,10 +234,9 @@ export const SaveApi = forwardRef((props, ref) => {
       }
     }
     setItems(newPanes);
-    setDefaultActiveKey(newActiveKey);
-    saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, newActiveKey)
+    setCurrentProject(newActiveKey);
     const newProjectList = projectList.filter(item => item.pathUrl !== targetKey)
-    saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
+    setProjectList(newProjectList)
     setDefaultChecked(newProjectList.find(item => item.pathUrl === newActiveKey)?.switchOn)
   };
   const onEdit = (targetKey: string) => {
@@ -298,8 +257,7 @@ export const SaveApi = forwardRef((props, ref) => {
 
   const handleChangeProject = async (activeKey: string) => {
     clearLogList()
-    setDefaultActiveKey(activeKey)
-    saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, activeKey)
+    setCurrentProject(activeKey)
     chrome.tabs.query({}, function (tabs) {
       const targetUrl = new Url(activeKey)
       // 切换 tab 的时候注入
@@ -350,19 +308,16 @@ export const SaveApi = forwardRef((props, ref) => {
       })
       return newlist
     })
-    readLocalStorage(AJAX_INTERCEPTOR_PROJECTS).then(projectList => {
-      saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
-        if (item.pathUrl === key) {
-          return {
-            ...item,
-            rules: item.rules.filter(item => item.pathRule !== record.pathRule)
-          }
-        } else {
-          return item
+    setProjectList(projectList.map(item => {
+      if (item.pathUrl === key) {
+        return {
+          ...item,
+          rules: item.rules.filter(item => item.pathRule !== record.pathRule)
         }
-      })
-      )
-    })
+      } else {
+        return item
+      }
+    }))
     messageApi.success('删除成功');
   }
   const handleEdit = (record) => {
@@ -381,7 +336,7 @@ export const SaveApi = forwardRef((props, ref) => {
   }
   const handleEditProject = () => {
     setProjectMode('edit')
-    const editProject = items.find(item => item.key === defaultActiveKey)
+    const editProject = items.find(item => item.key === currentProject)
     setProjectFormData({
       name: editProject.label,
       pathUrl: editProject.key
@@ -399,13 +354,13 @@ export const SaveApi = forwardRef((props, ref) => {
     if (mode === 'add') {
       const pathRule = formData.pathRule
       // 如果存在相同的pathRule，提示错误
-      if (items.some(item => item.key === defaultActiveKey && item.children.props.dataSource.some(item => item.pathRule === pathRule))) {
+      if (items.some(item => item.key === currentProject && item.children.props.dataSource.some(item => item.pathRule === pathRule))) {
         messageApi.error('pathRule重复');
         return
       }
       setItems((prevApiList) => {
         const newlist = prevApiList.map(item => {
-          if (item.key === defaultActiveKey) {
+          if (item.key === currentProject) {
             return {
               ...item,
               children: <Table
@@ -421,9 +376,8 @@ export const SaveApi = forwardRef((props, ref) => {
         })
         return newlist
       })
-      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-      saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
-        if (item.pathUrl === defaultActiveKey) {
+      setProjectList(projectList.map(item => {
+        if (item.pathUrl === currentProject) {
           return {
             ...item,
             rules: [formData, ...item.rules]
@@ -431,12 +385,11 @@ export const SaveApi = forwardRef((props, ref) => {
         } else {
           return item
         }
-      })
-      )
+      }))
     } else if (mode === 'edit') {
       setItems((prevApiList) => {
         const newlist = prevApiList.map(item => {
-          if (item.key === defaultActiveKey) {
+          if (item.key === currentProject) {
             return {
               ...item,
               children: <Table
@@ -458,9 +411,8 @@ export const SaveApi = forwardRef((props, ref) => {
         })
         return newlist
       })
-      let projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS);
-      saveStorage(AJAX_INTERCEPTOR_PROJECTS, projectList.map(item => {
-        if (item.pathUrl === defaultActiveKey) {
+      setProjectList(projectList.map(item => {
+        if (item.pathUrl === currentProject) {
           return {
             ...item,
             rules: item.rules.map(item => {
@@ -474,10 +426,8 @@ export const SaveApi = forwardRef((props, ref) => {
         } else {
           return item
         }
-      })
-      )
+      }))
     }
-
     setApiDetailVisible(false)
   }
   const onCancelDetail = () => {
@@ -502,9 +452,7 @@ export const SaveApi = forwardRef((props, ref) => {
         })
         setItems(newItems)
         setProjectDetailVisible(false)
-        setDefaultActiveKey(formData.pathUrl)
-        saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, formData.pathUrl)
-        const projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS)
+        setCurrentProject(formData.pathUrl)
         const newProjectList = projectList.map(item => {
           if (item.pathUrl === projectFormData.pathUrl) {
             return {
@@ -517,7 +465,7 @@ export const SaveApi = forwardRef((props, ref) => {
             return item
           }
         })
-        saveStorage(AJAX_INTERCEPTOR_PROJECTS, newProjectList)
+        setProjectList(newProjectList)
       }
     } else if (projectMode === 'add') {
       if (items.some(item => item.key === formData.pathUrl)) {
@@ -540,10 +488,8 @@ export const SaveApi = forwardRef((props, ref) => {
           return newlist
         });
         setProjectDetailVisible(false)
-        setDefaultActiveKey(formData.pathUrl)
-        saveStorage(AJAX_INTERCEPTOR_CURRENT_PROJECT, formData.pathUrl)
-        const projectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS)
-        saveStorage(AJAX_INTERCEPTOR_PROJECTS, [...projectList, {
+        setCurrentProject(formData.pathUrl)
+        setProjectList([...projectList, {
           pathUrl: formData.pathUrl,
           rules: [],
           projectName: formData.name,
@@ -604,7 +550,7 @@ export const SaveApi = forwardRef((props, ref) => {
             fontWeight: 'bold',
             color: '#e3e3e3'
           }}>
-            {defaultActiveKey}
+            {currentProject}
           </span>
           <div style={{
             display: 'flex',
@@ -632,7 +578,7 @@ export const SaveApi = forwardRef((props, ref) => {
 
         </div>
         <Tabs
-          activeKey={defaultActiveKey}
+          activeKey={currentProject}
           type="editable-card"
           items={items}
           hideAdd

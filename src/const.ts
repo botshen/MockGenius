@@ -5,11 +5,23 @@ export const CUSTOM_EVENT_NAME = 'CUSTOMEVENT'
 export const INJECT_ELEMENT_ID = 'mock-genius'
 export const SCRIPT_INJECT = 'script[src*="insert.js"]'
 export const defaultProjectProduct = {
-  projectName: 'default project',
   pathUrl: 'http://localhost:5173',
-  switchOn: true,
+  rules: [{
+    name: 'test',
+    code: '200',
+    switchOn: true,
+    delay: '0',
+    method: 'POST',
+    pathRule: '/api/test',
+    Response: {
+      code: 200,
+      data: {},
+      message: 'success'
+    },
+  }],
+  projectName: 'Default Project',
   isRealRequest: false,
   isTerminalLogOpen: false,
-  rules: []
+  switchOn: true
 }
 

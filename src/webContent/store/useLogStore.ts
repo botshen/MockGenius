@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 interface Log {
   pathRule: string;
-  status: number;
+  status: string;
   mock: string;
   type: string;
   method: string;
@@ -18,29 +18,17 @@ interface Log {
     'content-type': string;
   };
 }
+
 interface Domain {
-  domain: string
   apiLogList: Log[],
-  currentProject: {
-    name: string,
-    pathUrl: string,
-  },
-  setDomain: (domainText: string) => void
   clearLogList: () => void
   addApiLogList: (apiLog: Log) => void
 }
 
-export const useDomainStore = create<Domain>((set) => ({
-  domain: '',
-  currentProject: {
-    name: '',
-    pathUrl: '',
-  },
+export const useLogStore = create<Domain>((set) => ({
   apiLogList: [],
-  
-  setDomain: domainText => set({ domain: domainText }),
   clearLogList: () => set({ apiLogList: [] }),
   addApiLogList: (apiLog) => {
-    set({ apiLogList: [apiLog, ...useDomainStore.getState().apiLogList] })
+    set({ apiLogList: [apiLog, ...useLogStore.getState().apiLogList] })
   }
 }))
