@@ -60,7 +60,7 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
           autoComplete="off"
         >
           <Form.Item
-            label="Project Name"
+            label="Name"
             name="name"
             rules={[
               {
@@ -73,7 +73,7 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
           </Form.Item>
 
           <Form.Item
-            label="Project Domain"
+            label="Domain"
             name="pathUrl"
             rules={[
               {
