@@ -2,13 +2,10 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Button, message, Table, Tag, Space, Tabs, Tooltip, Switch, notification } from 'antd';
 import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
-import Url from "url-parse";
 import './saveApi.scss'
-import { Methods, checkAndInjectScript, readLocalStorage, removeInjectScript } from '../../utils';
+import { Methods } from '../../utils';
 import { ProjectDetailModal } from './detailModal/index';
 import { Detail } from '../../components/detail';
-import { ProjectList } from '../ApiLog';
-import { AJAX_INTERCEPTOR_CURRENT_PROJECT, AJAX_INTERCEPTOR_PROJECTS } from '../../../const';
 import { useLocalStore } from '../../store/useLocalStore';
 import { useLogStore } from '../../store/useLogStore';
 type RecordType = {
@@ -224,7 +221,6 @@ export const SaveApi = forwardRef((props, ref) => {
 
   };
   const remove = async (targetKey: string) => {
-    const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     if (projectList.length === 1) return;
     let lastIndex = -1;
     items.forEach((item, i) => {
@@ -249,15 +245,7 @@ export const SaveApi = forwardRef((props, ref) => {
     clearLogList()
     remove(targetKey);
   }
-  const getMatchingTabs = (tabs: any, url: string) => {
-    const matchingTabs = [];
-    for (const tab of tabs) {
-      if (tab.url.startsWith(url)) {
-        matchingTabs.push(tab);
-      }
-    }
-    return matchingTabs;
-  }
+
 
 
 
@@ -290,7 +278,6 @@ export const SaveApi = forwardRef((props, ref) => {
     //   }
     // })
     setPreviousActiveKey(activeKey);
-    const projectList: ProjectList = await readLocalStorage(AJAX_INTERCEPTOR_PROJECTS) as ProjectList;
     const switchOn = projectList.find(item => item.pathUrl === activeKey)?.switchOn
     setDefaultChecked(switchOn)
     openNotificationWithIcon('success', activeKey)
