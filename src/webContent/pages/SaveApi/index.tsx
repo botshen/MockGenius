@@ -321,9 +321,8 @@ export const SaveApi = forwardRef((props, ref) => {
   const onApiDrawDetailSubmit = async (formData: any, mode: string) => {
     if (mode === 'add') {
       const pathRule = formData.pathRule
-      // 如果存在相同的pathRule，提示错误
       if (items.some(item => item.key === currentProject && item.children.props.dataSource.some(item => item.pathRule === pathRule))) {
-        messageApi.error('pathRule重复');
+        messageApi.error('pathRule repeats');
         return
       }
       setItems((prevApiList) => {
@@ -404,7 +403,7 @@ export const SaveApi = forwardRef((props, ref) => {
   const saveProject = async (formData) => {
     if (projectMode === 'edit') {
       if (items.some(item => item.key === formData.pathUrl && item.key !== projectFormData.pathUrl)) {
-        messageApi.error('pathRule重复');
+        messageApi.error('pathRule repeats');
         return
       } else {
         const newItems = items.map(item => {
@@ -437,7 +436,7 @@ export const SaveApi = forwardRef((props, ref) => {
       }
     } else if (projectMode === 'add') {
       if (items.some(item => item.key === formData.pathUrl)) {
-        messageApi.error('pathRule重复');
+        messageApi.error('pathRule repeats');
         return
       } else {
         const result = {

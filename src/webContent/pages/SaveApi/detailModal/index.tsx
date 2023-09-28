@@ -44,24 +44,18 @@ export const ProjectDetailModal: React.FC<Props> = ({ onClose, saveProject, form
         <Form
           form={form}
           name="basic"
-          // labelCol={{
-          //   span: 8,
-          // }}
-          // wrapperCol={{
-          //   span: 16,
-          // }}
-          // style={{
-          //   maxWidth: 600,
-          // }}
-          // initialValues={{ ...formData, pathUrl: 'http://localhost:3000' }}
+          labelCol={{
+            span: 4,
+          }}
           initialValues={initialValues()}
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
           autoComplete="off"
         >
           <Form.Item
             label="Name"
             name="name"
+            labelCol={{
+              span: 4,
+            }}
             rules={[
               {
                 required: true,
