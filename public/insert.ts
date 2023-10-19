@@ -216,7 +216,7 @@ if (window.fetch !== undefined) {
         }
         return response;
       } catch (err) {
-        console.error(err);
+        // console.error(err);
       }
     },
     onRequestSuccess(

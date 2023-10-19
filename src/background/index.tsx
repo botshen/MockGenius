@@ -17,6 +17,6 @@ chrome.action.onClicked.addListener(() => {
     });
   } catch (error) {
     // 处理错误
-    console.error(error);
+    // console.error(error);
   }
 });

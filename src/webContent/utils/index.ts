@@ -124,7 +124,7 @@ export const injectScriptToPage = () => {
     input.setAttribute('style', 'display:none')
     document.documentElement.appendChild(input)
   } catch (err) {
-    console.error('err', err)
+    // console.error('err', err)
   }
 }
 export function removeInjectScript() {
