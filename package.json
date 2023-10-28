@@ -44,7 +44,7 @@
     "vite": "^4.4.9",
     "vite-plugin-javascript-obfuscator": "^3.0.3"
   },
-  "packageManager": "yarn@1.22.19",
+  "packageManager": "yarn@4.0.0",
   "resolutions": {
     "array-buffer-byte-length": "npm:@nolyfill/array-buffer-byte-length@latest",
     "array-includes": "npm:@nolyfill/array-includes@latest",
