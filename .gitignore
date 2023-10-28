@@ -12,6 +12,7 @@
 /build
 /dist
 /.idea
+/.yarn
 
 # misc
 .DS_Store
