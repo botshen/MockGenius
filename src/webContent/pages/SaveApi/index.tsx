@@ -1,13 +1,33 @@
 // @ts-nocheck
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
-import { Button, message, Table, Tag, Space, Tabs, Tooltip, Switch, notification } from 'antd';
-import { PlusOutlined, EditOutlined, CopyOutlined, DeleteOutlined } from '@ant-design/icons';
-import './saveApi.scss'
-import { Methods } from '../../utils';
-import { ProjectDetailModal } from './detailModal/index';
-import { Detail } from '../../components/detail';
-import { useLocalStore } from '../../store/useLocalStore';
-import { useLogStore } from '../../store/useLogStore';
+import React, {
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import {
+  Button,
+  message,
+  Table,
+  Tag,
+  Space,
+  Tabs,
+  Tooltip,
+  Switch,
+  notification,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
+import "./saveApi.scss";
+import { Methods } from "../../utils";
+import { ProjectDetailModal } from "./detailModal/index";
+import { Detail } from "../../components/detail";
+import { useLocalStore } from "../../store/useLocalStore";
+import { useLogStore } from "../../store/useLogStore";
 type RecordType = {
   name: string;
   code: string;
@@ -17,15 +37,15 @@ type RecordType = {
   pathRule: string;
   Response: any;
   comments: string;
-}
+};
 
 type ItemsType = {
   key: string;
   label: string;
   children: any;
-}[]
+}[];
 
-type NotificationType = 'success' | 'info' | 'warning' | 'error';
+type NotificationType = "success" | "info" | "warning" | "error";
 type TableRecord = {
   switchOn: boolean;
   method: Methods;
@@ -33,99 +53,105 @@ type TableRecord = {
   code: string;
   action: any;
   pathRule: string;
-}
+};
 export const SaveApi = forwardRef((props, ref) => {
-  const { currentProject, setCurrentProject, projectList, setProjectList } = useLocalStore()
+  const { currentProject, setCurrentProject, projectList, setProjectList } =
+    useLocalStore();
   const ruleSwitchChange = async (record: TableRecord) => {
     record = {
       ...record,
-      switchOn: !record.switchOn
-    }
+      switchOn: !record.switchOn,
+    };
     setItems((prevApiList) => {
-      const newlist = prevApiList.map(item => {
+      const newlist = prevApiList.map((item) => {
         return {
           ...item,
-          children: <Table
-            columns={columns}
-            size='small'
-            dataSource={item.children.props.dataSource.map(item => {
-              if (item.pathRule === record.pathRule) {
-                return {
-                  ...item,
-                  switchOn: !item.switchOn
+          children: (
+            <Table
+              columns={columns}
+              size="small"
+              dataSource={item.children.props.dataSource.map((item) => {
+                if (item.pathRule === record.pathRule) {
+                  return {
+                    ...item,
+                    switchOn: !item.switchOn,
+                  };
+                } else {
+                  return item;
                 }
+              })}
+            />
+          ),
+        };
+      });
+      return newlist;
+    });
+    setProjectList(
+      projectList.map((item) => {
+        if (item.pathUrl === currentProject) {
+          return {
+            ...item,
+            rules: item.rules.map((item) => {
+              if (item.pathRule === record.pathRule) {
+                return record;
               } else {
-                return item
+                return item;
               }
-            })}
-          />,
+            }),
+          };
+        } else {
+          return item;
         }
       })
-      return newlist
-    })
-    setProjectList(projectList.map(item => {
-      if (item.pathUrl === currentProject) {
-        return {
-          ...item,
-          rules: item.rules.map(item => {
-            if (item.pathRule === record.pathRule) {
-
-              return record
-            } else {
-              return item
-            }
-          })
-        }
-      } else {
-        return item
-      }
-    }))
-  }
+    );
+  };
   const columns = [
     {
-      title: 'SwitchOn',
-      dataIndex: 'switchOn',
-      key: 'switchOn',
+      title: "SwitchOn",
+      dataIndex: "switchOn",
+      key: "switchOn",
       width: 90,
       render: (switchOn: boolean, record: TableRecord) => {
         return (
           <Switch
             checked={switchOn}
-            size='small'
+            size="small"
             onChange={() => ruleSwitchChange(record)}
             checkedChildren="ON"
             unCheckedChildren="OFF"
           />
-        )
+        );
       },
     },
     {
-      title: 'Method',
-      key: 'method',
-      dataIndex: 'method',
+      title: "Method",
+      key: "method",
+      dataIndex: "method",
       width: 80,
       render: (method: Methods) => {
-        let color = 'geekblue';
+        let color = "geekblue";
         return (
           <Tag color={color} key={method}>
             {method.toUpperCase()}
           </Tag>
-        )
+        );
       },
     },
     {
-      title: 'URL',
-      dataIndex: 'pathUrl',
-      key: 'pathUrl',
+      title: "URL",
+      dataIndex: "pathUrl",
+      key: "pathUrl",
       ellipsis: {
         showTitle: false,
       },
       render: (pathUrl, record: RecordType) => (
-        <Tooltip placement="topLeft"
+        <Tooltip
+          placement="topLeft"
           title={
             record.comments ? (
               <>
-                pathRule: {record.pathRule} <br /><br />
+                pathRule: {record.pathRule} <br />
+                <br />
                 comments: {record.comments}
               </>
             ) : (
@@ -133,92 +159,107 @@ export const SaveApi = forwardRef((props, ref) => {
             )
           }
         >
-          {record.pathRule}
+          {record.comments || record.pathRule}
         </Tooltip>
-
       ),
     },
     {
-      title: 'Code',
-      dataIndex: 'code',
-      key: 'code',
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
       width: 60,
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       width: 100,
       render: (_: any, record: RecordType) => (
         <Space size="small">
-          <Tooltip placement="bottom" title={'Double click to delete'}>
-            <DeleteOutlined style={{ color: '#f7cbca' }} onClick={(e) => handleDelete(e, record)} />
+          <Tooltip placement="bottom" title={"Double click to delete"}>
+            <DeleteOutlined
+              style={{ color: "#f7cbca" }}
+              onClick={(e) => handleDelete(e, record)}
+            />
           </Tooltip>
-          <CopyOutlined style={{ color: '#abe7f0' }} onClick={() => handleCopy(record)} />
-          <EditOutlined style={{ color: '#b0d7fb' }} onClick={() => handleEdit(record)} />
+          <CopyOutlined
+            style={{ color: "#abe7f0" }}
+            onClick={() => handleCopy(record)}
+          />
+          <EditOutlined
+            style={{ color: "#b0d7fb" }}
+            onClick={() => handleEdit(record)}
+          />
         </Space>
       ),
     },
   ];
-  const { clearLogList } = useLogStore()
-  const [defaultChecked, setDefaultChecked] = useState(projectList?.find(item => item.pathUrl === currentProject)?.switchOn)
+  const { clearLogList } = useLogStore();
+  const [defaultChecked, setDefaultChecked] = useState(
+    projectList?.find((item) => item.pathUrl === currentProject)?.switchOn
+  );
   const [apiDetailData, setApiDetailData] = useState({});
-  const [items, setItems] = useState<ItemsType>(projectList?.map((item: any) => {
-    return {
-      key: item.pathUrl,
-      label: item.projectName,
-      children: <Table
-        columns={columns}
-        size='small'
-        dataSource={item.rules} />,
-    }
-  }))
+  const [items, setItems] = useState<ItemsType>(
+    projectList?.map((item: any) => {
+      return {
+        key: item.pathUrl,
+        label: item.projectName,
+        children: (
+          <Table columns={columns} size="small" dataSource={item.rules} />
+        ),
+      };
+    })
+  );
   const [projectDetailVisible, setProjectDetailVisible] = useState(false);
   const [apiDetailVisible, setApiDetailVisible] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [api, contextHolderNo] = notification.useNotification();
-  const [projectMode, setProjectMode] = useState('add');
-  const [apiDetailMode, setApiDetailMode] = useState('add');
-  const [projectFormData, setProjectFormData] = useState({})
+  const [projectMode, setProjectMode] = useState("add");
+  const [apiDetailMode, setApiDetailMode] = useState("add");
+  const [projectFormData, setProjectFormData] = useState({});
   const [previousActiveKey, setPreviousActiveKey] = useState(currentProject);
-  const openNotificationWithIcon = (type: NotificationType, currentHost: string) => {
+  const openNotificationWithIcon = (
+    type: NotificationType,
+    currentHost: string
+  ) => {
     api[type]({
-      message: 'Switching Successful',
-      description:
-        `current intercept address is: ${currentHost}`,
+      message: "Switching Successful",
+      description: `current intercept address is: ${currentHost}`,
     });
   };
 
-
   useEffect(() => {
-    clearLogList()
-  }, currentProject)
+    clearLogList();
+  }, currentProject);
 
   const globalSwitchChange = async (checked: boolean) => {
-    setDefaultChecked(checked => !checked)
+    setDefaultChecked((checked) => !checked);
 
-    setProjectList(projectList.map(item => {
-      if (item.pathUrl === currentProject) {
-        return {
-          ...item,
-          switchOn: checked
+    setProjectList(
+      projectList.map((item) => {
+        if (item.pathUrl === currentProject) {
+          return {
+            ...item,
+            switchOn: checked,
+          };
+        } else {
+          return item;
         }
-      } else {
-        return item
-      }
-    })
-    )
+      })
+    );
     if (checked) {
-      chrome.action.setIcon({ path: '/images/app.png' });
+      chrome.action.setIcon({ path: "/images/app.png" });
     } else {
-      chrome.action.setIcon({ path: '/images/gray.png' });
+      chrome.action.setIcon({ path: "/images/gray.png" });
     }
-  }
-  const handleDelete = (e: React.MouseEvent<HTMLButtonElement>, record: RecordType) => {
+  };
+  const handleDelete = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    record: RecordType
+  ) => {
     if (e.detail < 2) {
       return;
     }
-    _handleDelete(record, currentProject as string)
-
+    _handleDelete(record, currentProject as string);
   };
   const remove = async (targetKey: string) => {
     if (projectList.length === 1) return;
@@ -231,259 +272,285 @@ export const SaveApi = forwardRef((props, ref) => {
     const newPanes = items.filter((item) => item.key !== targetKey);
     if (newPanes.length && currentProject === targetKey) {
       if (lastIndex >= 0) {
-        setCurrentProject(newPanes[lastIndex].key)
+        setCurrentProject(newPanes[lastIndex].key);
       } else {
-        setCurrentProject(newPanes[0].key)
+        setCurrentProject(newPanes[0].key);
       }
     }
     setItems(newPanes);
-    const newProjectList = projectList.filter(item => item.pathUrl !== targetKey)
-    setProjectList(newProjectList)
-    setDefaultChecked(newProjectList.find(item => item.pathUrl === currentProject)?.switchOn)
+    const newProjectList = projectList.filter(
+      (item) => item.pathUrl !== targetKey
+    );
+    setProjectList(newProjectList);
+    setDefaultChecked(
+      newProjectList.find((item) => item.pathUrl === currentProject)?.switchOn
+    );
   };
   const onEdit = (targetKey: string) => {
-    clearLogList()
+    clearLogList();
     remove(targetKey);
-  }
-
-
-
+  };
 
   const handleChangeProject = async (activeKey: string) => {
-    clearLogList()
-    setCurrentProject(activeKey)
+    clearLogList();
+    setCurrentProject(activeKey);
     setPreviousActiveKey(activeKey);
-    const switchOn = projectList.find(item => item.pathUrl === activeKey)?.switchOn
-    setDefaultChecked(switchOn)
-    openNotificationWithIcon('success', activeKey)
-  }
+    const switchOn = projectList.find(
+      (item) => item.pathUrl === activeKey
+    )?.switchOn;
+    setDefaultChecked(switchOn);
+    openNotificationWithIcon("success", activeKey);
+  };
   const _handleDelete = (record: RecordType, key: string) => {
     setItems((prevApiList) => {
-      const newlist = prevApiList.map(item => {
+      const newlist = prevApiList.map((item) => {
         if (item.key === key) {
           return {
             ...item,
-            children: <Table
-
-              size='small'
-              columns={columns}
-              dataSource={item.children.props.dataSource.filter(item => item.pathRule !== record.pathRule)}
-            />,
-          }
+            children: (
+              <Table
+                size="small"
+                columns={columns}
+                dataSource={item.children.props.dataSource.filter(
+                  (item) => item.pathRule !== record.pathRule
+                )}
+              />
+            ),
+          };
         } else {
-          return item
+          return item;
+        }
+      });
+      return newlist;
+    });
+    setProjectList(
+      projectList.map((item) => {
+        if (item.pathUrl === key) {
+          return {
+            ...item,
+            rules: item.rules.filter(
+              (item) => item.pathRule !== record.pathRule
+            ),
+          };
+        } else {
+          return item;
         }
       })
-      return newlist
-    })
-    setProjectList(projectList.map(item => {
-      if (item.pathUrl === key) {
-        return {
-          ...item,
-          rules: item.rules.filter(item => item.pathRule !== record.pathRule)
-        }
-      } else {
-        return item
-      }
-    }))
-    messageApi.success('删除成功');
-  }
+    );
+    messageApi.success("删除成功");
+  };
   const handleEdit = (record) => {
-    setApiDetailData(() => record)
-    setApiDetailMode('edit')
-    setApiDetailVisible(true)
-  }
+    setApiDetailData(() => record);
+    setApiDetailMode("edit");
+    setApiDetailVisible(true);
+  };
   const handleCopy = (record) => {
-    setApiDetailData(() => record)
-    setApiDetailMode('add')
-    setApiDetailVisible(true)
-  }
+    setApiDetailData(() => record);
+    setApiDetailMode("add");
+    setApiDetailVisible(true);
+  };
   const handleAddProject = () => {
-    setProjectMode('add')
-    setProjectDetailVisible(true)
-  }
+    setProjectMode("add");
+    setProjectDetailVisible(true);
+  };
   const handleEditProject = () => {
-    setProjectMode('edit')
-    const editProject = items.find(item => item.key === currentProject)
+    setProjectMode("edit");
+    const editProject = items.find((item) => item.key === currentProject);
     setProjectFormData({
       name: editProject?.label,
-      pathUrl: editProject?.key
-    })
-    setProjectDetailVisible(true)
-  }
+      pathUrl: editProject?.key,
+    });
+    setProjectDetailVisible(true);
+  };
   const handleAddRule = () => {
-    setApiDetailMode('add')
+    setApiDetailMode("add");
     setApiDetailData({
-      Response: {}
-    })
-    setApiDetailVisible(true)
-  }
+      Response: {},
+    });
+    setApiDetailVisible(true);
+  };
   const onApiDrawDetailSubmit = async (formData: any, mode: string) => {
-    if (mode === 'add') {
-      const pathRule = formData.pathRule
-      if (items.some(item => item.key === currentProject && item.children.props.dataSource.some(item => item.pathRule === pathRule))) {
-        messageApi.error('pathRule repeats');
-        return
+    if (mode === "add") {
+      const pathRule = formData.pathRule;
+      if (
+        items.some(
+          (item) =>
+            item.key === currentProject &&
+            item.children.props.dataSource.some(
+              (item) => item.pathRule === pathRule
+            )
+        )
+      ) {
+        messageApi.error("pathRule repeats");
+        return;
       }
       setItems((prevApiList) => {
-        const newlist = prevApiList.map(item => {
+        const newlist = prevApiList.map((item) => {
           if (item.key === currentProject) {
             return {
               ...item,
-              children: <Table
-
-                size='small'
-                columns={columns}
-                dataSource={[formData, ...item.children.props.dataSource]}
-              />,
-            }
+              children: (
+                <Table
+                  size="small"
+                  columns={columns}
+                  dataSource={[formData, ...item.children.props.dataSource]}
+                />
+              ),
+            };
           } else {
-            return item
+            return item;
+          }
+        });
+        return newlist;
+      });
+      setProjectList(
+        projectList.map((item) => {
+          if (item.pathUrl === currentProject) {
+            return {
+              ...item,
+              rules: [formData, ...item.rules],
+            };
+          } else {
+            return item;
           }
         })
-        return newlist
-      })
-      setProjectList(projectList.map(item => {
-        if (item.pathUrl === currentProject) {
-          return {
-            ...item,
-            rules: [formData, ...item.rules]
-          }
-        } else {
-          return item
-        }
-      }))
-    } else if (mode === 'edit') {
+      );
+    } else if (mode === "edit") {
       setItems((prevApiList) => {
-        const newlist = prevApiList.map(item => {
+        const newlist = prevApiList.map((item) => {
           if (item.key === currentProject) {
             return {
               ...item,
-              children: <Table
-                columns={columns}
-
-                size='small'
-                dataSource={item.children.props.dataSource.map(item => {
-                  if (item.pathRule === formData.pathRule) {
-                    return formData
-                  } else {
-                    return item
-                  }
-                })}
-              />,
-            }
+              children: (
+                <Table
+                  columns={columns}
+                  size="small"
+                  dataSource={item.children.props.dataSource.map((item) => {
+                    if (item.pathRule === formData.pathRule) {
+                      return formData;
+                    } else {
+                      return item;
+                    }
+                  })}
+                />
+              ),
+            };
           } else {
-            return item
+            return item;
+          }
+        });
+        return newlist;
+      });
+      setProjectList(
+        projectList.map((item) => {
+          if (item.pathUrl === currentProject) {
+            return {
+              ...item,
+              rules: item.rules.map((item) => {
+                if (item.pathRule === formData.pathRule) {
+                  return formData;
+                } else {
+                  return item;
+                }
+              }),
+            };
+          } else {
+            return item;
           }
         })
-        return newlist
-      })
-      setProjectList(projectList.map(item => {
-        if (item.pathUrl === currentProject) {
-          return {
-            ...item,
-            rules: item.rules.map(item => {
-              if (item.pathRule === formData.pathRule) {
-                return formData
-              } else {
-                return item
-              }
-            })
-          }
-        } else {
-          return item
-        }
-      }))
+      );
     }
-    setApiDetailVisible(false)
-  }
+    setApiDetailVisible(false);
+  };
   const onCancelDetail = () => {
-    setApiDetailVisible(false)
-  }
+    setApiDetailVisible(false);
+  };
   const saveProject = async (formData) => {
-    if (projectMode === 'edit') {
-      if (items.some(item => item.key === formData.pathUrl && item.key !== projectFormData.pathUrl)) {
-        messageApi.error('pathRule repeats');
-        return
+    if (projectMode === "edit") {
+      if (
+        items.some(
+          (item) =>
+            item.key === formData.pathUrl &&
+            item.key !== projectFormData.pathUrl
+        )
+      ) {
+        messageApi.error("pathRule repeats");
+        return;
       } else {
-        const newItems = items.map(item => {
+        const newItems = items.map((item) => {
           if (item.key === projectFormData.pathUrl) {
             return {
               key: formData.pathUrl,
               label: formData.name,
-              children: item.children
-            }
+              children: item.children,
+            };
           } else {
-            return item
+            return item;
           }
-        })
-        setItems(newItems)
-        setProjectDetailVisible(false)
-        setCurrentProject(formData.pathUrl)
-        const newProjectList = projectList.map(item => {
+        });
+        setItems(newItems);
+        setProjectDetailVisible(false);
+        setCurrentProject(formData.pathUrl);
+        const newProjectList = projectList.map((item) => {
           if (item.pathUrl === projectFormData.pathUrl) {
             return {
               pathUrl: formData.pathUrl,
               rules: item.rules,
               projectName: formData.name,
-              switchOn: item.switchOn
-            }
+              switchOn: item.switchOn,
+            };
           } else {
-            return item
+            return item;
           }
-        })
-        setProjectList(newProjectList)
+        });
+        setProjectList(newProjectList);
       }
-    } else if (projectMode === 'add') {
-      if (items.some(item => item.key === formData.pathUrl)) {
-        messageApi.error('pathRule repeats');
-        return
+    } else if (projectMode === "add") {
+      if (items.some((item) => item.key === formData.pathUrl)) {
+        messageApi.error("pathRule repeats");
+        return;
       } else {
         const result = {
           key: formData.pathUrl,
           label: formData.name,
-          children: <Table
-
-            size='small'
-            columns={columns}
-            dataSource={[]}
-          />,
-        }
-        setProjectFormData({})
+          children: <Table size="small" columns={columns} dataSource={[]} />,
+        };
+        setProjectFormData({});
         setItems((prevApiList) => {
-          const newlist = [...prevApiList, result]
-          return newlist
+          const newlist = [...prevApiList, result];
+          return newlist;
         });
-        setProjectDetailVisible(false)
-        setCurrentProject(formData.pathUrl)
-        setProjectList([...projectList, {
-          pathUrl: formData.pathUrl,
-          rules: [],
-          projectName: formData.name,
-          switchOn: true
-        }])
+        setProjectDetailVisible(false);
+        setCurrentProject(formData.pathUrl);
+        setProjectList([
+          ...projectList,
+          {
+            pathUrl: formData.pathUrl,
+            rules: [],
+            projectName: formData.name,
+            switchOn: true,
+          },
+        ]);
       }
-
     }
-
-  }
+  };
   const onClose = () => {
-    setProjectFormData({})
-    setProjectDetailVisible(false)
-  }
+    setProjectFormData({});
+    setProjectDetailVisible(false);
+  };
   const setTabData = (projectList) => {
-    setItems(projectList.map((item, index) => {
-      return {
-        key: item.pathUrl,
-        label: item.projectName,
-        children: <Table
-          size='small'
-
-          columns={columns}
-          dataSource={item.rules} />,
-      }
-    }))
-  }
+    setItems(
+      projectList.map((item, index) => {
+        return {
+          key: item.pathUrl,
+          label: item.projectName,
+          children: (
+            <Table size="small" columns={columns} dataSource={item.rules} />
+          ),
+        };
+      })
+    );
+  };
   // 将方法暴露给外部，使父组件可以调用
   useImperativeHandle(ref, () => ({
     setTabData,
@@ -492,39 +559,40 @@ export const SaveApi = forwardRef((props, ref) => {
     <>
       {contextHolder}
       {contextHolderNo}
-      {
-        projectDetailVisible &&
+      {projectDetailVisible && (
         <ProjectDetailModal
           mode={projectMode}
           onClose={onClose}
           formData={projectFormData}
           saveProject={saveProject}
         />
-      }
-      {
-        apiDetailVisible &&
+      )}
+      {apiDetailVisible && (
         <Detail
           onSubmit={onApiDrawDetailSubmit}
           onCancel={onCancelDetail}
           data={apiDetailData}
           mode={apiDetailMode}
         />
-      }
-      <div className='home-wrapper'>
+      )}
+      <div className="home-wrapper">
         <div className="saved-api">
-          <span style={{
-            fontSize: '20px',
-            fontWeight: 'bold',
-            color: '#e3e3e3'
-          }}>
+          <span
+            style={{
+              fontSize: "20px",
+              fontWeight: "bold",
+              color: "#e3e3e3",
+            }}
+          >
             {currentProject}
           </span>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: '20px',
-          }}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: "20px",
+            }}
           >
             <Switch
               checked={defaultChecked}
@@ -532,17 +600,16 @@ export const SaveApi = forwardRef((props, ref) => {
               checkedChildren="ON"
               unCheckedChildren="OFF"
             />
-            <Button onClick={handleAddProject} icon={<PlusOutlined />}  >
+            <Button onClick={handleAddProject} icon={<PlusOutlined />}>
               Add Address
             </Button>
-            <Button onClick={handleEditProject} icon={<EditOutlined />}  >
+            <Button onClick={handleEditProject} icon={<EditOutlined />}>
               Edit Address
             </Button>
             <Button onClick={handleAddRule} icon={<PlusOutlined />}>
               Add Rule
             </Button>
           </div>
-
         </div>
         <Tabs
           activeKey={currentProject}
@@ -555,5 +622,4 @@ export const SaveApi = forwardRef((props, ref) => {
       </div>
     </>
   );
-}
-)
+});
